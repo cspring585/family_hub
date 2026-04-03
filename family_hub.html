@@ -10,7 +10,7 @@
     <link rel="manifest" href='data:application/manifest+json,{"name":"Family Hub","short_name":"FamilyHub","start_url":"/family_hub/family_hub.html","display":"standalone","background_color":"#1a1a2e","theme_color":"#1a1a2e","icons":[{"src":"https://cdn-icons-png.flaticon.com/512/609/609803.png","sizes":"512x512","type":"image/png","purpose":"any maskable"}]}'>
 
     <style>
-        /* CSS VARIABLES - THEME ENGINE */
+        /* CSS THEME ENGINE */
         :root { 
             --primary: #1a1a2e; --secondary: #16213e; --accent: #4ecca3; 
             --success: #4ecca3; --danger: #e94560; --warning: #f39c12;
@@ -19,14 +19,14 @@
         }
 
         body.dark-mode {
-            --bg: #0f3460; --card-bg: #16213e; --text-main: #e94560; /* Using danger as a neon accent for text in dark */
+            --bg: #0f3460; --card-bg: #16213e; 
             --text-main: #f4f4f2; --text-muted: #a2a2a2; --border: #1a1a2e;
             --nav-text: #cccccc;
         }
         
-        body { font-family: 'Inter', 'Segoe UI', sans-serif; margin: 0; display: flex; background: var(--bg); color: var(--text-main); transition: background 0.3s, color 0.3s; overflow-x: hidden; -webkit-tap-highlight-color: transparent; }
+        body { font-family: 'Inter', 'Segoe UI', sans-serif; margin: 0; display: flex; background: var(--bg); color: var(--text-main); transition: 0.3s; overflow-x: hidden; -webkit-tap-highlight-color: transparent; }
         
-        /* Sidebar Navigation */
+        /* Sidebar */
         nav { width: 220px; background: var(--primary); color: white; height: 100vh; position: fixed; z-index: 100; transition: 0.3s; overflow-x: hidden; border-right: 1px solid rgba(255,255,255,0.05); }
         nav.collapsed { width: 0; }
         nav h2 { padding: 20px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.05); margin: 0; font-size: 1rem; letter-spacing: 1px; text-transform: uppercase; color: var(--accent); }
@@ -49,9 +49,10 @@
         }
 
         .card { background: var(--card-bg); padding: 15px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.02); margin-bottom: 15px; border: 1px solid var(--border); position: relative; }
+        .header-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
         h1 { font-size: 1.5rem; margin: 0; font-weight: 800; color: var(--text-main); }
         
-        /* Dashboard Grid */
+        /* Dashboard Layout */
         .user-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; }
         .user-card { background: var(--card-bg); border-radius: 10px; border: 1px solid var(--border); position: relative; display: flex; flex-direction: column; transition: transform 0.2s; }
         .user-header { padding: 10px 15px; background: rgba(0,0,0,0.02); display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); border-radius: 10px 10px 0 0; }
@@ -59,62 +60,67 @@
         .currency-pill { font-size: 0.75rem; font-weight: 800; color: var(--success); background: rgba(78, 204, 163, 0.1); padding: 3px 10px; border-radius: 12px; }
         
         .chore-item { display: flex; align-items: center; gap: 12px; padding: 10px 15px; border-bottom: 1px solid var(--border); }
+        .chore-item.completed { background: rgba(0,0,0,0.02); opacity: 0.6; }
+        .chore-info { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
         .chore-info strong { font-size: 0.85rem; color: var(--text-main); }
         
         .progress-container { width: 100%; background: rgba(0,0,0,0.1); border-radius: 4px; height: 4px; margin-top: 6px; overflow: hidden; }
         .progress-fill { background: var(--accent); height: 100%; transition: 0.5s; }
         .milestone-text { font-size: 9px; color: var(--text-muted); font-weight: 700; margin-top: 3px; }
 
-        input[type="checkbox"] { width: 20px; height: 20px; cursor: pointer; accent-color: var(--accent); }
+        input[type="checkbox"] { width: 22px; height: 22px; cursor: pointer; accent-color: var(--accent); }
 
-        /* Admin & Table styles updated for dark mode */
-        table { width: 100%; border-collapse: collapse; color: var(--text-main); }
-        th { text-align: left; font-size: 11px; text-transform: uppercase; color: var(--text-muted); padding: 10px; border-bottom: 2px solid var(--border); }
-        td { padding: 10px; border-bottom: 1px solid var(--border); font-size: 13px; }
+        /* Celebrations */
+        .card-celebration { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: none; flex-direction: column; justify-content: center; align-items: center; z-index: 200; text-align: center; border-radius: 10px; pointer-events: none; background: rgba(26, 26, 46, 0.95); color: white; padding: 10px; }
+        .card-celebration-msg { font-size: 1.5rem; font-weight: 900; animation: bounceIn 0.5s; color: var(--accent); }
+
+        /* Admin Components */
+        .admin-form-box { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; background: rgba(0,0,0,0.03); padding: 15px; border-radius: 8px; margin-bottom: 15px; }
+        label { font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 4px; }
+        input, select, textarea { background: var(--card-bg); color: var(--text-main); border: 1px solid var(--border); padding: 8px; border-radius: 6px; font-size: 13px; }
+        .btn-primary { background: var(--primary); color: white; border: none; padding: 10px 18px; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 13px; }
+        .btn-danger { background: white; color: var(--danger); border: 1px solid var(--danger); padding: 4px 10px; border-radius: 4px; cursor: pointer; font-size: 11px; }
+        .btn-edit { background: white; color: #555; border: 1px solid #ddd; padding: 4px 10px; border-radius: 4px; cursor: pointer; font-size: 11px; }
         
-        .admin-form-box { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 15px; background: rgba(0,0,0,0.03); padding: 15px; border-radius: 8px; margin-bottom: 15px; }
-        input, select, textarea { background: var(--card-bg); color: var(--text-main); border: 1px solid var(--border); padding: 8px; border-radius: 6px; }
+        table { width: 100%; border-collapse: collapse; }
+        th { text-align: left; font-size: 11px; color: var(--text-muted); padding: 10px; border-bottom: 2px solid var(--border); }
+        td { padding: 10px; border-bottom: 1px solid var(--border); font-size: 13px; }
 
-        /* Overlays */
+        .hidden { display: none !important; }
+        
+        /* Modals */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(8px); display: none; justify-content: center; align-items: center; z-index: 1000; }
-        .modal-content { background: var(--card-bg); color: var(--text-main); width: 90%; max-width: 400px; padding: 30px; border-radius: 15px; text-align: center; border: 1px solid var(--border); }
+        .modal-content { background: var(--card-bg); color: var(--text-main); width: 90%; max-width: 450px; padding: 30px; border-radius: 15px; text-align: center; border: 1px solid var(--border); }
         
         .calendar-container { width: 100%; height: 600px; border-radius: 8px; overflow: hidden; margin-top: 10px; border: 1px solid var(--border); background: var(--card-bg); }
         .calendar-container iframe { width: 100%; height: 100%; border: 0; filter: var(--calendar-filter, none); }
-        
         body.dark-mode { --calendar-filter: invert(0.9) hue-rotate(180deg); }
-
-        .hidden { display: none !important; }
     </style>
 </head>
 <body onmousemove="resetSidebarTimer()" ontouchstart="resetSidebarTimer()">
 
 <div id="setup-wizard" class="modal-overlay">
     <div class="modal-content">
-        <h2>Welcome to Family Hub</h2>
-        <p>Create a Master Passcode to begin.</p>
-        <input type="password" id="setup-passcode" placeholder="Set Passcode" style="width: 80%; margin: 20px 0; text-align: center;">
-        <button class="btn-primary" style="width: 100%; padding: 10px; background: var(--accent); border: none; border-radius: 6px; cursor: pointer;" onclick="finalizeSetup()">Initialize Hub</button>
+        <h2 style="margin-top: 0;">Welcome to Family Hub</h2>
+        <p style="font-size: 14px;">Please create a Master Passcode to manage members and chores.</p>
+        <input type="password" id="setup-passcode" placeholder="Set Passcode" style="width: 100%; margin: 20px 0; text-align: center; font-size: 18px; letter-spacing: 4px;">
+        <button class="btn-primary" style="width: 100%;" onclick="finalizeSetup()">Initialize Hub</button>
     </div>
 </div>
 
 <nav id="sidebar">
     <h2>Family Hub</h2>
-    <button id="nav-dashboard" onclick="showSection('dashboard')"><span>🏠 Dashboard</span></button>
+    <button id="nav-dashboard" onclick="showSection('dashboard')">🏠 Dashboard</button>
     <div id="admin-menu" class="admin-only">
-        <button id="nav-approvals" onclick="handleAdminNav('admin-approvals')">
-            <span>✅ Approvals</span>
-            <span id="approval-badge" class="badge hidden">0</span>
-        </button>
-        <button id="nav-members" onclick="handleAdminNav('admin-members')"><span>👥 Manage</span></button>
-        <button id="nav-chores" onclick="handleAdminNav('admin-chores')"><span>⚙️ Chores</span></button>
+        <button onclick="handleAdminNav('admin-approvals')">✅ Approvals <span id="approval-badge" class="badge hidden">0</span></button>
+        <button onclick="handleAdminNav('admin-members')">👥 Manage</button>
+        <button onclick="handleAdminNav('admin-chores')">⚙️ Chores</button>
     </div>
-    
     <div style="margin-top:20px; padding:0 20px; display:flex; flex-direction:column; gap:10px;">
         <button onclick="toggleDarkMode()" style="background:none; border: 1px solid rgba(255,255,255,0.1); color: white; padding: 8px; border-radius: 6px; cursor: pointer; font-size: 12px;">
             <span id="theme-icon">🌙</span> Dark Mode
         </button>
-        <button id="unlock-btn" style="color:var(--warning); text-align:left; padding:0; background:none; border:none; cursor:pointer;" onclick="toggleAdminLock()"><span>🔒 Unlock</span></button>
+        <button id="unlock-btn" style="color:var(--warning); text-align:left; background:none; border:none; cursor:pointer;" onclick="toggleAdminLock()">🔒 Unlock</button>
     </div>
 </nav>
 
@@ -142,65 +148,94 @@
                 <h3 style="margin:0">📅 Family Schedule</h3><span id="cal-icon">▼</span>
             </div>
             <div id="cal-body" class="hidden">
-                <div class="calendar-container" id="calendar-slot"></div>
+                <div class="calendar-container" id="calendar-slot">
+                    <div style="color:#888; font-style:italic; padding: 20px;">Setup link in Manage Settings</div>
+                </div>
             </div>
         </div>
     </section>
 
     <section id="admin-members" class="content-section hidden">
         <div class="card">
-            <h1>Manage Hub</h1>
+            <h1>Manage Family</h1>
             <div class="admin-form-box">
                 <div class="form-group"><label>Name</label><input type="text" id="m-name"></div>
                 <div class="form-group"><label>Role</label><select id="m-role"><option value="kid">Kid</option><option value="teen">Teen</option><option value="adult">Adult</option></select></div>
-                <button onclick="addMember()" style="background:var(--accent); border:none; padding:10px; border-radius:6px; color:white; cursor:pointer;">Add Member</button>
+                <button class="btn-primary" onclick="addMember()">Add Member</button>
             </div>
-            <table id="member-table"><thead><tr><th>Name</th><th>Role</th><th>Balance</th><th>Action</th></tr></thead><tbody id="member-list-body"></tbody></table>
+            <table><thead><tr><th>Name</th><th>Role</th><th>Balance</th><th>Action</th></tr></thead><tbody id="member-list-body"></tbody></table>
             
-            <div style="margin-top:20px; background: rgba(0,0,0,0.05); padding:15px; border-radius:8px;">
+            <div style="background: rgba(0,0,0,0.05); padding: 15px; border-radius: 8px; margin-top: 15px;">
                 <h3>🛡️ Private Calendar</h3>
-                <input type="text" id="cal-url-input" placeholder="Google Embed URL..." style="width:100%; margin-bottom:10px;">
-                <button onclick="saveCalendarUrl()" style="background:var(--accent); border:none; padding:8px; border-radius:4px; color:white;">Save URL</button>
+                <input type="text" id="cal-url-input" placeholder="Google Embed URL..." style="width:100%">
+                <button class="btn-primary" style="margin-top:10px" onclick="saveCalendarUrl()">Save URL</button>
+            </div>
+            <div style="margin-top: 15px;">
+                <button class="btn-edit" onclick="exportData()">📤 Export Data</button>
+                <button class="btn-edit" onclick="document.getElementById('importFile').click()">📥 Import Data</button>
+                <input type="file" id="importFile" class="hidden" accept=".json" onchange="importData(event)">
+                <button onclick="nuclearReset()" class="btn-danger" style="margin-left: 10px;">☢️ Nuclear Reset</button>
             </div>
         </div>
     </section>
 
-    </main>
+    <section id="admin-chores" class="content-section hidden">
+        <div class="card">
+            <h1>Chore Configuration</h1>
+            <div class="admin-form-box">
+                <div class="form-group"><label>Chore Name</label><input type="text" id="c-name"></div>
+                <div class="form-group"><label>Assignee</label><select id="c-assignee"></select></div>
+                <div class="form-group"><label>Goal</label><input type="number" id="c-goal" value="0"></div>
+                <div class="form-group"><label>Prize</label><input type="text" id="c-prize"></div>
+                <div class="form-group"><label>Type</label><select id="c-type" onchange="togglePointForm('c-type','c-static','c-dynamic')"><option value="static">Static</option><option value="dynamic">Dynamic</option></select></div>
+                <div id="c-static" class="form-group"><label>Points</label><input type="number" id="c-points" value="5"></div>
+                <div id="c-dynamic" class="hidden" style="display:flex; gap:10px;"><div class="form-group"><label>Max</label><input type="number" id="c-max" value="10"></div><div class="form-group"><label>Min</label><input type="number" id="c-min" value="2"></div></div>
+            </div>
+            <button class="btn-primary" onclick="addChore()">Save Chore</button>
+        </div>
+        <div class="card">
+            <table><thead><tr><th>Chore</th><th>Goal</th><th>Assigned</th><th>Action</th></tr></thead><tbody id="chore-list-body"></tbody></table>
+        </div>
+    </section>
+
+    <section id="admin-approvals" class="content-section hidden">
+        <div class="card"><h1>Approval Queue</h1><table><thead><tr><th>Child</th><th>Chore</th><th>Val</th><th>Action</th></tr></thead><tbody id="approval-list-body"></tbody></table></div>
+    </section>
+</main>
+
+<div id="edit-member-modal" class="modal-overlay"><div class="modal-content"><h3>Edit Member</h3><div class="admin-form-box"><div class="form-group"><label>Name</label><input type="text" id="edit-m-name"></div><div class="form-group"><label>Role</label><select id="edit-m-role"><option value="kid">Kid</option><option value="teen">Teen</option><option value="adult">Adult</option></select></div></div><button class="btn-primary" id="save-member-btn">Save</button><button class="btn-danger" onclick="closeModal('edit-member-modal')">Cancel</button></div></div>
+<div id="edit-chore-modal" class="modal-overlay"><div class="modal-content"><h3>Edit Chore</h3><div class="admin-form-box">
+    <div class="form-group"><label>Name</label><input type="text" id="edit-c-name"></div><div class="form-group"><label>Assignee</label><select id="edit-c-assignee"></select></div>
+    <div class="form-group"><label>Goal</label><input type="number" id="edit-c-goal"></div><div class="form-group"><label>Prize</label><input type="text" id="edit-c-prize"></div>
+    <div class="form-group"><label>Logic</label><select id="edit-c-type" onchange="togglePointForm('edit-c-type','edit-c-static','edit-c-dynamic')"><option value="static">Static</option><option value="dynamic">Dynamic</option></select></div>
+    <div id="edit-c-static" class="form-group"><label>Points</label><input type="number" id="edit-c-points"></div>
+    <div id="edit-c-dynamic" class="hidden" style="display:flex; gap:5px;"><div class="form-group"><label>Max</label><input type="number" id="edit-c-max"></div><div class="form-group"><label>Min</label><input type="number" id="edit-c-min"></div></div>
+</div><button class="btn-primary" id="save-chore-btn">Save</button><button class="btn-danger" onclick="closeModal('edit-chore-modal')">Cancel</button></div></div>
 
 <script>
-    /* THEME ENGINE */
+    /* STATE */
+    let state = JSON.parse(localStorage.getItem('familyHubData')) || { 
+        members: [], chores: [], approvals: [], 
+        lastResetDate: new Date().toDateString(), 
+        choresVisible: true, calVisible: false, calendarUrl: "", adminPasscode: ""
+    };
+    let isUnlocked = false; 
+    let sidebarTimer;
+    let editTargetId = null;
+    const currencyMap = { kid: "tokens", teen: "minutes", adult: "" };
+
+    /* THEME */
     function toggleDarkMode() {
         const isDark = document.body.classList.toggle('dark-mode');
         localStorage.setItem('theme', isDark ? 'dark' : 'light');
         document.getElementById('theme-icon').innerText = isDark ? '☀️' : '🌙';
     }
-
-    // Load saved theme
     if (localStorage.getItem('theme') === 'dark') {
         document.body.classList.add('dark-mode');
         document.getElementById('theme-icon').innerText = '☀️';
     }
 
-    /* REST OF STATE & LOGIC */
-    let state = JSON.parse(localStorage.getItem('familyHubData')) || { 
-        members: [], chores: [], approvals: [], 
-        lastResetDate: new Date().toDateString(), 
-        choresVisible: true, calVisible: false, calendarUrl: "",
-        adminPasscode: "" 
-    };
-
-    let isUnlocked = false; 
-    let sidebarTimer;
-
-    function save() { localStorage.setItem('familyHubData', JSON.stringify(state)); renderAll(); }
-    
-    function updateClock() {
-        const now = new Date();
-        document.getElementById('current-date').innerText = now.toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' });
-        document.getElementById('current-time').innerText = now.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' });
-    }
-    setInterval(updateClock, 1000); updateClock();
-
+    /* AUTH */
     function finalizeSetup() {
         const p = document.getElementById('setup-passcode').value;
         if (!p) return alert("Enter code.");
@@ -211,34 +246,124 @@
     function toggleAdminLock() {
         if (isUnlocked) {
             isUnlocked = false; document.getElementById('admin-menu').style.display = 'none';
-            document.getElementById('unlock-btn').innerHTML = "<span>🔒 Unlock</span>";
+            document.getElementById('unlock-btn').innerHTML = "🔒 Unlock";
         } else {
             const entry = prompt("Passcode:");
             if (entry === state.adminPasscode) {
                 isUnlocked = true; document.getElementById('admin-menu').style.display = 'block';
-                document.getElementById('unlock-btn').innerHTML = "<span>🔓 Unlocked</span>";
+                document.getElementById('unlock-btn').innerHTML = "🔓 Unlocked";
             }
         }
     }
 
-    function toggleSidebar() { document.getElementById('sidebar').classList.toggle('collapsed'); document.getElementById('main-content').classList.toggle('expanded'); }
+    /* UTILS */
+    function save() { localStorage.setItem('familyHubData', JSON.stringify(state)); renderAll(); }
+    function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+    function nuclearReset() { if(confirm("Wipe everything?")) { localStorage.removeItem('familyHubData'); location.reload(); } }
     
+    function updateClock() {
+        const now = new Date();
+        document.getElementById('current-date').innerText = now.toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' });
+        document.getElementById('current-time').innerText = now.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' });
+        if (now.toDateString() !== state.lastResetDate) {
+            state.members.forEach(m => { if(m.role === 'teen') m.points = 0; });
+            state.lastResetDate = now.toDateString(); save();
+        }
+    }
+    setInterval(updateClock, 1000); updateClock();
+
+    function calculateVal(c) {
+        if(c.type === 'static') return c.points || 5;
+        const yest = new Date(Date.now() - 86400000).toDateString();
+        return (c.lastCompleted === yest) ? (c.dynamic?.min || 2) : (c.dynamic?.max || 10);
+    }
+
+    /* COMPLETION */
+    function toggleChoreCompletion(choreId, memberId) {
+        const c = state.chores.find(x => x.id === choreId);
+        const m = state.members.find(x => x.id === memberId);
+        state.approvals.push({ id: Date.now(), choreId, memberId, date: new Date().toDateString(), points: calculateVal(c), choreName: c.name });
+        const ov = document.getElementById(`celebrate-${memberId}`);
+        if (ov && (m.role !== 'adult')) {
+            let msg = m.role === 'kid' ? "BOOM! 🚀" : "Impressive. 🙄";
+            const count = (c.timesCompleted || 0) + 1;
+            if (m.role === 'kid' && c.goal > 0 && count >= c.goal) { msg = `PRIZE! 🎁<br>${c.prize}`; c.timesCompleted = 0; }
+            else if (c.goal > 0) { c.timesCompleted = count; }
+            ov.querySelector('.card-celebration-msg').innerHTML = msg; ov.style.display = 'flex';
+            setTimeout(() => { ov.style.display = 'none'; save(); }, 5000);
+        } else { save(); }
+    }
+
+    function approveChore(appId) {
+        const app = state.approvals.find(a => a.id === appId);
+        const mem = state.members.find(m => m.id === app.memberId);
+        const chore = state.chores.find(c => c.id === app.choreId);
+        if(mem) mem.points += app.points; if(chore) chore.lastCompleted = app.date;
+        state.approvals = state.approvals.filter(a => a.id !== appId); save();
+    }
+
+    /* NAVIGATION */
+    function toggleSidebar() { document.getElementById('sidebar').classList.toggle('collapsed'); document.getElementById('main-content').classList.toggle('expanded'); }
+    function resetSidebarTimer() { clearTimeout(sidebarTimer); sidebarTimer = setTimeout(() => { if (!isUnlocked && window.innerWidth > 768) toggleSidebar(); }, 10000); }
+    function handleAdminNav(id) { if (isUnlocked) showSection(id); else toggleAdminLock(); }
     function showSection(id) {
         document.querySelectorAll('.content-section').forEach(s => s.classList.add('hidden'));
         document.getElementById(id).classList.remove('hidden');
     }
 
-    function saveCalendarUrl() { state.calendarUrl = document.getElementById('cal-url-input').value.trim(); save(); location.reload(); }
+    /* CRUD */
+    function addMember() { const n = document.getElementById('m-name'); if(!n.value) return; state.members.push({id:Date.now(), name:n.value, role:document.getElementById('m-role').value, points:0}); n.value=''; save(); }
+    function openEditMember(id) { editTargetId = id; const m = state.members.find(x => x.id === id); document.getElementById('edit-m-name').value = m.name; document.getElementById('edit-m-role').value = m.role; document.getElementById('edit-member-modal').style.display = 'flex'; }
+    document.getElementById('save-member-btn').onclick = () => { const m = state.members.find(x => x.id === editTargetId); m.name = document.getElementById('edit-m-name').value; m.role = document.getElementById('edit-m-role').value; save(); closeModal('edit-member-modal'); };
+    function adjustPoints(id, current) { const m = state.members.find(x => x.id === id); const val = parseInt(prompt(`Adjust ${m.name}?`, -current)); if(!isNaN(val)) { m.points += val; save(); } }
+    
+    function updateAssigneeDropdowns() { const html = state.members.map(m => `<option value="${m.id}">${m.name}</option>`).join(''); document.getElementById('c-assignee').innerHTML = html; document.getElementById('edit-c-assignee').innerHTML = html; }
+    function addChore() { const n = document.getElementById('c-name'); if(!n.value) return; state.chores.push({ id: Date.now(), name: n.value, assigneeId: parseInt(document.getElementById('c-assignee').value), lastCompleted: null, points: parseInt(document.getElementById('c-points').value || 0), type: document.getElementById('c-type').value, dynamic: { max: parseInt(document.getElementById('c-max').value || 10), min: parseInt(document.getElementById('c-min').value || 2) }, goal: parseInt(document.getElementById('c-goal').value) || 0, prize: document.getElementById('c-prize').value || "", timesCompleted: 0 }); n.value=''; save(); }
+    function openEditChore(id) { editTargetId = id; const c = state.chores.find(x => x.id === id); updateAssigneeDropdowns(); document.getElementById('edit-c-name').value = c.name; document.getElementById('edit-c-assignee').value = c.assigneeId; document.getElementById('edit-c-type').value = c.type; document.getElementById('edit-c-points').value = c.points || 0; document.getElementById('edit-c-goal').value = c.goal || 0; document.getElementById('edit-c-prize').value = c.prize || ""; if(c.dynamic) { document.getElementById('edit-c-max').value = c.dynamic.max; document.getElementById('edit-c-min').value = c.dynamic.min; } togglePointForm('edit-c-type','edit-c-static','edit-c-dynamic'); document.getElementById('edit-chore-modal').style.display = 'flex'; }
+    document.getElementById('save-chore-btn').onclick = () => { const c = state.chores.find(x => x.id === editTargetId); c.name = document.getElementById('edit-c-name').value; c.assigneeId = parseInt(document.getElementById('edit-c-assignee').value); c.type = document.getElementById('edit-c-type').value; c.points = parseInt(document.getElementById('edit-c-points').value || 0); c.goal = parseInt(document.getElementById('edit-c-goal').value) || 0; c.prize = document.getElementById('edit-c-prize').value; if(c.dynamic) { c.dynamic.max = parseInt(document.getElementById('edit-c-max').value || 10); c.dynamic.min = parseInt(document.getElementById('edit-c-min').value || 2); } save(); closeModal('edit-chore-modal'); };
 
+    function saveCalendarUrl() { state.calendarUrl = document.getElementById('cal-url-input').value.trim(); save(); location.reload(); }
+    function exportData() { const blob = new Blob([JSON.stringify(state)], {type:"application/json"}); const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `Backup.json`; a.click(); }
+    function importData(e) { const r = new FileReader(); r.onload = (x) => { state = JSON.parse(x.target.result); save(); location.reload(); }; r.readAsText(e.target.files[0]); }
+    function toggleAccordion(key) { state[key] = !state[key]; save(); }
+    function togglePointForm(sel, sR, dR) { const t = document.getElementById(sel).value; document.getElementById(sR).classList.toggle('hidden', t !== 'static'); document.getElementById(dR).classList.toggle('hidden', t !== 'dynamic'); }
+
+    /* RENDER */
     function renderAll() {
-        // ... (Render logic remains consistent with previous versions, using variables for colors)
-        if(state.calVisible && state.calendarUrl) {
+        const today = new Date().toDateString();
+        document.getElementById('approval-badge').innerText = state.approvals.length;
+        document.getElementById('approval-badge').classList.toggle('hidden', state.approvals.length === 0);
+        
+        const dash = document.getElementById('chores-body');
+        dash.innerHTML = state.members.map(m => {
+            const chores = state.chores.filter(c => c.assigneeId === m.id);
+            return `<div class="user-card" id="card-${m.id}">
+                <div class="card-celebration" id="celebrate-${m.id}"><div class="card-celebration-msg"></div></div>
+                <div class="user-header"><h3>${m.name}</h3><span class="currency-pill">${m.points} ${currencyMap[m.role]}</span></div>
+                <div class="chore-list">
+                ${chores.length===0?'<p style="padding:10px; font-size:10px; color:#ccc;">No chores.</p>':chores.map(c => {
+                    const isP = state.approvals.some(a => a.choreId === c.id); const isD = c.lastCompleted === today;
+                    let prog = "";
+                    if(c.goal > 0) { const pct = Math.min(100, ((c.timesCompleted||0)/c.goal)*100); prog = `<div class="milestone-text">${c.timesCompleted||0}/${c.goal} to ${c.prize}</div><div class="progress-container"><div class="progress-fill" style="width:${pct}%"></div></div>`; }
+                    return `<div class="chore-item ${isD?'completed':(isP?'pending':'')}"><input type="checkbox" ${isD||isP?'checked disabled':''} onchange="toggleChoreCompletion(${c.id}, ${m.id})"><div class="chore-info"><strong>${c.name}</strong>${prog}</div><div class="chore-val" style="font-size:11px; font-weight:800; color:var(--accent)">${m.role!=='adult'?calculateVal(c):''}</div></div>`;
+                }).join('')}</div></div>`;
+        }).join('');
+
+        document.getElementById('member-list-body').innerHTML = state.members.map(m => `<tr><td><strong>${m.name}</strong></td><td>${m.role}</td><td>${m.points} <button class="btn-edit" style="padding:1px 5px" onclick="adjustPoints(${m.id}, ${m.points})">±</button></td><td><button class="btn-edit" onclick="openEditMember(${m.id})">Edit</button> <button class="btn-danger" onclick="state.members=state.members.filter(x=>x.id!==${m.id}); save();">X</button></td></tr>`).join('');
+        document.getElementById('chore-list-body').innerHTML = state.chores.map(c => `<tr><td><strong>${c.name}</strong></td><td>${c.goal||'--'}</td><td>${state.members.find(x=>x.id===c.assigneeId)?.name}</td><td><button class="btn-edit" onclick="openEditChore(${c.id})">Edit</button> <button class="btn-danger" onclick="state.chores=state.chores.filter(x=>x.id!==${c.id}); save();">X</button></td></tr>`).join('');
+        document.getElementById('approval-list-body').innerHTML = state.approvals.map(a => `<tr><td>${state.members.find(m=>m.id===a.memberId)?.name}</td><td>${a.choreName}</td><td>${a.points}</td><td><button class="btn-primary" style="padding:4px 8px; font-size:11px;" onclick="approveChore(${a.id})">Approve</button> <button class="btn-danger" style="padding:4px 8px; font-size:11px;" onclick="state.approvals=state.approvals.filter(x=>x.id!==${a.id}); save();">X</button></td></tr>`).join('');
+        
+        document.getElementById('chores-body').classList.toggle('hidden', !state.choresVisible);
+        document.getElementById('cal-body').classList.toggle('hidden', !state.calVisible);
+        if(state.calVisible && state.calendarUrl && !document.querySelector('#calendar-slot iframe')) {
             document.getElementById('calendar-slot').innerHTML = `<iframe src="${state.calendarUrl}"></iframe>`;
         }
     }
 
     if (!state.adminPasscode) document.getElementById('setup-wizard').style.display = 'flex';
+    if (state.calendarUrl) document.getElementById('cal-url-input').value = state.calendarUrl;
     renderAll();
+    showSection('dashboard');
 </script>
 </body>
 </html>
