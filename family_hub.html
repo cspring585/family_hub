@@ -26,7 +26,6 @@
         
         body { font-family: 'Inter', 'Segoe UI', sans-serif; margin: 0; display: flex; background: var(--bg); color: var(--text-main); transition: 0.3s; overflow-x: hidden; }
         
-        /* Sidebar */
         nav { width: 220px; background: var(--primary); color: white; height: 100vh; position: fixed; z-index: 100; transition: 0.3s; border-right: 1px solid var(--border); overflow-y: auto; }
         nav.collapsed { width: 0; }
         nav h2 { padding: 20px; text-align: center; border-bottom: 1px solid var(--border); margin: 0; font-size: 0.9rem; color: var(--accent); letter-spacing: 1px; }
@@ -47,7 +46,7 @@
         }
 
         .card { background: var(--card-bg); padding: 20px; border-radius: 16px; margin-bottom: 20px; border: 1px solid var(--border); }
-        .user-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 15px; }
+        .user-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 15px; }
         .user-card { background: var(--card-bg); border-radius: 12px; border: 1px solid var(--border); overflow: hidden; position: relative; }
         .user-header { padding: 12px 15px; background: rgba(255,255,255,0.02); display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); }
         .currency-pill { font-size: 0.8rem; font-weight: 800; color: var(--accent); background: rgba(78, 204, 163, 0.1); padding: 4px 12px; border-radius: 20px; }
@@ -64,7 +63,6 @@
 
         input[type="checkbox"] { width: 22px; height: 22px; cursor: pointer; accent-color: var(--accent); }
 
-        /* Form Visibility */
         .admin-form-box { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; background: rgba(0,0,0,0.02); padding: 15px; border-radius: 12px; border: 1px solid var(--border); margin-bottom: 20px; }
         label { font-size: 10px; font-weight: 800; color: var(--accent); text-transform: uppercase; margin-bottom: 4px; display: block; }
         input, select, textarea { background: var(--input-bg); color: var(--text-main); border: 1px solid var(--border); padding: 10px; border-radius: 8px; font-size: 14px; width: 100%; box-sizing: border-box; }
@@ -81,7 +79,6 @@
         body.dark-mode { --calendar-filter: invert(0.92) hue-rotate(180deg) brightness(1.1); }
         .hidden { display: none !important; }
 
-        /* Celebrations */
         .card-celebration { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: none; flex-direction: column; justify-content: center; align-items: center; z-index: 200; text-align: center; background: rgba(0,0,0,0.9); color: var(--accent); pointer-events: none; }
     </style>
 </head>
@@ -89,8 +86,8 @@
 
 <div id="setup-wizard" class="modal-overlay">
     <div class="modal-content">
-        <h2 style="color: var(--accent);">Initialize Hub</h2>
-        <p>Choose a Master Passcode to begin.</p>
+        <h2 style="color: var(--accent);">Initial Setup</h2>
+        <p>Choose a Master Passcode for your family.</p>
         <input type="password" id="setup-passcode" placeholder="Enter Code" style="text-align: center; font-size: 20px;">
         <button class="btn-primary" style="width: 100%; margin-top: 20px;" onclick="finalizeSetup()">Create Hub</button>
     </div>
@@ -128,7 +125,7 @@
             <div id="chores-body" class="user-grid"></div>
         </div>
         <div class="card">
-            <h3 style="margin:0 0 15px 0" onclick="toggleAccordion('calVisible')">📅 Family Schedule</h3>
+            <h3 style="margin:0 0 15px 0; cursor:pointer;" onclick="toggleAccordion('calVisible')">📅 Family Schedule</h3>
             <div id="cal-body" class="hidden">
                 <div class="calendar-container" id="calendar-slot"><div style="color:#666">Setup Calendar in Manage Hub</div></div>
             </div>
@@ -164,7 +161,7 @@
                 <div class="form-group"><label>Assignee</label><select id="c-assignee"></select></div>
                 <div class="form-group"><label>Goal</label><input type="number" id="c-goal" value="0"></div>
                 <div class="form-group"><label>Points</label><input type="number" id="c-points" value="5"></div>
-                <div class="form-group"><label>Type</label><select id="c-type"><option value="static">Static</option><option value="dynamic">Dynamic</option></select></div>
+                <div id="c-static" class="form-group"><label>Type</label><select id="c-type"><option value="static">Static</option><option value="dynamic">Dynamic</option></select></div>
                 <button class="btn-primary" onclick="addChore()">Save</button>
             </div>
             <table><thead><tr><th>Chore</th><th>Goal</th><th>User</th><th>Action</th></tr></thead><tbody id="chore-list-body"></tbody></table>
@@ -233,7 +230,16 @@
         document.getElementById('approval-list-body').innerHTML = state.approvals.map(a => `<tr><td>${state.members.find(m=>m.id===a.memberId)?.name}</td><td>${a.choreName}</td><td>${a.points}</td><td><button class="btn-primary" onclick="approveChore(${a.id})">Approve</button></td></tr>`).join('');
 
         updateAssigneeDropdowns();
+        document.getElementById('cal-body').classList.toggle('hidden', !state.calVisible);
         if(state.calVisible && state.calendarUrl) { document.getElementById('calendar-slot').innerHTML = `<iframe src="${state.calendarUrl}"></iframe>`; }
+    }
+
+    function toggleAccordion(k) { 
+        state[k] = !state[k]; 
+        if (k === 'calVisible' && state.calVisible && state.calendarUrl) {
+            document.getElementById('calendar-slot').innerHTML = `<iframe src="${state.calendarUrl}"></iframe>`;
+        }
+        save(); 
     }
 
     function completeChore(cid, mid) {
@@ -263,9 +269,10 @@
 
     function updateAssigneeDropdowns() { const h = state.members.map(m => `<option value="${m.id}">${m.name}</option>`).join(''); document.getElementById('c-assignee').innerHTML = h; document.getElementById('edit-c-assignee').innerHTML = h; }
     function saveCalendarUrl() { state.calendarUrl = document.getElementById('cal-url-input').value; save(); location.reload(); }
-    function toggleAccordion(k) { state[k] = !state[k]; save(); }
     function toggleSidebar() { document.getElementById('sidebar').classList.toggle('collapsed'); document.getElementById('main-content').classList.toggle('expanded'); }
-    function exportData() { const b = new Blob([JSON.stringify(state)], {type:"application/json"}); const a = document.createElement('a'); a.href = URL.createObjectURL(b); a.download = `Backup.json`; a.click(); }
+    function resetSidebarTimer() { clearTimeout(sidebarTimer); sidebarTimer = setTimeout(() => { if (!isUnlocked && window.innerWidth > 768) toggleSidebar(); }, 10000); }
+    function handleAdminNav(id) { showSection(id); }
+    function exportData() { const b = new Blob([JSON.stringify(state)], {type:"application/json"}); const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `Backup.json`; a.click(); }
     function nuclearReset() { if(confirm("Wipe everything?")) { localStorage.removeItem('familyHubData'); location.reload(); } }
 
     if (!state.adminPasscode) document.getElementById('setup-wizard').style.display = 'flex';
