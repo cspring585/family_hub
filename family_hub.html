@@ -10,7 +10,7 @@
     <link rel="manifest" href='data:application/manifest+json,{"name":"Family Hub","short_name":"FamilyHub","start_url":"/family_hub/family_hub.html","display":"standalone","background_color":"#000000","theme_color":"#000000","icons":[{"src":"https://cdn-icons-png.flaticon.com/512/609/609803.png","sizes":"512x512","type":"image/png"}]}'>
 
     <style>
-        /* TRUE DARK THEME ENGINE */
+        /* OLED DARK THEME ENGINE */
         :root { 
             --primary: #000000; --secondary: #111111; --accent: #4ecca3; 
             --success: #4ecca3; --danger: #ff4d4d; --warning: #f39c12;
@@ -23,102 +23,103 @@
             --bg: #000000; --card-bg: #0a0a0a; 
             --text-main: #ffffff; --text-muted: #a0a0a0; 
             --border: #333333; --nav-text: #eeeeee;
-            --input-bg: #1a1a2e; /* Visible text boxes in dark mode */
+            --input-bg: #1a1a2e; /* High visibility in dark mode */
         }
         
         body { font-family: 'Inter', 'Segoe UI', sans-serif; margin: 0; display: flex; background: var(--bg); color: var(--text-main); transition: 0.3s; overflow-x: hidden; -webkit-tap-highlight-color: transparent; }
         
         /* Sidebar */
-        nav { width: 220px; background: var(--primary); color: white; height: 100vh; position: fixed; z-index: 100; transition: 0.3s; border-right: 1px solid var(--border); }
+        nav { width: 220px; background: var(--primary); color: white; height: 100vh; position: fixed; z-index: 100; transition: 0.3s; border-right: 1px solid var(--border); overflow-y: auto; }
         nav.collapsed { width: 0; }
-        nav h2 { padding: 20px; text-align: center; border-bottom: 1px solid var(--border); margin: 0; font-size: 1rem; color: var(--accent); }
-        nav button { width: 100%; padding: 12px 20px; background: none; border: none; color: var(--nav-text); text-align: left; font-size: 14px; cursor: pointer; display: flex; justify-content: space-between; }
+        nav h2 { padding: 20px; text-align: center; border-bottom: 1px solid var(--border); margin: 0; font-size: 0.9rem; color: var(--accent); letter-spacing: 1px; }
+        nav button { width: 100%; padding: 12px 20px; background: none; border: none; color: var(--nav-text); text-align: left; font-size: 14px; cursor: pointer; display: flex; justify-content: space-between; transition: 0.2s; }
+        nav button:hover { background: var(--secondary); color: white; }
         nav button.active { background: rgba(78, 204, 163, 0.1); color: var(--accent); border-left: 3px solid var(--accent); }
+        .badge { background: var(--danger); color: white; padding: 1px 6px; border-radius: 4px; font-size: 10px; font-weight: bold; }
 
-        #nav-toggle { position: fixed; left: 230px; top: 15px; z-index: 101; background: var(--card-bg); color: var(--text-main); border: 1px solid var(--border); padding: 8px 12px; border-radius: 8px; cursor: pointer; transition: 0.3s; }
+        #nav-toggle { position: fixed; left: 230px; top: 15px; z-index: 101; background: var(--card-bg); color: var(--text-main); border: 1px solid var(--border); padding: 8px 12px; border-radius: 8px; cursor: pointer; transition: 0.3s; box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
         nav.collapsed + #nav-toggle { left: 15px; }
 
         main { margin-left: 220px; padding: 20px 30px; width: 100%; box-sizing: border-box; transition: 0.3s; }
         main.expanded { margin-left: 0; padding-left: 60px; }
         
         @media (max-width: 768px) {
-            main { margin-left: 0; padding-top: 70px; }
+            main { margin-left: 0; padding-top: 70px; padding-left: 15px; padding-right: 15px; }
             nav { width: 85%; }
             #nav-toggle { left: 15px; }
         }
 
-        .card { background: var(--card-bg); padding: 20px; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); margin-bottom: 20px; border: 1px solid var(--border); }
-        h1 { font-size: 1.8rem; font-weight: 900; color: var(--text-main); margin: 0; }
+        .card { background: var(--card-bg); padding: 20px; border-radius: 16px; margin-bottom: 20px; border: 1px solid var(--border); box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        h1 { font-size: 1.6rem; font-weight: 900; color: var(--text-main); margin: 0; }
         
-        /* Dashboard Cards */
-        .user-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 15px; }
-        .user-card { background: var(--card-bg); border-radius: 12px; border: 1px solid var(--border); overflow: hidden; }
-        .user-header { padding: 12px 15px; background: rgba(255,255,255,0.03); display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); }
-        .currency-pill { font-size: 0.8rem; font-weight: 800; color: var(--accent); background: rgba(78, 204, 163, 0.15); padding: 4px 12px; border-radius: 20px; }
+        .user-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 15px; }
+        .user-card { background: var(--card-bg); border-radius: 12px; border: 1px solid var(--border); overflow: hidden; position: relative; }
+        .user-header { padding: 12px 15px; background: rgba(255,255,255,0.02); display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); }
+        .currency-pill { font-size: 0.8rem; font-weight: 800; color: var(--accent); background: rgba(78, 204, 163, 0.1); padding: 4px 12px; border-radius: 20px; }
         
-        .chore-item { display: flex; align-items: center; gap: 12px; padding: 12px 15px; border-bottom: 1px solid var(--border); }
-        .chore-item.completed { opacity: 0.4; background: rgba(0,0,0,0.2); }
-        .chore-info strong { font-size: 0.9rem; color: var(--text-main); }
+        .chore-item { display: flex; align-items: center; gap: 12px; padding: 10px 15px; border-bottom: 1px solid var(--border); }
+        .chore-item.completed { opacity: 0.5; background: rgba(0,0,0,0.05); }
+        .chore-info { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+        .chore-info strong { font-size: 0.85rem; color: var(--text-main); }
         
-        .progress-container { width: 100%; background: #333; border-radius: 10px; height: 6px; margin-top: 8px; overflow: hidden; }
-        .progress-fill { background: linear-gradient(90deg, var(--accent), #2ecc71); height: 100%; transition: 0.5s; }
+        .progress-container { width: 100%; background: rgba(0,0,0,0.15); border-radius: 10px; height: 5px; margin-top: 6px; overflow: hidden; }
+        .progress-fill { background: var(--accent); height: 100%; transition: 0.5s; }
+        .milestone-text { font-size: 9px; color: var(--text-muted); font-weight: 700; margin-top: 3px; }
 
-        input[type="checkbox"] { width: 24px; height: 24px; cursor: pointer; accent-color: var(--accent); }
+        input[type="checkbox"] { width: 22px; height: 22px; cursor: pointer; accent-color: var(--accent); }
 
-        /* FORM VISIBILITY FIXES */
-        .admin-form-box { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; background: rgba(255,255,255,0.02); padding: 20px; border-radius: 12px; margin-bottom: 20px; }
-        label { font-size: 11px; font-weight: 800; color: var(--accent); text-transform: uppercase; margin-bottom: 5px; display: block; }
+        .admin-form-box { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; background: rgba(0,0,0,0.02); padding: 15px; border-radius: 12px; border: 1px solid var(--border); }
+        label { font-size: 10px; font-weight: 800; color: var(--accent); text-transform: uppercase; margin-bottom: 4px; display: block; }
         
         input, select, textarea { 
-            background: var(--input-bg); 
-            color: var(--text-main); 
-            border: 1px solid var(--border); 
-            padding: 12px; 
-            border-radius: 8px; 
-            font-size: 14px; 
-            width: 100%;
-            box-sizing: border-box;
-            transition: border-color 0.2s, box-shadow 0.2s;
+            background: var(--input-bg); color: var(--text-main); border: 1px solid var(--border); 
+            padding: 10px; border-radius: 8px; font-size: 14px; width: 100%; box-sizing: border-box;
         }
-        input:focus { border-color: var(--accent); outline: none; box-shadow: 0 0 8px rgba(78, 204, 163, 0.3); }
 
-        .btn-primary { background: var(--accent); color: #000; border: none; padding: 12px 20px; border-radius: 8px; cursor: pointer; font-weight: 800; font-size: 14px; transition: 0.2s; }
-        .btn-primary:hover { transform: scale(1.02); filter: brightness(1.1); }
-        .btn-danger { background: none; color: var(--danger); border: 1px solid var(--danger); padding: 5px 12px; border-radius: 6px; cursor: pointer; font-size: 12px; }
+        .btn-primary { background: var(--accent); color: #000; border: none; padding: 12px 20px; border-radius: 8px; cursor: pointer; font-weight: 800; font-size: 13px; }
+        .btn-danger { background: none; color: var(--danger); border: 1px solid var(--danger); padding: 4px 10px; border-radius: 6px; cursor: pointer; font-size: 11px; }
 
-        /* Modal Styling */
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); backdrop-filter: blur(10px); display: none; justify-content: center; align-items: center; z-index: 1000; }
-        .modal-content { background: #0a0a0a; color: white; width: 90%; max-width: 450px; padding: 40px; border-radius: 24px; text-align: center; border: 1px solid var(--border); }
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); backdrop-filter: blur(8px); display: none; justify-content: center; align-items: center; z-index: 1000; }
+        .modal-content { background: var(--card-bg); color: var(--text-main); width: 90%; max-width: 400px; padding: 30px; border-radius: 20px; text-align: center; border: 1px solid var(--border); }
         
         .calendar-container { width: 100%; height: 600px; border-radius: 12px; overflow: hidden; border: 1px solid var(--border); background: #000; }
         .calendar-container iframe { width: 100%; height: 100%; border: 0; filter: var(--calendar-filter, none); }
         body.dark-mode { --calendar-filter: invert(0.92) hue-rotate(180deg) brightness(1.1); }
+
+        .hidden { display: none !important; }
+        
+        /* Celebrations */
+        .card-celebration { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: none; flex-direction: column; justify-content: center; align-items: center; z-index: 200; text-align: center; background: rgba(0,0,0,0.9); color: var(--accent); pointer-events: none; }
+        .card-celebration-msg { font-size: 1.5rem; font-weight: 900; animation: bounceIn 0.5s; }
+        @keyframes bounceIn { 0% { transform: scale(0.3); opacity: 0; } 50% { transform: scale(1.05); } 100% { transform: scale(1); opacity: 1; } }
     </style>
 </head>
 <body onmousemove="resetSidebarTimer()" ontouchstart="resetSidebarTimer()">
 
 <div id="setup-wizard" class="modal-overlay">
     <div class="modal-content">
-        <h2 style="color: var(--accent);">Initialize Hub</h2>
-        <p>Choose a Master Passcode for your family.</p>
-        <input type="password" id="setup-passcode" placeholder="Enter Code" style="text-align: center; font-size: 20px;">
-        <button class="btn-primary" style="width: 100%; margin-top: 20px;" onclick="finalizeSetup()">Create Account</button>
+        <h2 style="color: var(--accent);">Create Master Passcode</h2>
+        <p style="font-size: 14px;">This code locks the sidebar management buttons.</p>
+        <input type="password" id="setup-passcode" placeholder="Choose Passcode" style="text-align: center; font-size: 20px; letter-spacing: 4px;">
+        <button class="btn-primary" style="width: 100%; margin-top: 20px;" onclick="finalizeSetup()">Complete Setup</button>
     </div>
 </div>
 
 <nav id="sidebar">
     <h2>FAMILY HUB</h2>
-    <button id="nav-dashboard" onclick="showSection('dashboard')">🏠 Dashboard</button>
-    <div id="admin-menu" class="admin-only">
+    <button id="nav-dashboard" class="active" onclick="showSection('dashboard')">🏠 Dashboard</button>
+    
+    <div id="admin-menu" class="hidden">
         <button onclick="handleAdminNav('admin-approvals')">✅ Approvals <span id="approval-badge" class="badge hidden">0</span></button>
-        <button onclick="handleAdminNav('admin-members')">👥 Manage</button>
-        <button onclick="handleAdminNav('admin-chores')">⚙️ Chores</button>
+        <button onclick="handleAdminNav('admin-members')">👥 Manage Hub</button>
+        <button onclick="handleAdminNav('admin-chores')">⚙️ Configure</button>
     </div>
-    <div style="padding: 20px; display: flex; flex-direction: column; gap: 10px;">
-        <button onclick="toggleDarkMode()" style="border: 1px solid var(--border); color: white; border-radius: 8px; padding: 10px; cursor: pointer;">
+    
+    <div style="padding: 20px; display: flex; flex-direction: column; gap: 10px; border-top: 1px solid var(--border); margin-top: 10px;">
+        <button onclick="toggleDarkMode()" style="border: 1px solid var(--border); color: white; border-radius: 8px; padding: 10px; cursor: pointer; font-size: 12px;">
             <span id="theme-icon">🌙</span> Dark Mode
         </button>
-        <button id="unlock-btn" style="color: var(--warning); text-align: left;" onclick="toggleAdminLock()">🔒 Unlock</button>
+        <button id="unlock-btn" style="color: var(--warning); text-align: left; padding: 0; background: none; border: none; cursor: pointer;" onclick="toggleAdminLock()">🔒 Unlock Admin</button>
     </div>
 </nav>
 
@@ -129,8 +130,8 @@
         <div class="header-row">
             <h1>Command Center</h1>
             <div id="clock-box" style="text-align:right">
-                <div id="current-date" style="color: var(--text-muted); font-size: 0.9rem;"></div>
-                <div id="current-time" style="font-weight: 900; font-size: 1.5rem; color: var(--accent);"></div>
+                <div id="current-date" style="color: var(--text-muted); font-size: 0.8rem;"></div>
+                <div id="current-time" style="font-weight: 900; font-size: 1.4rem; color: var(--accent);"></div>
             </div>
         </div>
         
@@ -142,7 +143,9 @@
         <div class="card">
             <h3 style="margin:0 0 15px 0" onclick="toggleAccordion('calVisible')">📅 Family Schedule</h3>
             <div id="cal-body" class="hidden">
-                <div class="calendar-container" id="calendar-slot"></div>
+                <div class="calendar-container" id="calendar-slot">
+                    <div style="padding:40px; color:#888;">Configure Calendar in Manage Hub</div>
+                </div>
             </div>
         </div>
     </section>
@@ -153,18 +156,18 @@
             <div class="admin-form-box">
                 <div class="form-group"><label>Name</label><input type="text" id="m-name"></div>
                 <div class="form-group"><label>Role</label><select id="m-role"><option value="kid">Kid</option><option value="teen">Teen</option><option value="adult">Adult</option></select></div>
-                <button class="btn-primary" onclick="addMember()">Add Member</button>
+                <button class="btn-primary" onclick="addMember()">Add</button>
             </div>
-            <table><thead><tr><th>Name</th><th>Role</th><th>Points</th><th>Action</th></tr></thead><tbody id="member-list-body"></tbody></table>
+            <table style="margin-top:20px;"><thead><tr><th>Name</th><th>Role</th><th>Points</th><th>Action</th></tr></thead><tbody id="member-list-body"></tbody></table>
             
-            <div style="margin-top:20px; border: 1px solid var(--border); padding: 20px; border-radius: 12px;">
-                <label>Private Google Calendar Embed URL</label>
-                <input type="text" id="cal-url-input" placeholder="https://calendar.google.com/calendar/embed?..." style="margin-bottom: 10px;">
-                <button class="btn-primary" onclick="saveCalendarUrl()">Update Schedule</button>
+            <div style="margin-top:20px; border: 1px solid var(--border); padding: 15px; border-radius: 12px;">
+                <label>Private Google Embed URL</label>
+                <input type="text" id="cal-url-input" placeholder="Paste link here...">
+                <button class="btn-primary" style="margin-top:10px" onclick="saveCalendarUrl()">Save Schedule</button>
             </div>
             
-            <div style="margin-top: 20px;">
-                <button class="btn-primary" style="background:#333; color:white;" onclick="exportData()">📤 Backup Hub</button>
+            <div style="margin-top: 20px; display: flex; gap: 10px;">
+                <button class="btn-primary" style="background:#222; color:white; border: 1px solid #444;" onclick="exportData()">📤 Backup Hub</button>
                 <button onclick="nuclearReset()" class="btn-danger">☢️ Factory Reset</button>
             </div>
         </div>
@@ -176,13 +179,12 @@
             <div class="admin-form-box">
                 <div class="form-group"><label>Name</label><input type="text" id="c-name"></div>
                 <div class="form-group"><label>Assignee</label><select id="c-assignee"></select></div>
-                <div class="form-group"><label>Goal Count</label><input type="number" id="c-goal" value="0"></div>
-                <div class="form-group"><label>Prize</label><input type="text" id="c-prize"></div>
+                <div class="form-group"><label>Goal</label><input type="number" id="c-goal" value="0"></div>
                 <div class="form-group"><label>Points</label><input type="number" id="c-points" value="5"></div>
                 <div class="form-group"><label>Type</label><select id="c-type"><option value="static">Static</option><option value="dynamic">Dynamic</option></select></div>
-                <button class="btn-primary" onclick="addChore()">Add Chore</button>
+                <button class="btn-primary" onclick="addChore()">Save</button>
             </div>
-            <table id="chore-list-body"></table>
+            <table style="margin-top:20px;"><thead><tr><th>Chore</th><th>Goal</th><th>Assigned</th><th>Action</th></tr></thead><tbody id="chore-list-body"></tbody></table>
         </div>
     </section>
 
@@ -202,6 +204,7 @@
     let sidebarTimer;
     const currencyMap = { kid: "tokens", teen: "minutes", adult: "" };
 
+    // THEME
     function toggleDarkMode() {
         const isDark = document.body.classList.toggle('dark-mode');
         localStorage.setItem('theme', isDark ? 'dark' : 'light');
@@ -212,32 +215,37 @@
         document.getElementById('theme-icon').innerText = '☀️';
     }
 
+    // AUTH
     function finalizeSetup() {
         const p = document.getElementById('setup-passcode').value;
-        if (!p) return alert("Enter code.");
+        if (!p) return alert("Code required.");
         state.adminPasscode = p; save();
         document.getElementById('setup-wizard').style.display = 'none';
     }
 
     function toggleAdminLock() {
         if (isUnlocked) {
-            isUnlocked = false; document.getElementById('admin-menu').style.display = 'none';
-            document.getElementById('unlock-btn').innerHTML = "🔒 Unlock";
+            isUnlocked = false; 
+            document.getElementById('admin-menu').classList.add('hidden'); // CRITICAL: Hide menu
+            document.getElementById('unlock-btn').innerHTML = "🔒 Unlock Admin";
+            showSection('dashboard');
         } else {
             const entry = prompt("Passcode:");
             if (entry === state.adminPasscode) {
-                isUnlocked = true; document.getElementById('admin-menu').style.display = 'block';
+                isUnlocked = true; 
+                document.getElementById('admin-menu').classList.remove('hidden'); // CRITICAL: Show menu
                 document.getElementById('unlock-btn').innerHTML = "🔓 Unlocked";
-            }
+            } else { alert("Wrong code."); }
         }
     }
 
+    // CORE LOGIC
     function save() { localStorage.setItem('familyHubData', JSON.stringify(state)); renderAll(); }
-    function nuclearReset() { if(confirm("Factory Reset? All data lost.")) { localStorage.removeItem('familyHubData'); location.reload(); } }
+    function nuclearReset() { if(confirm("Nuclear Reset? All data will be lost.")) { localStorage.removeItem('familyHubData'); location.reload(); } }
 
     function updateClock() {
         const now = new Date();
-        document.getElementById('current-date').innerText = now.toLocaleDateString(undefined, { weekday: 'long', month: 'short', day: 'numeric' });
+        document.getElementById('current-date').innerText = now.toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' });
         document.getElementById('current-time').innerText = now.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' });
     }
     setInterval(updateClock, 1000); updateClock();
@@ -245,6 +253,8 @@
     function showSection(id) {
         document.querySelectorAll('.content-section').forEach(s => s.classList.add('hidden'));
         document.getElementById(id).classList.remove('hidden');
+        document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+        if(id === 'dashboard') document.getElementById('nav-dashboard').classList.add('active');
     }
 
     function renderAll() {
@@ -252,44 +262,52 @@
         const dash = document.getElementById('chores-body');
         dash.innerHTML = state.members.map(m => {
             const chores = state.chores.filter(c => c.assigneeId === m.id);
-            return `<div class="user-card">
+            return `<div class="user-card" id="card-${m.id}">
+                <div class="card-celebration" id="celebrate-${m.id}"><div class="card-celebration-msg">BOOM! 🚀</div></div>
                 <div class="user-header"><h3>${m.name}</h3><span class="currency-pill">${m.points} ${currencyMap[m.role]}</span></div>
                 <div class="chore-list">
-                ${chores.length===0?'<p style="padding:10px; font-size:10px; opacity:0.5;">Empty.</p>':chores.map(c => {
+                ${chores.length===0?'<p style="padding:10px; font-size:10px; opacity:0.5;">No tasks.</p>':chores.map(c => {
                     const isD = c.lastCompleted === today;
                     let prog = "";
                     if(c.goal > 0) { const pct = Math.min(100, ((c.timesCompleted||0)/c.goal)*100); prog = `<div class="progress-container"><div class="progress-fill" style="width:${pct}%"></div></div>`; }
-                    return `<div class="chore-item ${isD?'completed':''}"><input type="checkbox" ${isD?'checked disabled':''} onchange="toggleChoreCompletion(${c.id}, ${m.id})"><div class="chore-info"><strong>${c.name}</strong>${prog}</div></div>`;
+                    return `<div class="chore-item ${isD?'completed':''}"><input type="checkbox" ${isD?'checked disabled':''} onchange="completeChore(${c.id}, ${m.id})"><div class="chore-info"><strong>${c.name}</strong>${prog}</div></div>`;
                 }).join('')}</div></div>`;
         }).join('');
         
-        document.getElementById('member-list-body').innerHTML = state.members.map(m => `<tr><td>${m.name}</td><td>${m.role}</td><td>${m.points}</td><td><button class="btn-danger" onclick="state.members=state.members.filter(x=>x.id!==${m.id}); save();">X</button></td></tr>`).join('');
+        document.getElementById('member-list-body').innerHTML = state.members.map(m => `<tr><td>${m.name}</td><td>${m.role}</td><td>${m.points}</td><td><button class="btn-danger" onclick="deleteMember(${m.id})">X</button></td></tr>`).join('');
+        document.getElementById('chore-list-body').innerHTML = state.chores.map(c => `<tr><td>${c.name}</td><td>${c.goal||'--'}</td><td>${state.members.find(x=>x.id===c.assigneeId)?.name}</td><td><button class="btn-danger" onclick="deleteChore(${c.id})">X</button></td></tr>`).join('');
         
+        updateAssigneeDropdowns();
         if(state.calVisible && state.calendarUrl) {
             document.getElementById('calendar-slot').innerHTML = `<iframe src="${state.calendarUrl}"></iframe>`;
         }
     }
 
-    /* Core logic for chore toggling, member adding, etc. stays same as previous working versions */
-    function toggleChoreCompletion(cid, mid) {
+    function completeChore(cid, mid) {
         const c = state.chores.find(x => x.id === cid);
-        c.lastCompleted = new Date().toDateString();
         const m = state.members.find(x => x.id === mid);
+        c.lastCompleted = new Date().toDateString();
         m.points += (c.points || 5);
-        save();
+        if(c.goal > 0) c.timesCompleted = (c.timesCompleted || 0) + 1;
+        
+        const ov = document.getElementById(`celebrate-${mid}`);
+        ov.style.display = 'flex';
+        setTimeout(() => { ov.style.display = 'none'; save(); }, 3000);
     }
     
-    function addMember() { const n = document.getElementById('m-name').value; const r = document.getElementById('m-role').value; if(!n) return; state.members.push({id:Date.now(), name:n, role:r, points:0}); save(); }
-    function addChore() { const n = document.getElementById('c-name').value; const a = document.getElementById('c-assignee').value; if(!n) return; state.chores.push({id:Date.now(), name:n, assigneeId:parseInt(a), lastCompleted:null, points:parseInt(document.getElementById('c-points').value), goal:parseInt(document.getElementById('c-goal').value), timesCompleted:0}); save(); }
+    function addMember() { const n = document.getElementById('m-name').value; if(!n) return; state.members.push({id:Date.now(), name:n, role:document.getElementById('m-role').value, points:0}); save(); }
+    function deleteMember(id) { state.members = state.members.filter(x => x.id !== id); save(); }
+    function addChore() { const n = document.getElementById('c-name').value; if(!n) return; state.chores.push({id:Date.now(), name:n, assigneeId:parseInt(document.getElementById('c-assignee').value), lastCompleted:null, points:parseInt(document.getElementById('c-points').value), goal:parseInt(document.getElementById('c-goal').value), timesCompleted:0}); save(); }
+    function deleteChore(id) { state.chores = state.chores.filter(x => x.id !== id); save(); }
     function saveCalendarUrl() { state.calendarUrl = document.getElementById('cal-url-input').value; save(); location.reload(); }
     function toggleAccordion(k) { state[k] = !state[k]; save(); }
     function toggleSidebar() { document.getElementById('sidebar').classList.toggle('collapsed'); document.getElementById('main-content').classList.toggle('expanded'); }
     function exportData() { const blob = new Blob([JSON.stringify(state)], {type:"application/json"}); const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `Backup.json`; a.click(); }
     function handleAdminNav(id) { showSection(id); }
+    function updateAssigneeDropdowns() { const html = state.members.map(m => `<option value="${m.id}">${m.name}</option>`).join(''); document.getElementById('c-assignee').innerHTML = html; }
 
     if (!state.adminPasscode) document.getElementById('setup-wizard').style.display = 'flex';
-    updateAssigneeDropdowns();
-    function updateAssigneeDropdowns() { const html = state.members.map(m => `<option value="${m.id}">${m.name}</option>`).join(''); document.getElementById('c-assignee').innerHTML = html; }
+    if (state.calendarUrl) document.getElementById('cal-url-input').value = state.calendarUrl;
     renderAll();
 </script>
 </body>
