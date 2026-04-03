@@ -10,9 +10,6 @@
     <link rel="manifest" href='data:application/manifest+json,{"name":"Family Hub","short_name":"FamilyHub","start_url":"/family_hub/family_hub.html","display":"standalone","background_color":"#1a1a2e","theme_color":"#1a1a2e","icons":[{"src":"https://cdn-icons-png.flaticon.com/512/609/609803.png","sizes":"512x512","type":"image/png","purpose":"any maskable"}]}'>
 
     <style>
-        /* COLOR PALETTE & THEMING 
-          Modern 'Sleek Command Center' theme using Glassmorphism principles.
-        */
         :root { 
             --primary: #1a1a2e; --secondary: #16213e; --accent: #4ecca3; 
             --success: #4ecca3; --danger: #e94560; --light: #f4f4f2; --warning: #f39c12;
@@ -21,7 +18,7 @@
         
         body { font-family: 'Inter', 'Segoe UI', sans-serif; margin: 0; display: flex; background: var(--bg); color: var(--text-main); transition: 0.3s; overflow-x: hidden; -webkit-tap-highlight-color: transparent; }
         
-        /* SIDEBAR NAVIGATION */
+        /* Sidebar Navigation */
         nav { width: 220px; background: var(--primary); color: white; height: 100vh; position: fixed; z-index: 100; transition: 0.3s; overflow-x: hidden; border-right: 1px solid rgba(255,255,255,0.05); }
         nav.collapsed { width: 0; }
         nav h2 { padding: 20px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.05); margin: 0; font-size: 1rem; letter-spacing: 1px; text-transform: uppercase; color: var(--accent); }
@@ -33,53 +30,44 @@
         #nav-toggle { position: fixed; left: 230px; top: 15px; z-index: 101; background: white; color: var(--primary); border: none; padding: 8px 12px; border-radius: 6px; cursor: pointer; transition: 0.3s; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
         nav.collapsed + #nav-toggle { left: 15px; }
 
-        /* MAIN CONTENT AREA */
         main { margin-left: 220px; padding: 20px 30px; width: 100%; box-sizing: border-box; transition: 0.3s; }
         main.expanded { margin-left: 0; padding-left: 60px; }
         
-        /* MOBILE RESPONSIVENESS */
         @media (max-width: 768px) {
             main { margin-left: 0; padding: 15px; padding-top: 70px; }
-            main.expanded { padding-left: 15px; }
-            nav { width: 80%; }
+            main.expanded { padding-left: 15px; nav { width: 80%; } }
             #nav-toggle { left: 15px; }
         }
 
-        /* CARD STYLING - Compact */
         .card { background: white; padding: 15px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.02); margin-bottom: 15px; border: 1px solid #eee; position: relative; }
         .header-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
         h1 { font-size: 1.5rem; margin: 0; font-weight: 800; color: var(--primary); }
         
-        /* USER DASHBOARD CARDS */
+        /* Dashboard Layout */
         .user-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; }
         .user-card { background: #fff; border-radius: 10px; border: 1px solid #eee; position: relative; display: flex; flex-direction: column; transition: transform 0.2s; }
-        .user-card:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(0,0,0,0.05); }
         .user-header { padding: 10px 15px; background: #fafafa; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eee; border-radius: 10px 10px 0 0; }
         .user-header h3 { margin: 0; font-size: 0.95rem; font-weight: 700; color: var(--primary); }
         .currency-pill { font-size: 0.75rem; font-weight: 800; color: var(--success); background: #eefdf7; padding: 3px 10px; border-radius: 12px; }
         
-        /* CHORE ITEMS */
         .chore-item { display: flex; align-items: center; gap: 12px; padding: 10px 15px; border-bottom: 1px solid #f9f9f9; }
         .chore-item.completed { background: #fdfdfd; opacity: 0.6; }
         .chore-item.pending { background: #fffcf0; }
         .chore-info { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
         .chore-info strong { font-size: 0.85rem; color: #444; }
-        .chore-info small { font-size: 0.75rem; color: #888; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .chore-info small { font-size: 10px; color: #999; }
         
-        /* PROGRESS BARS */
         .progress-container { width: 100%; background: #f0f0f0; border-radius: 4px; height: 4px; margin-top: 6px; overflow: hidden; }
         .progress-fill { background: var(--accent); height: 100%; transition: 0.5s; }
         .milestone-text { font-size: 9px; color: #aaa; font-weight: 700; margin-top: 3px; }
 
-        input[type="checkbox"] { width: 20px; height: 20px; cursor: pointer; border-radius: 4px; accent-color: var(--accent); }
+        input[type="checkbox"] { width: 20px; height: 20px; cursor: pointer; accent-color: var(--accent); }
 
-        /* CELEBRATION OVERLAYS */
+        /* Overlays */
         .card-celebration { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: none; flex-direction: column; justify-content: center; align-items: center; z-index: 200; text-align: center; border-radius: 10px; pointer-events: none; background: rgba(26, 26, 46, 0.95); color: white; padding: 10px; }
         .card-celebration-msg { font-size: 1.5rem; font-weight: 900; animation: bounceIn 0.5s; color: var(--accent); }
 
-        @keyframes bounceIn { 0% { transform: scale(0.3); opacity: 0; } 50% { transform: scale(1.05); } 100% { transform: scale(1); opacity: 1; } }
-
-        /* ADMIN & TABLES */
+        /* Forms & Tables */
         .admin-form-box { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; background: #f9fafb; padding: 15px; border-radius: 8px; margin-bottom: 15px; }
         label { font-size: 11px; font-weight: 700; color: #888; text-transform: uppercase; margin-bottom: 4px; }
         input, select, textarea { padding: 8px 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 13px; }
@@ -89,16 +77,37 @@
         
         .hidden { display: none !important; }
         
-        /* CALENDAR WRAPPER */
+        /* Modals */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(26, 26, 46, 0.9); backdrop-filter: blur(8px); display: none; justify-content: center; align-items: center; z-index: 1000; }
+        .modal-content { background: white; width: 90%; max-width: 450px; padding: 30px; border-radius: 15px; box-shadow: 0 20px 50px rgba(0,0,0,0.3); text-align: center; }
+        
         .calendar-container { width: 100%; height: 600px; border-radius: 8px; overflow: hidden; margin-top: 10px; border: 1px solid #eee; display: flex; align-items: center; justify-content: center; background: #f9f9f9; }
         .calendar-container iframe { width: 100%; height: 100%; border: 0; }
-        
-        /* MODAL DIALOGS */
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); backdrop-filter: blur(4px); display: none; justify-content: center; align-items: center; z-index: 300; }
-        .modal-content { background: white; width: 90%; max-width: 500px; padding: 25px; border-radius: 12px; box-shadow: 0 20px 40px rgba(0,0,0,0.2); }
     </style>
 </head>
 <body onmousemove="resetSidebarTimer()" ontouchstart="resetSidebarTimer()">
+
+<div id="setup-wizard" class="modal-overlay">
+    <div class="modal-content">
+        <h2 style="color: var(--primary); margin-top: 0;">Welcome to Family Hub</h2>
+        <p style="color: #666; font-size: 14px;">Please create a Master Passcode to manage members and chores.</p>
+        <input type="password" id="setup-passcode" placeholder="Set Passcode" style="width: 100%; margin: 20px 0; text-align: center; font-size: 18px; letter-spacing: 4px;">
+        <button class="btn-primary" style="width: 100%;" onclick="finalizeSetup()">Initialize Hub</button>
+    </div>
+</div>
+
+<div id="recovery-modal" class="modal-overlay" style="z-index: 2000;">
+    <div class="modal-content">
+        <h3 style="color:var(--danger)">Passcode Recovery</h3>
+        <p style="font-size:13px; color:#444; text-align:left;">This app is local to your browser. There is no password reset email.</p>
+        <div style="background:#fff5f5; padding:12px; border-radius:8px; font-size:12px; border:1px solid #ffebeb; text-align:left; line-height:1.5;">
+            <strong>Step 1:</strong> Use the <strong>Nuclear Reset</strong> button in Manage Family (if you can access it).<br><br>
+            <strong>Step 2:</strong> Clear your browser's "Site Data/Cookies" for this URL. This wipes the app memory.<br><br>
+            <strong>Warning:</strong> You will lose all data unless you have a recent <strong>JSON Export</strong> to re-import!
+        </div>
+        <button class="btn-primary" style="width:100%; margin-top:20px;" onclick="closeModal('recovery-modal')">I Understand</button>
+    </div>
+</div>
 
 <nav id="sidebar">
     <h2>Family Hub</h2>
@@ -111,7 +120,10 @@
         <button id="nav-members" onclick="handleAdminNav('admin-members')"><span>👥 Manage</span></button>
         <button id="nav-chores" onclick="handleAdminNav('admin-chores')"><span>⚙️ Chores</span></button>
     </div>
-    <button id="unlock-btn" style="color:var(--warning); margin-top:15px;" onclick="toggleAdminLock()"><span>🔒 Unlock</span></button>
+    <div style="margin-top:15px; padding:0 20px; display:flex; flex-direction:column; gap:5px;">
+        <button id="unlock-btn" style="color:var(--warning); text-align:left; padding:0; background:none; border:none; cursor:pointer;" onclick="toggleAdminLock()"><span>🔒 Unlock</span></button>
+        <button id="forgot-btn" style="color:#666; font-size:10px; text-align:left; background:none; border:none; cursor:pointer; text-decoration:underline;" onclick="showRecoveryHint()">Forgot Code?</button>
+    </div>
 </nav>
 
 <button id="nav-toggle" onclick="toggleSidebar()">☰</button>
@@ -135,11 +147,11 @@
 
         <div class="card">
             <div class="section-header" style="display:flex; justify-content:space-between; align-items:center; cursor:pointer;" onclick="toggleAccordion('calVisible')">
-                <h3 id="calendar-title" style="margin:0">📅 Family Schedule</h3><span id="cal-icon">▼</span>
+                <h3 style="margin:0">📅 Family Schedule</h3><span id="cal-icon">▼</span>
             </div>
             <div id="cal-body" class="hidden">
                 <div class="calendar-container" id="calendar-slot">
-                    <div style="color:#888; font-style:italic; padding: 20px;">Setup private link in Admin > Manage</div>
+                    <div style="color:#888; font-style:italic;">Setup calendar link in Manage > Settings</div>
                 </div>
             </div>
         </div>
@@ -147,7 +159,7 @@
 
     <section id="admin-members" class="content-section hidden">
         <div class="card">
-            <h1>Manage Family</h1>
+            <h1>Manage Hub & Privacy</h1>
             <div class="admin-form-box">
                 <div class="form-group"><label>Name</label><input type="text" id="m-name"></div>
                 <div class="form-group"><label>Role</label><select id="m-role"><option value="kid">Kid</option><option value="teen">Teen</option><option value="adult">Adult</option></select></div>
@@ -158,18 +170,24 @@
                 <tbody id="member-list-body"></tbody>
             </table>
             
-            <div style="background: #fdfefe; border: 1px dashed var(--accent); padding: 15px; border-radius: 8px; margin-top: 15px;">
-                <h3>🛡️ Calendar Setup (Private)</h3>
-                <p style="font-size: 11px; color:#666">Paste Google Embed URL here to save it locally on this device.</p>
-                <input type="text" id="cal-url-input" placeholder="Google Embed URL..." style="width:100%">
-                <button class="btn-primary" style="margin-top:10px" onclick="saveCalendarUrl()">Save URL</button>
+            <div style="background: #fdfefe; border: 1px dashed var(--accent); padding: 15px; border-radius: 8px; margin-top: 15px; display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                <div>
+                    <h3>🛡️ Private Calendar</h3>
+                    <input type="text" id="cal-url-input" placeholder="Google Embed URL..." style="width:100%">
+                    <button class="btn-primary" style="margin-top:10px" onclick="saveCalendarUrl()">Save</button>
+                </div>
+                <div>
+                    <h3>🔑 Master Passcode</h3>
+                    <input type="password" id="change-pass-input" placeholder="New Code..." style="width:100%">
+                    <button class="btn-primary" style="margin-top:10px" onclick="updatePasscode()">Update</button>
+                </div>
             </div>
 
-            <div style="margin-top: 15px;">
-                <button class="btn-edit" onclick="exportData()">📤 Export Data</button>
-                <button class="btn-edit" onclick="document.getElementById('importFile').click()">📥 Import Data</button>
+            <div style="margin-top: 15px; display: flex; align-items: center; gap: 10px;">
+                <button class="btn-edit" onclick="exportData()">📤 Export Backup</button>
+                <button class="btn-edit" onclick="document.getElementById('importFile').click()">📥 Import Backup</button>
                 <input type="file" id="importFile" class="hidden" accept=".json" onchange="importData(event)">
-                <button onclick="nuclearReset()" class="btn-danger" style="margin-left: 10px;">☢️ Wipe Storage</button>
+                <button onclick="nuclearReset()" class="btn-danger">☢️ Nuclear Reset</button>
             </div>
         </div>
     </section>
@@ -178,19 +196,18 @@
         <div class="card">
             <h1>Chore Configuration</h1>
             <div class="admin-form-box">
-                <div class="form-group"><label>Chore Name</label><input type="text" id="c-name"></div>
+                <div class="form-group"><label>Name</label><input type="text" id="c-name"></div>
                 <div class="form-group"><label>Assignee</label><select id="c-assignee"></select></div>
-                <div class="form-group"><label>Instructions</label><textarea id="c-desc" rows="1"></textarea></div>
-                <div class="form-group"><label>Goal (X times)</label><input type="number" id="c-goal" value="0"></div>
-                <div class="form-group"><label>Prize Name</label><input type="text" id="c-prize"></div>
-                <div class="form-group"><label>Points Type</label><select id="c-type" onchange="togglePointForm('c-type','c-static','c-dynamic')"><option value="static">Static</option><option value="dynamic">Dynamic</option></select></div>
-                <div id="c-static" class="form-group"><label>Value</label><input type="number" id="c-points" value="5"></div>
+                <div class="form-group"><label>Goal</label><input type="number" id="c-goal" value="0"></div>
+                <div class="form-group"><label>Prize</label><input type="text" id="c-prize"></div>
+                <div class="form-group"><label>Type</label><select id="c-type" onchange="togglePointForm('c-type','c-static','c-dynamic')"><option value="static">Static</option><option value="dynamic">Dynamic</option></select></div>
+                <div id="c-static" class="form-group"><label>Points</label><input type="number" id="c-points" value="5"></div>
                 <div id="c-dynamic" class="hidden" style="display:flex; gap:10px;"><div class="form-group"><label>Max</label><input type="number" id="c-max" value="10"></div><div class="form-group"><label>Min</label><input type="number" id="c-min" value="2"></div></div>
             </div>
             <button class="btn-primary" onclick="addChore()">Save Chore</button>
         </div>
         <div class="card">
-            <button class="btn-danger" onclick="resetAllChoreChecks()" style="margin-bottom:10px;">🧪 Reset Daily Progress</button>
+            <button class="btn-danger" onclick="resetAllChoreChecks()" style="margin-bottom:10px;">🧪 Clear Daily Progress</button>
             <table style="width:100%; border-collapse: collapse;">
                 <thead><tr><th>Chore</th><th>Goal</th><th>Assigned</th><th>Action</th></tr></thead>
                 <tbody id="chore-list-body"></tbody>
@@ -203,10 +220,9 @@
     </section>
 </main>
 
-<div id="edit-member-modal" class="modal-overlay"><div class="modal-content"><h3>Edit Member</h3><div class="admin-form-box"><div class="form-group"><label>Name</label><input type="text" id="edit-m-name"></div><div class="form-group"><label>Role</label><select id="edit-m-role"><option value="kid">Kid</option><option value="teen">Teen</option><option value="adult">Adult</option></select></div></div><button class="btn-primary" id="save-member-btn">Save</button><button class="btn-danger" onclick="closeModal('edit-member-modal')" style="margin-left:10px">Cancel</button></div></div>
-<div id="edit-chore-modal" class="modal-overlay"><div class="modal-content"><h3>Edit Chore</h3><div class="admin-form-box">
+<div id="edit-member-modal" class="modal-overlay" style="z-index: 1100;"><div class="modal-content"><h3>Edit Member</h3><div class="admin-form-box"><div class="form-group"><label>Name</label><input type="text" id="edit-m-name"></div><div class="form-group"><label>Role</label><select id="edit-m-role"><option value="kid">Kid</option><option value="teen">Teen</option><option value="adult">Adult</option></select></div></div><button class="btn-primary" id="save-member-btn">Save</button><button class="btn-danger" onclick="closeModal('edit-member-modal')" style="margin-left:10px">Cancel</button></div></div>
+<div id="edit-chore-modal" class="modal-overlay" style="z-index: 1100;"><div class="modal-content"><h3>Edit Chore</h3><div class="admin-form-box">
     <div class="form-group"><label>Name</label><input type="text" id="edit-c-name"></div><div class="form-group"><label>Assignee</label><select id="edit-c-assignee"></select></div>
-    <div class="form-group" style="grid-column: span 2;"><label>Instructions</label><textarea id="edit-c-desc"></textarea></div>
     <div class="form-group"><label>Goal</label><input type="number" id="edit-c-goal"></div><div class="form-group"><label>Prize</label><input type="text" id="edit-c-prize"></div>
     <div class="form-group"><label>Logic</label><select id="edit-c-type" onchange="togglePointForm('edit-c-type','edit-c-static','edit-c-dynamic')"><option value="static">Static</option><option value="dynamic">Dynamic</option></select></div>
     <div id="edit-c-static" class="form-group"><label>Points</label><input type="number" id="edit-c-points"></div>
@@ -214,35 +230,37 @@
 </div><button class="btn-primary" id="save-chore-btn">Save</button><button class="btn-danger" onclick="closeModal('edit-chore-modal')" style="margin-left:10px">Cancel</button></div></div>
 
 <script>
-    /**
-     * MASTER ROADMAP (PHASE 1)
-     * - Status: Active / Standalone
-     * - Goal: Stability and UI Testing
-     * - Next Step: Phase 2 (Home Hosting on RPi/NAS + Section Reorder)
-     */
-
-    const ADMIN_PASSCODE = "1234";
-    const kidMessages = ["BOOM! 🚀", "YOU WIN! 🏆", "LEGEND! 🔥", "BOOYAH! 😎"];
-    const teenMessages = ["Impressive. 🙄", "One closer to freedom. 📱", "Functional human. 👏"];
+    /* MASTER STATE */
+    let state = JSON.parse(localStorage.getItem('familyHubData')) || { 
+        members: [], chores: [], approvals: [], 
+        lastResetDate: new Date().toDateString(), 
+        choresVisible: true, calVisible: false, calendarUrl: "",
+        adminPasscode: "" 
+    };
 
     let isUnlocked = false; 
     let sidebarTimer;
     let editTargetId = null;
-
-    // STATE INITIALIZATION
-    let state = JSON.parse(localStorage.getItem('familyHubData')) || { 
-        members: [], chores: [], approvals: [], 
-        lastResetDate: new Date().toDateString(), 
-        choresVisible: true, calVisible: false, calendarUrl: ""
-    };
     const currencyMap = { kid: "tokens", teen: "minutes", adult: "" };
 
-    // CORE FUNCTIONS
-    function save() { localStorage.setItem('familyHubData', JSON.stringify(state)); renderAll(); }
-    function closeModal(id) { document.getElementById(id).style.display = 'none'; }
-    function nuclearReset() { if(confirm("DANGER: Wipe EVERYTHING?")) { localStorage.removeItem('familyHubData'); location.reload(); } }
+    // AUTH & SETUP
+    function checkSetup() {
+        if (!state.adminPasscode) document.getElementById('setup-wizard').style.display = 'flex';
+    }
+    function finalizeSetup() {
+        const p = document.getElementById('setup-passcode').value;
+        if (!p) return alert("Enter code.");
+        state.adminPasscode = p; save();
+        document.getElementById('setup-wizard').style.display = 'none';
+    }
+    function updatePasscode() {
+        const p = document.getElementById('change-pass-input').value;
+        if (!p) return alert("Enter code.");
+        state.adminPasscode = p; save(); alert("Updated!");
+    }
+    function showRecoveryHint() { document.getElementById('recovery-modal').style.display = 'flex'; }
 
-    // TIME & AUTO-RESET (MIDNIGHT)
+    // TIME & AUTO-RESET
     function updateClock() {
         const now = new Date();
         document.getElementById('current-date').innerText = now.toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' });
@@ -254,18 +272,20 @@
     }
     setInterval(updateClock, 1000); updateClock();
 
-    // SECURITY & NAVIGATION
+    // SECURITY & NAV
     function toggleAdminLock() {
         if (isUnlocked) {
             isUnlocked = false; document.getElementById('admin-menu').style.display = 'none';
             document.getElementById('unlock-btn').innerHTML = "<span>🔒 Unlock</span>";
             showSection('dashboard');
-        } else if (prompt("Passcode:") === ADMIN_PASSCODE) {
-            isUnlocked = true; document.getElementById('admin-menu').style.display = 'block';
-            document.getElementById('unlock-btn').innerHTML = "<span>🔓 Mode Active</span>";
+        } else {
+            const entry = prompt("Passcode:");
+            if (entry === state.adminPasscode) {
+                isUnlocked = true; document.getElementById('admin-menu').style.display = 'block';
+                document.getElementById('unlock-btn').innerHTML = "<span>🔓 Unlocked</span>";
+            } else { alert("Incorrect."); }
         }
     }
-
     function toggleSidebar(force = false) {
         const sb = document.getElementById('sidebar'); const main = document.getElementById('main-content');
         if (force) { sb.classList.add('collapsed'); main.classList.add('expanded'); }
@@ -282,37 +302,29 @@
         renderAll();
     }
 
-    // CHORE LOGIC: Point calculation (Dynamic decay support)
+    // CORE LOGIC
+    function save() { localStorage.setItem('familyHubData', JSON.stringify(state)); renderAll(); }
+    function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+    function nuclearReset() { if(confirm("Wipe everything?")) { localStorage.removeItem('familyHubData'); location.reload(); } }
     function calculateVal(c) {
         if(c.type === 'static') return c.points || 5;
         const yest = new Date(Date.now() - 86400000).toDateString();
         return (c.lastCompleted === yest) ? (c.dynamic?.min || 2) : (c.dynamic?.max || 10);
     }
-    
-    // COMPLETION & MILESTONE HANDLING
     function toggleChoreCompletion(choreId, memberId) {
-        const chore = state.chores.find(c => c.id === choreId);
-        const member = state.members.find(m => m.id === memberId);
-        state.approvals.push({ id: Date.now(), choreId, memberId, date: new Date().toDateString(), points: calculateVal(chore), choreName: chore.name });
-        
-        const overlay = document.getElementById(`celebrate-${memberId}`);
-        if (overlay && (member.role === 'kid' || member.role === 'teen')) {
-            let msg;
-            if (member.role === 'kid') {
-                msg = kidMessages[Math.floor(Math.random()*kidMessages.length)];
-                const count = (chore.timesCompleted || 0) + 1;
-                if (chore.goal > 0 && count >= chore.goal) { msg = `PRIZE! 🎁<br>${chore.prize}`; chore.timesCompleted = 0; }
-                else if (chore.goal > 0) { chore.timesCompleted = count; }
-            } else {
-                msg = teenMessages[Math.floor(Math.random()*teenMessages.length)];
-                if (chore.goal > 0) chore.timesCompleted = (chore.timesCompleted || 0) + 1;
-            }
-            overlay.querySelector('.card-celebration-msg').innerHTML = msg;
-            overlay.style.display = 'flex';
-            setTimeout(() => { overlay.style.display = 'none'; save(); }, 5000);
+        const c = state.chores.find(x => x.id === choreId);
+        const m = state.members.find(x => x.id === memberId);
+        state.approvals.push({ id: Date.now(), choreId, memberId, date: new Date().toDateString(), points: calculateVal(c), choreName: c.name });
+        const ov = document.getElementById(`celebrate-${memberId}`);
+        if (ov && (m.role !== 'adult')) {
+            let msg = m.role === 'kid' ? "BOOM! 🚀" : "Impressive. 🙄";
+            const count = (c.timesCompleted || 0) + 1;
+            if (m.role === 'kid' && c.goal > 0 && count >= c.goal) { msg = `PRIZE! 🎁<br>${c.prize}`; c.timesCompleted = 0; }
+            else if (c.goal > 0) { c.timesCompleted = count; }
+            ov.querySelector('.card-celebration-msg').innerHTML = msg; ov.style.display = 'flex';
+            setTimeout(() => { ov.style.display = 'none'; save(); }, 5000);
         } else { save(); }
     }
-
     function approveChore(appId) {
         const app = state.approvals.find(a => a.id === appId);
         const mem = state.members.find(m => m.id === app.memberId);
@@ -320,83 +332,56 @@
         if(mem) mem.points += app.points; if(chore) chore.lastCompleted = app.date;
         state.approvals = state.approvals.filter(a => a.id !== appId); save();
     }
+    function resetAllChoreChecks() { if(confirm("Reset?")) { state.chores.forEach(c => { c.lastCompleted = null; c.timesCompleted = 0; }); state.approvals = []; save(); } }
 
-    // MEMBER MGMT
-    function addMember() { const n = document.getElementById('m-name'); if(!n.value) return; state.members.push({id:Date.now(), name:n.value, role:document.getElementById('m-role').value, points:0}); n.value=''; save(); }
-    function openEditMember(id) { editTargetId = id; const m = state.members.find(x => x.id === id); document.getElementById('edit-m-name').value = m.name; document.getElementById('edit-m-role').value = m.role; document.getElementById('edit-member-modal').style.display = 'flex'; }
-    document.getElementById('save-member-btn').onclick = () => { const m = state.members.find(x => x.id === editTargetId); m.name = document.getElementById('edit-m-name').value; m.role = document.getElementById('edit-m-role').value; save(); closeModal('edit-member-modal'); };
-    function adjustPoints(id, current) { const m = state.members.find(x => x.id === id); const val = parseInt(prompt(`Adjust ${m.name}?`, -current)); if(!isNaN(val)) { m.points += val; save(); } }
-    
-    // CHORE MGMT
-    function updateAssigneeDropdowns() { const html = state.members.map(m => `<option value="${m.id}">${m.name}</option>`).join(''); document.getElementById('c-assignee').innerHTML = html; document.getElementById('edit-c-assignee').innerHTML = html;}
-    function addChore() { const n = document.getElementById('c-name'); if(!n.value) return; state.chores.push({ id: Date.now(), name: n.value, desc: document.getElementById('c-desc').value, assigneeId: parseInt(document.getElementById('c-assignee').value), lastCompleted: null, points: parseInt(document.getElementById('c-points').value || 0), type: document.getElementById('c-type').value, dynamic: { max: parseInt(document.getElementById('c-max').value || 10), min: parseInt(document.getElementById('c-min').value || 2) }, goal: parseInt(document.getElementById('c-goal').value) || 0, prize: document.getElementById('c-prize').value || "", timesCompleted: 0 }); n.value=''; save(); }
-    function openEditChore(id) {
-        editTargetId = id; const c = state.chores.find(x => x.id === id); updateAssigneeDropdowns();
-        document.getElementById('edit-c-name').value = c.name; document.getElementById('edit-c-desc').value = c.desc || ''; document.getElementById('edit-c-assignee').value = c.assigneeId; document.getElementById('edit-c-type').value = c.type; document.getElementById('edit-c-points').value = c.points || 0; document.getElementById('edit-c-goal').value = c.goal || 0; document.getElementById('edit-c-prize').value = c.prize || "";
-        if(c.dynamic) { document.getElementById('edit-c-max').value = c.dynamic.max; document.getElementById('edit-c-min').value = c.dynamic.min; }
-        togglePointForm('edit-c-type','edit-c-static','edit-c-dynamic'); document.getElementById('edit-chore-modal').style.display = 'flex';
-    }
-    document.getElementById('save-chore-btn').onclick = () => {
-        const c = state.chores.find(x => x.id === editTargetId);
-        c.name = document.getElementById('edit-c-name').value; c.desc = document.getElementById('edit-c-desc').value; c.assigneeId = parseInt(document.getElementById('edit-c-assignee').value); c.type = document.getElementById('edit-c-type').value; c.points = parseInt(document.getElementById('edit-c-points').value || 0); c.goal = parseInt(document.getElementById('edit-c-goal').value) || 0; c.prize = document.getElementById('edit-c-prize').value;
-        if(c.dynamic) { c.dynamic.max = parseInt(document.getElementById('edit-c-max').value || 10); c.dynamic.min = parseInt(document.getElementById('edit-c-min').value || 2); }
-        save(); closeModal('edit-chore-modal');
-    };
-
-    // UI HELPERS
-    function toggleAccordion(key) { state[key] = !state[key]; save(); }
-    function togglePointForm(sel, sR, dR) { const t = document.getElementById(sel).value; document.getElementById(sR).classList.toggle('hidden', t !== 'static'); document.getElementById(dR).classList.toggle('hidden', t !== 'dynamic'); }
+    // DATA MGMT
+    function exportData() { const blob = new Blob([JSON.stringify(state)], {type:"application/json"}); const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `HubBackup.json`; a.click(); }
+    function importData(e) { const r = new FileReader(); r.onload = (x) => { state = JSON.parse(x.target.result); save(); location.reload(); }; r.readAsText(e.target.files[0]); }
     function saveCalendarUrl() { state.calendarUrl = document.getElementById('cal-url-input').value.trim(); save(); location.reload(); }
-    function exportData() { const blob = new Blob([JSON.stringify(state)], {type:"application/json"}); const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `FamilyHub_Backup.json`; a.click(); }
-    function importData(e) { const r = new FileReader(); r.onload = (x) => { try { state = JSON.parse(x.target.result); save(); location.reload(); } catch(err) { alert("Invalid File"); } }; r.readAsText(e.target.files[0]); }
-    function resetAllChoreChecks() { if(confirm("Reset progress?")) { state.chores.forEach(c => { c.lastCompleted = null; c.timesCompleted = 0; }); state.approvals = []; save(); } }
 
-    // THE RENDER ENGINE
+    // RENDER ENGINE
     function renderAll() {
         const today = new Date().toDateString();
         document.getElementById('approval-badge').innerText = state.approvals.length;
         document.getElementById('approval-badge').classList.toggle('hidden', state.approvals.length === 0);
         
-        // Render Dashboard
         const dash = document.getElementById('chores-body');
         dash.innerHTML = state.members.map(m => {
             const chores = state.chores.filter(c => c.assigneeId === m.id);
-            const cur = currencyMap[m.role];
-            return `<div class="user-card" id="card-${m.id}">
+            return `<div class="user-card">
                 <div class="card-celebration" id="celebrate-${m.id}"><div class="card-celebration-msg"></div></div>
-                <div class="user-header"><h3>${m.name}</h3><span class="currency-pill">${m.points} ${cur}</span></div>
+                <div class="user-header"><h3>${m.name}</h3><span class="currency-pill">${m.points} ${currencyMap[m.role]}</span></div>
                 <div class="chore-list">
-                ${chores.length===0?'<p style="padding:10px; font-size:11px; color:#aaa;">No chores assigned.</p>':chores.map(c => {
+                ${chores.length===0?'<p style="padding:10px; font-size:10px; color:#ccc;">No chores.</p>':chores.map(c => {
                     const isP = state.approvals.some(a => a.choreId === c.id); const isD = c.lastCompleted === today;
-                    let progHtml = "";
-                    if(c.goal > 0) { 
-                        const tc = (c.timesCompleted || 0); const pct = Math.min(100, (tc / c.goal) * 100); 
-                        progHtml = `<div class="milestone-text">${tc}/${c.goal} to ${c.prize}</div><div class="progress-container"><div class="progress-fill" style="width:${pct}%"></div></div>`; 
-                    }
-                    return `<div class="chore-item ${isD?'completed':(isP?'pending':'')}"><input type="checkbox" ${isD||isP?'checked disabled':''} onchange="toggleChoreCompletion(${c.id}, ${m.id})"><div class="chore-info"><strong>${c.name}</strong><small>${c.desc||''}</small>${progHtml}</div><div class="chore-val">${m.role!=='adult'?calculateVal(c):''}</div></div>`;
+                    let prog = "";
+                    if(c.goal > 0) { const pct = Math.min(100, ((c.timesCompleted||0)/c.goal)*100); prog = `<div class="milestone-text">${c.timesCompleted||0}/${c.goal} to ${c.prize}</div><div class="progress-container"><div class="progress-fill" style="width:${pct}%"></div></div>`; }
+                    return `<div class="chore-item ${isD?'completed':(isP?'pending':'')}"><input type="checkbox" ${isD||isP?'checked disabled':''} onchange="toggleChoreCompletion(${c.id}, ${m.id})"><div class="chore-info"><strong>${c.name}</strong>${prog}</div><div class="chore-val" style="font-size:11px; font-weight:800; color:var(--accent)">${m.role!=='adult'?calculateVal(c):''}</div></div>`;
                 }).join('')}</div></div>`;
         }).join('');
+
+        document.getElementById('member-list-body').innerHTML = state.members.map(m => `<tr><td><strong>${m.name}</strong></td><td>${m.role}</td><td>${m.points} <button class="btn-edit" style="padding:1px 5px" onclick="adjustPoints(${m.id}, ${m.points})">±</button></td><td><button class="btn-edit" onclick="openEditMember(${m.id})">Edit</button> <button class="btn-danger" onclick="state.members=state.members.filter(x=>x.id!==${m.id}); save();">X</button></td></tr>`).join('');
+        document.getElementById('chore-list-body').innerHTML = state.chores.map(c => `<tr><td><strong>${c.name}</strong></td><td>${c.goal||'--'}</td><td>${state.members.find(x=>x.id===c.assigneeId)?.name}</td><td><button class="btn-edit" onclick="openEditChore(${c.id})">Edit</button> <button class="btn-danger" onclick="state.chores=state.chores.filter(x=>x.id!==${c.id}); save();">X</button></td></tr>`).join('');
+        document.getElementById('approval-list-body').innerHTML = state.approvals.map(a => `<tr><td>${state.members.find(m=>m.id===a.memberId)?.name}</td><td>${a.choreName}</td><td>${a.points}</td><td><button class="btn-primary" style="padding:4px 8px; font-size:11px;" onclick="approveChore(${a.id})">Approve</button> <button class="btn-danger" style="padding:4px 8px; font-size:11px;" onclick="state.approvals=state.approvals.filter(x=>x.id!==${a.id}); save();">X</button></td></tr>`).join('');
         
-        // Render Admin Tables (Restored Edit Logic)
-        document.getElementById('member-list-body').innerHTML = state.members.map(m => `<tr><td><strong>${m.name}</strong></td><td style="font-size:12px">${m.role}</td><td style="font-size:12px">${m.points} <button class="btn-edit" style="padding:1px 5px" onclick="adjustPoints(${m.id}, ${m.points})">±</button></td><td><button class="btn-edit" onclick="openEditMember(${m.id})">Edit</button> <button class="btn-danger" onclick="state.members=state.members.filter(x=>x.id!==${m.id}); save();">X</button></td></tr>`).join('');
-        document.getElementById('chore-list-body').innerHTML = state.chores.map(c => `<tr><td><strong style="font-size:13px">${c.name}</strong></td><td style="font-size:12px">${c.goal || '--'}</td><td style="font-size:12px">${state.members.find(x=>x.id===c.assigneeId)?.name}</td><td><button class="btn-edit" onclick="openEditChore(${c.id})">Edit</button> <button class="btn-danger" onclick="state.chores=state.chores.filter(x=>x.id!==${c.id}); save();">X</button></td></tr>`).join('');
-        document.getElementById('approval-list-body').innerHTML = state.approvals.map(a => `<tr><td style="font-size:12px">${state.members.find(m=>m.id===a.memberId)?.name}</td><td style="font-size:12px">${a.choreName}</td><td style="font-size:12px">${a.points}</td><td><button class="btn-primary" style="padding:4px 8px; font-size:11px;" onclick="approveChore(${a.id})">Approve</button> <button class="btn-danger" style="padding:4px 8px; font-size:11px;" onclick="state.approvals=state.approvals.filter(x=>x.id!==${a.id}); save();">X</button></td></tr>`).join('');
-        
-        // Handle UI toggles
         document.getElementById('chores-body').classList.toggle('hidden', !state.choresVisible);
         document.getElementById('cal-body').classList.toggle('hidden', !state.calVisible);
-        document.getElementById('chores-icon').style.transform = state.choresVisible ? 'rotate(180deg)' : 'rotate(0deg)';
-        document.getElementById('cal-icon').style.transform = state.calVisible ? 'rotate(180deg)' : 'rotate(0deg)';
-        
-        // Load Calendar Iframe if visible and configured
-        if(state.calVisible && state.calendarUrl && !document.querySelector('#calendar-slot iframe')) {
-            document.getElementById('calendar-slot').innerHTML = `<iframe src="${state.calendarUrl}"></iframe>`;
-        }
+        if(state.calVisible && state.calendarUrl && !document.querySelector('#calendar-slot iframe')) document.getElementById('calendar-slot').innerHTML = `<iframe src="${state.calendarUrl}"></iframe>`;
     }
-    
-    // Initial UI Setup
-    if(state.calendarUrl) document.getElementById('cal-url-input').value = state.calendarUrl;
-    renderAll(); 
+
+    function addMember() { const n = document.getElementById('m-name'); if(!n.value) return; state.members.push({id:Date.now(), name:n.value, role:document.getElementById('m-role').value, points:0}); n.value=''; save(); }
+    function adjustPoints(id, current) { const m = state.members.find(x => x.id === id); const val = parseInt(prompt(`Adjust ${m.name}?`, -current)); if(!isNaN(val)) { m.points += val; save(); } }
+    function updateAssigneeDropdowns() { const html = state.members.map(m => `<option value="${m.id}">${m.name}</option>`).join(''); document.getElementById('c-assignee').innerHTML = html; document.getElementById('edit-c-assignee').innerHTML = html; }
+    function addChore() { const n = document.getElementById('c-name'); if(!n.value) return; state.chores.push({ id: Date.now(), name: n.value, assigneeId: parseInt(document.getElementById('c-assignee').value), lastCompleted: null, points: parseInt(document.getElementById('c-points').value || 0), type: document.getElementById('c-type').value, dynamic: { max: parseInt(document.getElementById('c-max').value || 10), min: parseInt(document.getElementById('c-min').value || 2) }, goal: parseInt(document.getElementById('c-goal').value) || 0, prize: document.getElementById('c-prize').value || "", timesCompleted: 0 }); n.value=''; save(); }
+    function openEditMember(id) { editTargetId = id; const m = state.members.find(x => x.id === id); document.getElementById('edit-m-name').value = m.name; document.getElementById('edit-m-role').value = m.role; document.getElementById('edit-member-modal').style.display = 'flex'; }
+    document.getElementById('save-member-btn').onclick = () => { const m = state.members.find(x => x.id === editTargetId); m.name = document.getElementById('edit-m-name').value; m.role = document.getElementById('edit-m-role').value; save(); closeModal('edit-member-modal'); };
+    function openEditChore(id) { editTargetId = id; const c = state.chores.find(x => x.id === id); updateAssigneeDropdowns(); document.getElementById('edit-c-name').value = c.name; document.getElementById('edit-c-assignee').value = c.assigneeId; document.getElementById('edit-c-type').value = c.type; document.getElementById('edit-c-points').value = c.points || 0; document.getElementById('edit-c-goal').value = c.goal || 0; document.getElementById('edit-c-prize').value = c.prize || ""; if(c.dynamic) { document.getElementById('edit-c-max').value = c.dynamic.max; document.getElementById('edit-c-min').value = c.dynamic.min; } togglePointForm('edit-c-type','edit-c-static','edit-c-dynamic'); document.getElementById('edit-chore-modal').style.display = 'flex'; }
+    document.getElementById('save-chore-btn').onclick = () => { const c = state.chores.find(x => x.id === editTargetId); c.name = document.getElementById('edit-c-name').value; c.assigneeId = parseInt(document.getElementById('edit-c-assignee').value); c.type = document.getElementById('edit-c-type').value; c.points = parseInt(document.getElementById('edit-c-points').value || 0); c.goal = parseInt(document.getElementById('edit-c-goal').value) || 0; c.prize = document.getElementById('edit-c-prize').value; if(c.dynamic) { c.dynamic.max = parseInt(document.getElementById('edit-c-max').value || 10); c.dynamic.min = parseInt(document.getElementById('edit-c-min').value || 2); } save(); closeModal('edit-chore-modal'); };
+    function toggleAccordion(key) { state[key] = !state[key]; save(); }
+    function togglePointForm(sel, sR, dR) { const t = document.getElementById(sel).value; document.getElementById(sR).classList.toggle('hidden', t !== 'static'); document.getElementById(dR).classList.toggle('hidden', t !== 'dynamic'); }
+
+    checkSetup();
+    renderAll();
     showSection('dashboard');
 </script>
 </body>
