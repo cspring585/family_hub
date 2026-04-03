@@ -44,7 +44,8 @@
         .card { background: white; padding: 25px; border-radius: 15px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); margin-bottom: 20px; position: relative; }
         .header-row { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
         
-        .user-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; padding-top: 15px; }
+        /* Dashboard Cards */
+        .user-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 20px; padding-top: 15px; }
         .user-card { background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 5px 15px rgba(0,0,0,0.05); border-top: 5px solid var(--accent); position: relative; display: flex; flex-direction: column; min-height: 150px; }
         .user-header { padding: 15px 20px; background: #fcfcfc; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #f0f0f0; }
         .currency-pill { font-size: 0.85rem; font-weight: bold; color: var(--success); background: #e8f8f5; padding: 5px 12px; border-radius: 20px; }
@@ -52,13 +53,16 @@
         .chore-item { display: flex; align-items: flex-start; gap: 15px; padding: 18px 20px; border-bottom: 1px solid #f0f0f0; }
         .chore-item.completed { background: #f8fff9; opacity: 0.7; }
         .chore-item.pending { background: #fffbe6; }
-        
-        .progress-container { width: 100%; background: #eee; border-radius: 10px; height: 8px; margin-top: 8px; overflow: hidden; border: 1px solid #e0e0e0; }
+        .chore-info { flex: 1; display: flex; flex-direction: column; gap: 4px; }
+        .chore-val { font-weight: 700; color: var(--accent); font-size: 13px; }
+
+        .progress-container { width: 100%; background: #eee; border-radius: 10px; height: 8px; margin-top: 10px; overflow: hidden; border: 1px solid #e0e0e0; }
         .progress-fill { background: linear-gradient(90deg, var(--accent), var(--success)); height: 100%; transition: 0.5s ease-out; }
         .milestone-text { font-size: 11px; color: var(--text-muted); font-weight: 700; margin-top: 4px; text-transform: uppercase; }
 
         input[type="checkbox"] { width: 28px; height: 28px; cursor: pointer; }
 
+        /* Celebrations */
         .card-celebration { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: none; flex-direction: column; justify-content: center; align-items: center; z-index: 200; text-align: center; border-radius: 12px; pointer-events: none; padding: 20px; box-sizing: border-box; }
         .kid-theme { background: rgba(44, 62, 80, 0.98); color: white; border: 4px solid var(--accent); }
         .teen-theme { background: rgba(52, 73, 94, 0.98); color: #ecf0f1; border: 4px solid var(--warning); }
@@ -66,13 +70,15 @@
 
         @keyframes bounceIn { 0% { transform: scale(0.3); opacity: 0; } 50% { transform: scale(1.05); } 100% { transform: scale(1); opacity: 1; } }
 
-        /* Admin Components */
+        /* Admin Layouts */
         .admin-form-box { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; background: #f8f9fa; padding: 20px; border-radius: 12px; border: 1px solid #eee; margin-bottom: 20px; }
         .form-group { display: flex; flex-direction: column; gap: 8px; }
         label { font-size: 0.85rem; font-weight: 800; color: var(--secondary); text-transform: uppercase; }
         input, select, textarea { padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-family: inherit; font-size: 14px; }
-        .btn-primary { background: var(--accent); color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: bold; }
+        .btn-primary { background: var(--accent); color: white; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer; font-weight: bold; }
         .btn-danger { background: white; color: var(--danger); border: 1px solid var(--danger); padding: 6px 12px; border-radius: 6px; cursor: pointer; }
+        .btn-edit { background: white; color: var(--accent); border: 1px solid var(--accent); padding: 6px 12px; border-radius: 6px; cursor: pointer; }
+        .btn-adjust { background: #eee; border: 1px solid #ccc; padding: 2px 8px; border-radius: 4px; cursor: pointer; }
         .btn-toggle { background: #eee; border: 1px solid #ccc; padding: 5px 12px; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: bold; }
         .btn-toggle.active { background: var(--accent); color: white; border-color: var(--accent); }
         
@@ -80,6 +86,8 @@
         table { width: 100%; border-collapse: collapse; margin-top: 10px; }
         th { text-align: left; padding: 15px; border-bottom: 2px solid #eee; background: #fafafa; font-size: 0.8rem; color: #888; }
         td { padding: 15px; border-bottom: 1px solid #eee; vertical-align: middle; }
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); display: none; justify-content: center; align-items: center; z-index: 300; }
+        .modal-content { background: white; width: 90%; max-width: 650px; padding: 30px; border-radius: 15px; max-height: 90vh; overflow-y: auto; }
         
         .calendar-container { width: 100%; height: 650px; border-radius: 10px; overflow: hidden; margin-top: 15px; border: 1px solid #eee; display: flex; align-items: center; justify-content: center; background: #f9f9f9; }
         .calendar-container iframe { width: 100% !important; height: 100% !important; border: 0; }
@@ -152,14 +160,13 @@
             
             <div style="background: #fdfefe; border: 1px dashed var(--accent); padding: 20px; border-radius: 12px; margin-top: 20px;">
                 <h3>🛡️ Private Calendar Setup</h3>
-                <input type="text" id="cal-url-input" placeholder="Paste Google Calendar Embed URL..." style="width:100%">
+                <input type="text" id="cal-url-input" placeholder="Paste Embed URL..." style="width:100%">
                 <button class="btn-primary" style="margin-top:10px" onclick="saveCalendarUrl()">Save Calendar</button>
             </div>
 
             <div style="background: #f4f7f9; padding: 20px; border-radius: 12px; margin-top: 20px;">
-                <strong>Data Management:</strong><br><br>
-                <button class="btn-primary" style="background:var(--success); margin-bottom: 5px;" onclick="exportData()">📤 Export Backup</button>
-                <button class="btn-primary" style="background:var(--secondary); margin-bottom: 5px;" onclick="document.getElementById('importFile').click()">📥 Import Backup</button>
+                <button class="btn-primary" style="background:var(--success)" onclick="exportData()">📤 Export Data</button>
+                <button class="btn-primary" style="background:var(--secondary)" onclick="document.getElementById('importFile').click()">📥 Import Data</button>
                 <input type="file" id="importFile" class="hidden" accept=".json" onchange="importData(event)">
                 <hr style="border:0; border-top:1px solid #ddd; margin:15px 0;">
                 <button onclick="nuclearReset()" style="color:var(--danger); border:none; background:none; cursor:pointer; font-size:12px;">☢️ Nuclear Reset</button>
@@ -193,14 +200,25 @@
     </section>
 </main>
 
+<div id="edit-member-modal" class="modal-overlay"><div class="modal-content"><h2>Edit Member</h2><div class="admin-form-box"><div class="form-group"><label>Name</label><input type="text" id="edit-m-name"></div><div class="form-group"><label>Role</label><select id="edit-m-role"><option value="kid">Kid</option><option value="teen">Teen</option><option value="adult">Adult</option></select></div></div><button class="btn-primary" id="save-member-btn">Save</button><button class="btn-danger" onclick="closeModal('edit-member-modal')">Cancel</button></div></div>
+<div id="edit-chore-modal" class="modal-overlay"><div class="modal-content"><h2>Edit Chore</h2><div class="admin-form-box">
+    <div class="form-group"><label>Name</label><input type="text" id="edit-c-name"></div><div class="form-group"><label>Assignee</label><select id="edit-c-assignee"></select></div>
+    <div class="form-group" style="grid-column: span 2;"><label>Instructions</label><textarea id="edit-c-desc"></textarea></div>
+    <div class="form-group"><label>Goal</label><input type="number" id="edit-c-goal"></div><div class="form-group"><label>Prize</label><input type="text" id="edit-c-prize"></div>
+    <div class="form-group"><label>Logic</label><select id="edit-c-type" onchange="togglePointForm('edit-c-type','edit-c-static','edit-c-dynamic')"><option value="static">Static</option><option value="dynamic">Dynamic</option></select></div>
+    <div id="edit-c-static" class="form-group"><label>Points</label><input type="number" id="edit-c-points"></div>
+    <div id="edit-c-dynamic" class="hidden" style="display:flex; gap:5px;"><div class="form-group"><label>Max</label><input type="number" id="edit-c-max"></div><div class="form-group"><label>Min</label><input type="number" id="edit-c-min"></div></div>
+</div><button class="btn-primary" id="save-chore-btn">Save</button><button class="btn-danger" onclick="closeModal('edit-chore-modal')">Cancel</button></div></div>
+
 <script>
     const ADMIN_PASSCODE = "1234";
-    const kidMessages = ["BOOM! 🚀", "YOU WIN! 🏆", "LEGEND! 🔥"];
-    const teenMessages = ["Impressive. 🙄", "Functional human. 👏"];
-    const quotes = ["Hub Active.", "Work hard, play hard."];
+    const kidMessages = ["BOOM! 🚀", "YOU WIN! 🏆", "LEGEND! 🔥", "BOOYAH! 😎"];
+    const teenMessages = ["Impressive. 🙄", "One closer to freedom. 📱", "Functional human. 👏"];
+    const quotes = ["Hub Active.", "Work hard, play hard.", "Wifi is a privilege."];
 
     let isUnlocked = false; 
     let sidebarTimer;
+    let editTargetId = null;
     let state = JSON.parse(localStorage.getItem('familyHubData')) || { 
         members: [], chores: [], approvals: [], 
         lastResetDate: new Date().toDateString(), 
@@ -210,10 +228,8 @@
     const currencyMap = { kid: "tokens", teen: "minutes", adult: "" };
 
     function save() { localStorage.setItem('familyHubData', JSON.stringify(state)); renderAll(); }
-
-    function nuclearReset() {
-        if(confirm("Permanently delete EVERYTHING?")) { localStorage.removeItem('familyHubData'); location.reload(); }
-    }
+    function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+    function nuclearReset() { if(confirm("Permanently delete EVERYTHING?")) { localStorage.removeItem('familyHubData'); location.reload(); } }
 
     function updateClock() {
         const now = new Date();
@@ -226,28 +242,24 @@
     }
     setInterval(updateClock, 1000); updateClock();
 
-    // CALENDAR TOGGLE LOGIC
+    // CALENDAR Logic
     function saveCalendarUrl() {
         const url = document.getElementById('cal-url-input').value.trim();
         if(url.includes('calendar.google.com')) { state.calendarUrl = url; save(); location.reload(); }
         else { alert("Invalid URL."); }
     }
-
     function switchCalendarView(mode) {
         state.currentCalMode = mode;
-        const url = state.calendarUrl;
-        if (!url) return;
-
-        const newUrl = url.replace(/mode=[A-Z]+/, "mode=" + mode);
+        if (!state.calendarUrl) return;
+        const newUrl = state.calendarUrl.replace(/mode=[A-Z]+/, "mode=" + mode);
         document.getElementById('calendar-slot').innerHTML = `<iframe src="${newUrl}"></iframe>`;
-        
         document.getElementById('calendar-title').innerText = mode === "WEEK" ? "📅 Weekly Schedule" : "🗓️ Monthly Overview";
         document.getElementById('btn-week').classList.toggle('active', mode === "WEEK");
         document.getElementById('btn-month').classList.toggle('active', mode === "MONTH");
-        
         save();
     }
 
+    // SECURITY & UI
     function toggleAdminLock() {
         if (isUnlocked) {
             isUnlocked = false; document.getElementById('admin-menu').style.display = 'none';
@@ -258,7 +270,6 @@
             document.getElementById('unlock-btn').innerHTML = "<span>🔓 Admin Mode</span>";
         }
     }
-
     function toggleSidebar(force = false) {
         const sb = document.getElementById('sidebar'); const main = document.getElementById('main-content');
         if (force) { sb.classList.add('collapsed'); main.classList.add('expanded'); }
@@ -266,7 +277,6 @@
     }
     function resetSidebarTimer() { clearTimeout(sidebarTimer); sidebarTimer = setTimeout(() => { if (!isUnlocked && window.innerWidth > 768) toggleSidebar(true); }, 8000); }
     function handleAdminNav(id) { if (isUnlocked) showSection(id); else toggleAdminLock(); }
-    
     function showSection(id) {
         document.querySelectorAll('.content-section').forEach(s => s.classList.add('hidden'));
         document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
@@ -276,12 +286,12 @@
         renderAll();
     }
 
+    // CHORE LOGIC
     function calculateVal(c) {
         if(c.type === 'static') return c.points || 5;
         const yest = new Date(Date.now() - 86400000).toDateString();
         return (c.lastCompleted === yest) ? (c.dynamic?.min || 2) : (c.dynamic?.max || 10);
     }
-
     function toggleChoreCompletion(choreId, memberId) {
         const chore = state.chores.find(c => c.id === choreId);
         const member = state.members.find(m => m.id === memberId);
@@ -305,7 +315,6 @@
             setTimeout(() => { overlay.style.display = 'none'; save(); }, 5000);
         } else { save(); }
     }
-
     function approveChore(appId) {
         const app = state.approvals.find(a => a.id === appId);
         const mem = state.members.find(m => m.id === app.memberId);
@@ -313,15 +322,33 @@
         if(mem) mem.points += app.points; if(chore) chore.lastCompleted = app.date;
         state.approvals = state.approvals.filter(a => a.id !== appId); save();
     }
-    function resetAllChoreChecks() { if(confirm("Reset progress?")) { state.chores.forEach(c => { c.lastCompleted = null; c.timesCompleted = 0; }); state.approvals = []; save(); } }
+
+    // MEMBER & CHORE MANAGEMENT
     function addMember() { const n = document.getElementById('m-name'); if(!n.value) return; state.members.push({id:Date.now(), name:n.value, role:document.getElementById('m-role').value, points:0}); n.value=''; save(); }
+    function openEditMember(id) { editTargetId = id; const m = state.members.find(x => x.id === id); document.getElementById('edit-m-name').value = m.name; document.getElementById('edit-m-role').value = m.role; document.getElementById('edit-member-modal').style.display = 'flex'; }
+    document.getElementById('save-member-btn').onclick = () => { const m = state.members.find(x => x.id === editTargetId); m.name = document.getElementById('edit-m-name').value; m.role = document.getElementById('edit-m-role').value; save(); closeModal('edit-member-modal'); };
     function adjustPoints(id, current) { const m = state.members.find(x => x.id === id); const val = parseInt(prompt(`Adjust ${m.name}?`, -current)); if(!isNaN(val)) { m.points += val; save(); } }
-    function updateAssigneeDropdowns() { const html = state.members.map(m => `<option value="${m.id}">${m.name}</option>`).join(''); document.getElementById('c-assignee').innerHTML = html; }
+    
+    function updateAssigneeDropdowns() { const html = state.members.map(m => `<option value="${m.id}">${m.name}</option>`).join(''); document.getElementById('c-assignee').innerHTML = html; document.getElementById('edit-c-assignee').innerHTML = html;}
     function addChore() { const n = document.getElementById('c-name'); if(!n.value) return; state.chores.push({ id: Date.now(), name: n.value, desc: document.getElementById('c-desc').value, assigneeId: parseInt(document.getElementById('c-assignee').value), lastCompleted: null, points: parseInt(document.getElementById('c-points').value), type: document.getElementById('c-type').value, dynamic: { max: parseInt(document.getElementById('c-max').value), min: parseInt(document.getElementById('c-min').value) }, goal: parseInt(document.getElementById('c-goal').value) || 0, prize: document.getElementById('c-prize').value || "", timesCompleted: 0 }); n.value=''; save(); }
+    function openEditChore(id) {
+        editTargetId = id; const c = state.chores.find(x => x.id === id); updateAssigneeDropdowns();
+        document.getElementById('edit-c-name').value = c.name; document.getElementById('edit-c-desc').value = c.desc || ''; document.getElementById('edit-c-assignee').value = c.assigneeId; document.getElementById('edit-c-type').value = c.type; document.getElementById('edit-c-points').value = c.points; document.getElementById('edit-c-goal').value = c.goal || 0; document.getElementById('edit-c-prize').value = c.prize || "";
+        if(c.dynamic) { document.getElementById('edit-c-max').value = c.dynamic.max; document.getElementById('edit-c-min').value = c.dynamic.min; }
+        togglePointForm('edit-c-type','edit-c-static','edit-c-dynamic'); document.getElementById('edit-chore-modal').style.display = 'flex';
+    }
+    document.getElementById('save-chore-btn').onclick = () => {
+        const c = state.chores.find(x => x.id === editTargetId);
+        c.name = document.getElementById('edit-c-name').value; c.desc = document.getElementById('edit-c-desc').value; c.assigneeId = parseInt(document.getElementById('edit-c-assignee').value); c.type = document.getElementById('edit-c-type').value; c.points = parseInt(document.getElementById('edit-c-points').value); c.goal = parseInt(document.getElementById('edit-c-goal').value) || 0; c.prize = document.getElementById('edit-c-prize').value;
+        if(c.dynamic) { c.dynamic.max = parseInt(document.getElementById('edit-c-max').value); c.dynamic.min = parseInt(document.getElementById('edit-c-min').value); }
+        save(); closeModal('edit-chore-modal');
+    };
+
+    function resetAllChoreChecks() { if(confirm("Deep Reset progress?")) { state.chores.forEach(c => { c.lastCompleted = null; c.timesCompleted = 0; }); state.approvals = []; save(); } }
     function toggleAccordion(key) { state[key] = !state[key]; save(); }
     function togglePointForm(sel, sR, dR) { const t = document.getElementById(sel).value; document.getElementById(sR).classList.toggle('hidden', t !== 'static'); document.getElementById(dR).classList.toggle('hidden', t !== 'dynamic'); }
-    function exportData() { const blob = new Blob([JSON.stringify(state)], {type:"application/json"}); const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `HubBackup.json`; a.click(); }
-    function importData(e) { const r = new FileReader(); r.onload = (x) => { state = JSON.parse(x.target.result); save(); location.reload(); }; r.readAsText(e.target.files[0]); }
+    function exportData() { const blob = new Blob([JSON.stringify(state)], {type:"application/json"}); const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `FamilyHub_Backup.json`; a.click(); }
+    function importData(e) { const r = new FileReader(); r.onload = (x) => { try { state = JSON.parse(x.target.result); save(); location.reload(); } catch(err) { alert("Invalid File"); } }; r.readAsText(e.target.files[0]); }
 
     function renderAll() {
         const today = new Date().toDateString();
@@ -329,7 +356,7 @@
         document.getElementById('approval-badge').classList.toggle('hidden', state.approvals.length === 0);
         document.getElementById('quote-box').innerText = `"${quotes[new Date().getDate() % quotes.length]}"`;
         
-        // Chores
+        // CHORES DASHBOARD
         const dash = document.getElementById('chores-body');
         dash.innerHTML = state.members.map(m => {
             const chores = state.chores.filter(c => c.assigneeId === m.id);
@@ -338,17 +365,21 @@
                 <div class="card-celebration" id="celebrate-${m.id}"><div class="card-celebration-msg"></div></div>
                 <div class="user-header"><h3>${m.name}</h3><span class="currency-pill">${m.points} ${cur}</span></div>
                 <div class="chore-list">
-                ${chores.length===0?'<p style="padding:15px;">No chores assigned.</p>':chores.map(c => {
+                ${chores.length===0?'<p style="padding:15px;">No chores.</p>':chores.map(c => {
                     const isP = state.approvals.some(a => a.choreId === c.id); const isD = c.lastCompleted === today;
                     let progHtml = "";
-                    if(c.goal > 0) { const tc = (c.timesCompleted || 0); const pct = Math.min(100, (tc / c.goal) * 100); progHtml = `<div class="milestone-text">${tc}/${c.goal} to ${c.prize}</div><div class="progress-container"><div class="progress-fill" style="width:${pct}%"></div></div>`; }
+                    if(c.goal > 0) { 
+                        const tc = (c.timesCompleted || 0); 
+                        const pct = Math.min(100, (tc / c.goal) * 100); 
+                        progHtml = `<div class="milestone-text">${tc}/${c.goal} to ${c.prize}</div><div class="progress-container"><div class="progress-fill" style="width:${pct}%"></div></div>`; 
+                    }
                     return `<div class="chore-item ${isD?'completed':(isP?'pending':'')}"><input type="checkbox" ${isD||isP?'checked disabled':''} onchange="toggleChoreCompletion(${c.id}, ${m.id})"><div class="chore-info"><strong>${c.name}</strong><small>${c.desc||''}</small>${progHtml}</div><div class="chore-val">${m.role!=='adult'?calculateVal(c):''}</div></div>`;
                 }).join('')}</div></div>`;
         }).join('');
         
-        // Members & Chores & Approvals
-        document.getElementById('member-list-body').innerHTML = state.members.map(m => `<tr><td><strong>${m.name}</strong></td><td>${m.role}</td><td>${m.points} <button class="btn-adjust" onclick="adjustPoints(${m.id}, ${m.points})">±</button></td><td><button class="btn-danger" onclick="state.members=state.members.filter(x=>x.id!==${m.id}); save();">Del</button></td></tr>`).join('');
-        document.getElementById('chore-list-body').innerHTML = state.chores.map(c => `<tr><td><strong>${c.name}</strong></td><td>${c.goal || '--'}</td><td>${state.members.find(x=>x.id===c.assigneeId)?.name}</td><td><button class="btn-danger" onclick="state.chores=state.chores.filter(x=>x.id!==${c.id}); save();">Del</button></td></tr>`).join('');
+        // ADMIN TABLES (RE-ADDED EDIT BUTTONS)
+        document.getElementById('member-list-body').innerHTML = state.members.map(m => `<tr><td><strong>${m.name}</strong></td><td>${m.role}</td><td>${m.points} <button class="btn-adjust" onclick="adjustPoints(${m.id}, ${m.points})">±</button></td><td><button class="btn-edit" onclick="openEditMember(${m.id})" style="margin-right:5px">Edit</button><button class="btn-danger" onclick="state.members=state.members.filter(x=>x.id!==${m.id}); save();">Del</button></td></tr>`).join('');
+        document.getElementById('chore-list-body').innerHTML = state.chores.map(c => `<tr><td><strong>${c.name}</strong></td><td>${c.goal || '--'}</td><td>${state.members.find(x=>x.id===c.assigneeId)?.name}</td><td><button class="btn-edit" onclick="openEditChore(${c.id})" style="margin-right:5px">Edit</button><button class="btn-danger" onclick="state.chores=state.chores.filter(x=>x.id!==${c.id}); save();">Del</button></td></tr>`).join('');
         document.getElementById('approval-list-body').innerHTML = state.approvals.map(a => `<tr><td>${state.members.find(m=>m.id===a.memberId)?.name}</td><td>${a.choreName}</td><td>${a.points}</td><td><button class="btn-primary" style="background:var(--success); padding:5px 10px;" onclick="approveChore(${a.id})">Approve</button> <button class="btn-danger" style="padding:5px 10px;" onclick="rejectChore(${a.id})">Reject</button></td></tr>`).join('');
         
         // UI Sync
@@ -357,14 +388,9 @@
         document.getElementById('cal-controls').classList.toggle('hidden', !state.calVisible);
         document.getElementById('chores-icon').style.transform = state.choresVisible ? 'rotate(180deg)' : 'rotate(0deg)';
         document.getElementById('cal-icon').style.transform = state.calVisible ? 'rotate(180deg)' : 'rotate(0deg)';
-
-        // Initial Calendar Load
-        if(state.calVisible && state.calendarUrl && !document.querySelector('#calendar-slot iframe')) {
-            switchCalendarView(state.currentCalMode || 'WEEK');
-        }
+        if(state.calVisible && state.calendarUrl && !document.querySelector('#calendar-slot iframe')) switchCalendarView(state.currentCalMode || 'WEEK');
     }
     
-    // Initial Load setup
     if(state.calendarUrl) document.getElementById('cal-url-input').value = state.calendarUrl;
     renderAll(); showSection('dashboard');
 </script>
