@@ -7,7 +7,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>Family Hub</title>
     
-    <link rel="manifest" href='data:application/manifest+json,{"name":"Family Hub","short_name":"FamilyHub","start_url":".","display":"standalone","background_color":"#2c3e50","theme_color":"#2c3e50","icons":[{"src":"https://cdn-icons-png.flaticon.com/512/609/609803.png","sizes":"512x512","type":"image/png"}]}'>
+    <link rel="manifest" href='data:application/manifest+json,{"name":"Family Hub","short_name":"FamilyHub","start_url":"/family-hub/","display":"standalone","background_color":"#2c3e50","theme_color":"#2c3e50","icons":[{"src":"https://cdn-icons-png.flaticon.com/512/609/609803.png","sizes":"512x512","type":"image/png","purpose":"any maskable"}]}'>
 
     <style>
         :root { 
@@ -18,6 +18,7 @@
         
         body { font-family: 'Segoe UI', sans-serif; margin: 0; display: flex; background: #f0f2f5; color: var(--text-main); transition: 0.3s; overflow-x: hidden; -webkit-tap-highlight-color: transparent; }
         
+        /* Sidebar */
         nav { width: 240px; background: var(--primary); color: white; height: 100vh; position: fixed; z-index: 100; transition: 0.3s; overflow-x: hidden; }
         nav.collapsed { width: 0; }
         nav h2 { padding: 25px 20px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.1); margin: 0; white-space: nowrap; font-size: 1.1rem; }
@@ -42,8 +43,8 @@
 
         .card { background: white; padding: 25px; border-radius: 15px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); margin-bottom: 20px; position: relative; }
         .header-row { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
-        #quote-box { font-style: italic; color: var(--accent); margin-bottom: 25px; font-size: 1.1rem; border-left: 4px solid var(--accent); padding-left: 15px; min-height: 1.2em; }
-
+        #clock-box { text-align: right; }
+        
         .user-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; padding-top: 15px; }
         .user-card { background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 5px 15px rgba(0,0,0,0.05); border-top: 5px solid var(--accent); position: relative; display: flex; flex-direction: column; min-height: 150px; }
         .user-header { padding: 15px 20px; background: #fcfcfc; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #f0f0f0; }
@@ -52,13 +53,12 @@
         .chore-item { display: flex; align-items: flex-start; gap: 15px; padding: 18px 20px; border-bottom: 1px solid #f0f0f0; }
         .chore-item.completed { background: #f8fff9; opacity: 0.7; }
         .chore-item.pending { background: #fffbe6; }
-        .chore-info { flex: 1; display: flex; flex-direction: column; gap: 4px; }
         
-        .progress-container { width: 100%; background: #eee; border-radius: 10px; height: 8px; margin-top: 10px; overflow: hidden; border: 1px solid #e0e0e0; }
+        .progress-container { width: 100%; background: #eee; border-radius: 10px; height: 8px; margin-top: 8px; overflow: hidden; border: 1px solid #e0e0e0; }
         .progress-fill { background: linear-gradient(90deg, var(--accent), var(--success)); height: 100%; transition: 0.5s ease-out; }
         .milestone-text { font-size: 11px; color: var(--text-muted); font-weight: 700; margin-top: 4px; text-transform: uppercase; }
 
-        input[type="checkbox"] { width: 28px; height: 28px; cursor: pointer; }
+        input[type="checkbox"] { width: 26px; height: 26px; cursor: pointer; }
 
         .card-celebration { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: none; flex-direction: column; justify-content: center; align-items: center; z-index: 200; text-align: center; border-radius: 12px; pointer-events: none; padding: 20px; box-sizing: border-box; }
         .kid-theme { background: rgba(44, 62, 80, 0.98); color: white; border: 4px solid var(--accent); }
@@ -66,26 +66,24 @@
         .card-celebration-msg { font-size: 2rem; font-weight: 900; animation: bounceIn 0.6s; text-shadow: 0 0 10px rgba(0,0,0,0.5); line-height: 1.1; }
 
         @keyframes bounceIn { 0% { transform: scale(0.3); opacity: 0; } 50% { transform: scale(1.05); } 100% { transform: scale(1); opacity: 1; } }
-        @keyframes slideDown { from { transform: translateY(-20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 
         /* Admin Components */
-        .admin-form-box { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; background: #f8f9fa; padding: 20px; border-radius: 12px; border: 1px solid #eee; margin-bottom: 20px; }
+        .admin-form-box { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; background: #f8f9fa; padding: 20px; border-radius: 12px; border: 1px solid #eee; margin-bottom: 20px; }
         .form-group { display: flex; flex-direction: column; gap: 8px; }
         label { font-size: 0.85rem; font-weight: 800; color: var(--secondary); text-transform: uppercase; }
         input, select, textarea { padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-family: inherit; font-size: 14px; }
         .btn-primary { background: var(--accent); color: white; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer; font-weight: bold; }
         .btn-danger { background: white; color: var(--danger); border: 1px solid var(--danger); padding: 6px 12px; border-radius: 6px; cursor: pointer; }
-        .btn-edit { background: white; color: var(--accent); border: 1px solid var(--accent); padding: 6px 12px; border-radius: 6px; cursor: pointer; }
-        .btn-adjust { background: #eee; border: 1px solid #ccc; padding: 2px 8px; border-radius: 4px; cursor: pointer; }
+        .btn-nuclear { background: var(--danger); color: white; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer; font-weight: bold; width: 100%; margin-top: 20px; border: 2px solid #c0392b; transition: 0.2s; }
+        .btn-nuclear:hover { background: #c0392b; transform: scale(0.98); }
+        
         .hidden { display: none !important; }
         table { width: 100%; border-collapse: collapse; margin-top: 10px; }
         th { text-align: left; padding: 15px; border-bottom: 2px solid #eee; background: #fafafa; font-size: 0.8rem; color: #888; }
         td { padding: 15px; border-bottom: 1px solid #eee; vertical-align: middle; }
         
-        /* Calendar Logic */
-        .calendar-container { width: 100%; height: 650px; border-radius: 10px; overflow: hidden; margin-top: 15px; border: 1px solid #eee; background: #f9f9f9; display: flex; align-items: center; justify-content: center; text-align: center; }
+        .calendar-container { width: 100%; height: 650px; border-radius: 10px; overflow: hidden; margin-top: 15px; border: 1px solid #eee; display: flex; align-items: center; justify-content: center; background: #f9f9f9; }
         .calendar-container iframe { width: 100% !important; height: 100% !important; border: 0; }
-        .setup-prompt { color: #888; padding: 40px; font-style: italic; }
     </style>
 </head>
 <body onmousemove="resetSidebarTimer()" ontouchstart="resetSidebarTimer()">
@@ -110,12 +108,12 @@
     <section id="dashboard" class="content-section">
         <div class="header-row">
             <h1>Family Hub</h1>
-            <div id="clock-box" style="text-align:right">
+            <div id="clock-box">
                 <div id="current-date" style="font-weight:bold"></div>
                 <div id="current-time"></div>
             </div>
         </div>
-        <div id="quote-box"></div>
+        <div id="quote-box" style="font-style:italic; color:var(--accent); margin-bottom:25px; border-left:4px solid var(--accent); padding-left:15px; min-height:1.2em;"></div>
         
         <div class="card">
             <div id="teen-toast-area" style="width:100%; display:none; background:#34495e; color:#fff; padding:15px; border-radius:10px; margin-bottom:20px; text-align:center; font-weight:600; border-left:10px solid var(--warning); animation:slideDown 0.4s;"></div>
@@ -131,18 +129,7 @@
             </div>
             <div id="week-body" class="hidden">
                 <div class="calendar-container" id="week-calendar-slot">
-                    <div class="setup-prompt">Setup private calendar link in Admin Settings</div>
-                </div>
-            </div>
-        </div>
-
-        <div class="card">
-            <div class="section-header" style="display:flex; justify-content:space-between; cursor:pointer;" onclick="toggleAccordion('monthVisible')">
-                <h3 style="margin:0">🗓️ Monthly Master Overview</h3><span id="month-icon">▼</span>
-            </div>
-            <div id="month-body" class="hidden">
-                <div class="calendar-container" id="month-calendar-slot">
-                    <div class="setup-prompt">Setup private calendar link in Admin Settings</div>
+                    <div style="color:#888; font-style:italic;">Setup calendar link in Admin Settings</div>
                 </div>
             </div>
         </div>
@@ -150,7 +137,7 @@
 
     <section id="admin-members" class="content-section hidden">
         <div class="card">
-            <h1>Manage Family & Privacy</h1>
+            <h1>Manage Family</h1>
             <div class="admin-form-box">
                 <div class="form-group"><label>Full Name</label><input type="text" id="m-name"></div>
                 <div class="form-group"><label>Role</label><select id="m-role"><option value="kid">Kid</option><option value="teen">Teen</option><option value="adult">Adult</option></select></div>
@@ -160,19 +147,18 @@
             
             <div style="background: #fdfefe; border: 1px dashed var(--accent); padding: 20px; border-radius: 12px; margin-top: 20px;">
                 <h3>🛡️ Private Calendar Setup</h3>
-                <p style="font-size: 13px; color: #666;">Paste the <strong>Embed Link</strong> from Google Calendar (Settings > Integrate Calendar > Embed Code src). This stays private to this device.</p>
-                <div class="form-group">
-                    <label>Master Calendar URL</label>
-                    <input type="text" id="cal-url-input" placeholder="https://calendar.google.com/calendar/embed?..." style="width:100%">
-                    <button class="btn-primary" style="margin-top:10px" onclick="saveCalendarUrl()">Save Calendar Links</button>
-                </div>
+                <input type="text" id="cal-url-input" placeholder="Paste Embed URL here..." style="width:100%">
+                <button class="btn-primary" style="margin-top:10px" onclick="saveCalendarUrl()">Save Calendar</button>
             </div>
 
             <div style="background: #f4f7f9; padding: 20px; border-radius: 12px; margin-top: 20px;">
-                <strong>Sync Hub Data:</strong><br><br>
-                <button class="btn-primary" style="background:var(--success)" onclick="exportData()">📤 Export Backup (.json)</button>
-                <button class="btn-primary" style="background:var(--secondary)" onclick="document.getElementById('importFile').click()">📥 Import Backup</button>
+                <strong>Data Management:</strong><br><br>
+                <button class="btn-primary" style="background:var(--success); margin-bottom: 5px;" onclick="exportData()">📤 Export Backup (.json)</button>
+                <button class="btn-primary" style="background:var(--secondary); margin-bottom: 5px;" onclick="document.getElementById('importFile').click()">📥 Import Backup</button>
                 <input type="file" id="importFile" class="hidden" accept=".json" onchange="importData(event)">
+                
+                <hr style="border:0; border-top:1px solid #ddd; margin:15px 0;">
+                <button class="btn-nuclear" onclick="nuclearReset()">☢️ Nuclear Reset: Wipe All App Data</button>
             </div>
         </div>
     </section>
@@ -193,7 +179,6 @@
             <button class="btn-primary" onclick="addChore()">Save Chore</button>
         </div>
         <div class="card">
-            <button class="btn-danger" onclick="resetAllChoreChecks()" style="margin-bottom:15px;">🧪 Reset Progress + Goals</button>
             <table><thead><tr><th>Chore</th><th>Goal</th><th>Assigned</th><th>Action</th></tr></thead><tbody id="chore-list-body"></tbody></table>
         </div>
     </section>
@@ -206,19 +191,28 @@
 <script>
     const ADMIN_PASSCODE = "1234";
     const kidMessages = ["BOOM! 🚀", "YOU WIN! 🏆", "LEGEND! 🔥"];
-    const teenMessages = ["Impressive. 🙄", "One closer. 📱", "Functional human. 👏"];
+    const teenMessages = ["Impressive. 🙄", "One closer. 📱", "Functional. 👏"];
+    const quotes = ["Hub Active.", "Speedrun starts now.", "Work hard, play hard."];
 
     let isUnlocked = false; 
     let sidebarTimer;
     let state = JSON.parse(localStorage.getItem('familyHubData')) || { 
         members: [], chores: [], approvals: [], 
         lastResetDate: new Date().toDateString(), 
-        choresVisible: true, weekVisible: false, monthVisible: false,
-        calendarUrl: "" 
+        choresVisible: true, weekVisible: false, calendarUrl: "" 
     };
     const currencyMap = { kid: "tokens", teen: "minutes", adult: "" };
 
     function save() { localStorage.setItem('familyHubData', JSON.stringify(state)); renderAll(); }
+
+    function nuclearReset() {
+        if(confirm("DANGER: This will permanently delete EVERY setting, member, and chore recorded in this app.")) {
+            if(confirm("LAST WARNING: Are you absolutely sure?")) {
+                localStorage.removeItem('familyHubData');
+                location.reload();
+            }
+        }
+    }
 
     function updateClock() {
         const now = new Date();
@@ -231,32 +225,18 @@
     }
     setInterval(updateClock, 1000); updateClock();
 
-    // CALENDAR PRIVACY LOGIC
     function saveCalendarUrl() {
         const url = document.getElementById('cal-url-input').value.trim();
-        if(url.includes('calendar.google.com')) {
-            state.calendarUrl = url;
-            alert("Calendar link saved privately to this device.");
-            save();
-            location.reload();
-        } else {
-            alert("Please enter a valid Google Calendar Embed URL.");
-        }
+        if(url.includes('calendar.google.com')) { state.calendarUrl = url; save(); location.reload(); }
+        else { alert("Invalid URL."); }
     }
 
     function loadCalendars() {
-        if (!state.calendarUrl) return;
-        
-        // Setup Weekly View (force mode=WEEK)
-        const weekUrl = state.calendarUrl.replace(/mode=[A-Z]+/, "mode=WEEK");
-        document.getElementById('week-calendar-slot').innerHTML = `<iframe src="${weekUrl}"></iframe>`;
-        
-        // Setup Monthly View (force mode=MONTH)
-        const monthUrl = state.calendarUrl.replace(/mode=[A-Z]+/, "mode=MONTH");
-        document.getElementById('month-calendar-slot').innerHTML = `<iframe src="${monthUrl}"></iframe>`;
-        
-        // Pre-fill input in admin
-        document.getElementById('cal-url-input').value = state.calendarUrl;
+        if (state.calendarUrl && document.getElementById('week-calendar-slot')) {
+            const weekUrl = state.calendarUrl.replace(/mode=[A-Z]+/, "mode=WEEK");
+            document.getElementById('week-calendar-slot').innerHTML = `<iframe src="${weekUrl}"></iframe>`;
+            document.getElementById('cal-url-input').value = state.calendarUrl;
+        }
     }
 
     function toggleAdminLock() {
@@ -304,10 +284,8 @@
                 overlay.className = "card-celebration kid-theme";
                 msg = kidMessages[Math.floor(Math.random()*kidMessages.length)];
                 const count = (chore.timesCompleted || 0) + 1;
-                if (chore.goal > 0 && count >= chore.goal) {
-                    msg = `PRIZE! 🎁<br><small>${chore.prize}</small>`;
-                    chore.timesCompleted = 0;
-                } else if (chore.goal > 0) { chore.timesCompleted = count; }
+                if (chore.goal > 0 && count >= chore.goal) { msg = `PRIZE! 🎁<br><small>${chore.prize}</small>`; chore.timesCompleted = 0; }
+                else if (chore.goal > 0) { chore.timesCompleted = count; }
             } else {
                 overlay.className = "card-celebration teen-theme";
                 msg = teenMessages[Math.floor(Math.random()*teenMessages.length)];
@@ -325,7 +303,7 @@
         if(mem) mem.points += app.points; if(chore) chore.lastCompleted = app.date;
         state.approvals = state.approvals.filter(a => a.id !== appId); save();
     }
-    function resetAllChoreChecks() { if(confirm("Deep Reset?")) { state.chores.forEach(c => { c.lastCompleted = null; c.timesCompleted = 0; }); state.approvals = []; save(); } }
+    function resetAllChoreChecks() { if(confirm("Deep Reset Progress?")) { state.chores.forEach(c => { c.lastCompleted = null; c.timesCompleted = 0; }); state.approvals = []; save(); } }
     function addMember() { const n = document.getElementById('m-name'); if(!n.value) return; state.members.push({id:Date.now(), name:n.value, role:document.getElementById('m-role').value, points:0}); n.value=''; save(); }
     function adjustPoints(id, current) { const m = state.members.find(x => x.id === id); const val = parseInt(prompt(`Adjust ${m.name}?`, -current)); if(!isNaN(val)) { m.points += val; save(); } }
     function updateAssigneeDropdowns() { const html = state.members.map(m => `<option value="${m.id}">${m.name}</option>`).join(''); document.getElementById('c-assignee').innerHTML = html; }
@@ -333,12 +311,13 @@
     function toggleAccordion(key) { state[key] = !state[key]; save(); }
     function togglePointForm(sel, sR, dR) { const t = document.getElementById(sel).value; document.getElementById(sR).classList.toggle('hidden', t !== 'static'); document.getElementById(dR).classList.toggle('hidden', t !== 'dynamic'); }
     function exportData() { const blob = new Blob([JSON.stringify(state)], {type:"application/json"}); const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `FamilyHub_Backup.json`; a.click(); }
-    function importData(e) { const r = new FileReader(); r.onload = (x) => { state = JSON.parse(x.target.result); save(); location.reload(); }; r.readAsText(e.target.files[0]); }
+    function importData(e) { const r = new FileReader(); r.onload = (x) => { try { state = JSON.parse(x.target.result); save(); location.reload(); } catch(err) { alert("Invalid File"); } }; r.readAsText(e.target.files[0]); }
 
     function renderAll() {
         const today = new Date().toDateString();
         document.getElementById('approval-badge').innerText = state.approvals.length;
         document.getElementById('approval-badge').classList.toggle('hidden', state.approvals.length === 0);
+        document.getElementById('quote-box').innerText = `"${quotes[new Date().getDate() % quotes.length]}"`;
         const dash = document.getElementById('chores-body');
         dash.innerHTML = state.members.map(m => {
             const chores = state.chores.filter(c => c.assigneeId === m.id);
@@ -359,7 +338,6 @@
         document.getElementById('approval-list-body').innerHTML = state.approvals.map(a => `<tr><td>${state.members.find(m=>m.id===a.memberId)?.name}</td><td>${a.choreName}</td><td>${a.points}</td><td><button class="btn-primary" style="background:var(--success); padding:5px 10px;" onclick="approveChore(${a.id})">Approve</button> <button class="btn-danger" style="padding:5px 10px;" onclick="rejectChore(${a.id})">Reject</button></td></tr>`).join('');
         document.getElementById('chores-body').classList.toggle('hidden', !state.choresVisible);
         document.getElementById('week-body').classList.toggle('hidden', !state.weekVisible);
-        document.getElementById('month-body').classList.toggle('hidden', !state.monthVisible);
     }
     loadCalendars(); renderAll(); showSection('dashboard');
 </script>
