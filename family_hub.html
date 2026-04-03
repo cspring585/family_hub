@@ -18,7 +18,6 @@
         
         body { font-family: 'Segoe UI', sans-serif; margin: 0; display: flex; background: #f0f2f5; color: var(--text-main); transition: 0.3s; overflow-x: hidden; -webkit-tap-highlight-color: transparent; }
         
-        /* Sidebar */
         nav { width: 240px; background: var(--primary); color: white; height: 100vh; position: fixed; z-index: 100; transition: 0.3s; overflow-x: hidden; }
         nav.collapsed { width: 0; }
         nav h2 { padding: 25px 20px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.1); margin: 0; white-space: nowrap; font-size: 1.1rem; }
@@ -42,9 +41,7 @@
         }
 
         .card { background: white; padding: 25px; border-radius: 15px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); margin-bottom: 20px; position: relative; }
-        .header-row { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
         
-        /* Dashboard Cards */
         .user-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 20px; padding-top: 15px; }
         .user-card { background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 5px 15px rgba(0,0,0,0.05); border-top: 5px solid var(--accent); position: relative; display: flex; flex-direction: column; min-height: 150px; }
         .user-header { padding: 15px 20px; background: #fcfcfc; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #f0f0f0; }
@@ -54,15 +51,13 @@
         .chore-item.completed { background: #f8fff9; opacity: 0.7; }
         .chore-item.pending { background: #fffbe6; }
         .chore-info { flex: 1; display: flex; flex-direction: column; gap: 4px; }
-        .chore-val { font-weight: 700; color: var(--accent); font-size: 13px; }
-
+        
         .progress-container { width: 100%; background: #eee; border-radius: 10px; height: 8px; margin-top: 10px; overflow: hidden; border: 1px solid #e0e0e0; }
         .progress-fill { background: linear-gradient(90deg, var(--accent), var(--success)); height: 100%; transition: 0.5s ease-out; }
         .milestone-text { font-size: 11px; color: var(--text-muted); font-weight: 700; margin-top: 4px; text-transform: uppercase; }
 
         input[type="checkbox"] { width: 28px; height: 28px; cursor: pointer; }
 
-        /* Celebrations */
         .card-celebration { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: none; flex-direction: column; justify-content: center; align-items: center; z-index: 200; text-align: center; border-radius: 12px; pointer-events: none; padding: 20px; box-sizing: border-box; }
         .kid-theme { background: rgba(44, 62, 80, 0.98); color: white; border: 4px solid var(--accent); }
         .teen-theme { background: rgba(52, 73, 94, 0.98); color: #ecf0f1; border: 4px solid var(--warning); }
@@ -70,7 +65,6 @@
 
         @keyframes bounceIn { 0% { transform: scale(0.3); opacity: 0; } 50% { transform: scale(1.05); } 100% { transform: scale(1); opacity: 1; } }
 
-        /* Admin Layouts */
         .admin-form-box { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; background: #f8f9fa; padding: 20px; border-radius: 12px; border: 1px solid #eee; margin-bottom: 20px; }
         .form-group { display: flex; flex-direction: column; gap: 8px; }
         label { font-size: 0.85rem; font-weight: 800; color: var(--secondary); text-transform: uppercase; }
@@ -78,14 +72,12 @@
         .btn-primary { background: var(--accent); color: white; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer; font-weight: bold; }
         .btn-danger { background: white; color: var(--danger); border: 1px solid var(--danger); padding: 6px 12px; border-radius: 6px; cursor: pointer; }
         .btn-edit { background: white; color: var(--accent); border: 1px solid var(--accent); padding: 6px 12px; border-radius: 6px; cursor: pointer; }
-        .btn-adjust { background: #eee; border: 1px solid #ccc; padding: 2px 8px; border-radius: 4px; cursor: pointer; }
-        .btn-toggle { background: #eee; border: 1px solid #ccc; padding: 5px 12px; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: bold; }
-        .btn-toggle.active { background: var(--accent); color: white; border-color: var(--accent); }
         
         .hidden { display: none !important; }
         table { width: 100%; border-collapse: collapse; margin-top: 10px; }
         th { text-align: left; padding: 15px; border-bottom: 2px solid #eee; background: #fafafa; font-size: 0.8rem; color: #888; }
         td { padding: 15px; border-bottom: 1px solid #eee; vertical-align: middle; }
+        
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); display: none; justify-content: center; align-items: center; z-index: 300; }
         .modal-content { background: white; width: 90%; max-width: 650px; padding: 30px; border-radius: 15px; max-height: 90vh; overflow-y: auto; }
         
@@ -113,7 +105,7 @@
 
 <main id="main-content">
     <section id="dashboard" class="content-section">
-        <div class="header-row">
+        <div class="header-row" style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:10px;">
             <h1>Family Hub</h1>
             <div id="clock-box" style="text-align:right">
                 <div id="current-date" style="font-weight:bold"></div>
@@ -131,14 +123,8 @@
         </div>
 
         <div class="card">
-            <div class="section-header" style="display:flex; justify-content:space-between; align-items:center;">
-                <div style="display:flex; align-items:center; gap:10px; cursor:pointer;" onclick="toggleAccordion('calVisible')">
-                    <h3 id="calendar-title" style="margin:0">📅 Weekly Schedule</h3><span id="cal-icon">▼</span>
-                </div>
-                <div id="cal-controls" class="hidden" style="display:flex; gap:5px;">
-                    <button id="btn-week" class="btn-toggle active" onclick="switchCalendarView('WEEK')">Week</button>
-                    <button id="btn-month" class="btn-toggle" onclick="switchCalendarView('MONTH')">Month</button>
-                </div>
+            <div class="section-header" style="display:flex; justify-content:space-between; align-items:center; cursor:pointer;" onclick="toggleAccordion('calVisible')">
+                <h3 id="calendar-title" style="margin:0">📅 Family Schedule</h3><span id="cal-icon">▼</span>
             </div>
             <div id="cal-body" class="hidden">
                 <div class="calendar-container" id="calendar-slot">
@@ -160,7 +146,7 @@
             
             <div style="background: #fdfefe; border: 1px dashed var(--accent); padding: 20px; border-radius: 12px; margin-top: 20px;">
                 <h3>🛡️ Private Calendar Setup</h3>
-                <input type="text" id="cal-url-input" placeholder="Paste Embed URL..." style="width:100%">
+                <input type="text" id="cal-url-input" placeholder="Paste Embed URL here..." style="width:100%">
                 <button class="btn-primary" style="margin-top:10px" onclick="saveCalendarUrl()">Save Calendar</button>
             </div>
 
@@ -223,7 +209,7 @@
         members: [], chores: [], approvals: [], 
         lastResetDate: new Date().toDateString(), 
         choresVisible: true, calVisible: false, 
-        calendarUrl: "", currentCalMode: "WEEK"
+        calendarUrl: ""
     };
     const currencyMap = { kid: "tokens", teen: "minutes", adult: "" };
 
@@ -242,24 +228,12 @@
     }
     setInterval(updateClock, 1000); updateClock();
 
-    // CALENDAR Logic
     function saveCalendarUrl() {
         const url = document.getElementById('cal-url-input').value.trim();
         if(url.includes('calendar.google.com')) { state.calendarUrl = url; save(); location.reload(); }
         else { alert("Invalid URL."); }
     }
-    function switchCalendarView(mode) {
-        state.currentCalMode = mode;
-        if (!state.calendarUrl) return;
-        const newUrl = state.calendarUrl.replace(/mode=[A-Z]+/, "mode=" + mode);
-        document.getElementById('calendar-slot').innerHTML = `<iframe src="${newUrl}"></iframe>`;
-        document.getElementById('calendar-title').innerText = mode === "WEEK" ? "📅 Weekly Schedule" : "🗓️ Monthly Overview";
-        document.getElementById('btn-week').classList.toggle('active', mode === "WEEK");
-        document.getElementById('btn-month').classList.toggle('active', mode === "MONTH");
-        save();
-    }
 
-    // SECURITY & UI
     function toggleAdminLock() {
         if (isUnlocked) {
             isUnlocked = false; document.getElementById('admin-menu').style.display = 'none';
@@ -270,6 +244,7 @@
             document.getElementById('unlock-btn').innerHTML = "<span>🔓 Admin Mode</span>";
         }
     }
+
     function toggleSidebar(force = false) {
         const sb = document.getElementById('sidebar'); const main = document.getElementById('main-content');
         if (force) { sb.classList.add('collapsed'); main.classList.add('expanded'); }
@@ -286,7 +261,6 @@
         renderAll();
     }
 
-    // CHORE LOGIC
     function calculateVal(c) {
         if(c.type === 'static') return c.points || 5;
         const yest = new Date(Date.now() - 86400000).toDateString();
@@ -297,8 +271,7 @@
         const member = state.members.find(m => m.id === memberId);
         state.approvals.push({ id: Date.now(), choreId, memberId, date: new Date().toDateString(), points: calculateVal(chore), choreName: chore.name });
         const overlay = document.getElementById(`celebrate-${memberId}`);
-        const msgBox = overlay.querySelector('.card-celebration-msg');
-        if (member.role === 'kid' || member.role === 'teen') {
+        if (overlay && (member.role === 'kid' || member.role === 'teen')) {
             let msg;
             if (member.role === 'kid') {
                 overlay.className = "card-celebration kid-theme";
@@ -311,7 +284,8 @@
                 msg = teenMessages[Math.floor(Math.random()*teenMessages.length)];
                 if (chore.goal > 0) chore.timesCompleted = (chore.timesCompleted || 0) + 1;
             }
-            msgBox.innerHTML = msg; overlay.style.display = 'flex';
+            overlay.querySelector('.card-celebration-msg').innerHTML = msg;
+            overlay.style.display = 'flex';
             setTimeout(() => { overlay.style.display = 'none'; save(); }, 5000);
         } else { save(); }
     }
@@ -323,28 +297,27 @@
         state.approvals = state.approvals.filter(a => a.id !== appId); save();
     }
 
-    // MEMBER & CHORE MANAGEMENT
     function addMember() { const n = document.getElementById('m-name'); if(!n.value) return; state.members.push({id:Date.now(), name:n.value, role:document.getElementById('m-role').value, points:0}); n.value=''; save(); }
     function openEditMember(id) { editTargetId = id; const m = state.members.find(x => x.id === id); document.getElementById('edit-m-name').value = m.name; document.getElementById('edit-m-role').value = m.role; document.getElementById('edit-member-modal').style.display = 'flex'; }
     document.getElementById('save-member-btn').onclick = () => { const m = state.members.find(x => x.id === editTargetId); m.name = document.getElementById('edit-m-name').value; m.role = document.getElementById('edit-m-role').value; save(); closeModal('edit-member-modal'); };
     function adjustPoints(id, current) { const m = state.members.find(x => x.id === id); const val = parseInt(prompt(`Adjust ${m.name}?`, -current)); if(!isNaN(val)) { m.points += val; save(); } }
     
     function updateAssigneeDropdowns() { const html = state.members.map(m => `<option value="${m.id}">${m.name}</option>`).join(''); document.getElementById('c-assignee').innerHTML = html; document.getElementById('edit-c-assignee').innerHTML = html;}
-    function addChore() { const n = document.getElementById('c-name'); if(!n.value) return; state.chores.push({ id: Date.now(), name: n.value, desc: document.getElementById('c-desc').value, assigneeId: parseInt(document.getElementById('c-assignee').value), lastCompleted: null, points: parseInt(document.getElementById('c-points').value), type: document.getElementById('c-type').value, dynamic: { max: parseInt(document.getElementById('c-max').value), min: parseInt(document.getElementById('c-min').value) }, goal: parseInt(document.getElementById('c-goal').value) || 0, prize: document.getElementById('c-prize').value || "", timesCompleted: 0 }); n.value=''; save(); }
+    function addChore() { const n = document.getElementById('c-name'); if(!n.value) return; state.chores.push({ id: Date.now(), name: n.value, desc: document.getElementById('c-desc').value, assigneeId: parseInt(document.getElementById('c-assignee').value), lastCompleted: null, points: parseInt(document.getElementById('c-points').value || 0), type: document.getElementById('c-type').value, dynamic: { max: parseInt(document.getElementById('c-max').value || 10), min: parseInt(document.getElementById('c-min').value || 2) }, goal: parseInt(document.getElementById('c-goal').value) || 0, prize: document.getElementById('c-prize').value || "", timesCompleted: 0 }); n.value=''; save(); }
     function openEditChore(id) {
         editTargetId = id; const c = state.chores.find(x => x.id === id); updateAssigneeDropdowns();
-        document.getElementById('edit-c-name').value = c.name; document.getElementById('edit-c-desc').value = c.desc || ''; document.getElementById('edit-c-assignee').value = c.assigneeId; document.getElementById('edit-c-type').value = c.type; document.getElementById('edit-c-points').value = c.points; document.getElementById('edit-c-goal').value = c.goal || 0; document.getElementById('edit-c-prize').value = c.prize || "";
+        document.getElementById('edit-c-name').value = c.name; document.getElementById('edit-c-desc').value = c.desc || ''; document.getElementById('edit-c-assignee').value = c.assigneeId; document.getElementById('edit-c-type').value = c.type; document.getElementById('edit-c-points').value = c.points || 0; document.getElementById('edit-c-goal').value = c.goal || 0; document.getElementById('edit-c-prize').value = c.prize || "";
         if(c.dynamic) { document.getElementById('edit-c-max').value = c.dynamic.max; document.getElementById('edit-c-min').value = c.dynamic.min; }
         togglePointForm('edit-c-type','edit-c-static','edit-c-dynamic'); document.getElementById('edit-chore-modal').style.display = 'flex';
     }
     document.getElementById('save-chore-btn').onclick = () => {
         const c = state.chores.find(x => x.id === editTargetId);
-        c.name = document.getElementById('edit-c-name').value; c.desc = document.getElementById('edit-c-desc').value; c.assigneeId = parseInt(document.getElementById('edit-c-assignee').value); c.type = document.getElementById('edit-c-type').value; c.points = parseInt(document.getElementById('edit-c-points').value); c.goal = parseInt(document.getElementById('edit-c-goal').value) || 0; c.prize = document.getElementById('edit-c-prize').value;
-        if(c.dynamic) { c.dynamic.max = parseInt(document.getElementById('edit-c-max').value); c.dynamic.min = parseInt(document.getElementById('edit-c-min').value); }
+        c.name = document.getElementById('edit-c-name').value; c.desc = document.getElementById('edit-c-desc').value; c.assigneeId = parseInt(document.getElementById('edit-c-assignee').value); c.type = document.getElementById('edit-c-type').value; c.points = parseInt(document.getElementById('edit-c-points').value || 0); c.goal = parseInt(document.getElementById('edit-c-goal').value) || 0; c.prize = document.getElementById('edit-c-prize').value;
+        if(c.dynamic) { c.dynamic.max = parseInt(document.getElementById('edit-c-max').value || 10); c.dynamic.min = parseInt(document.getElementById('edit-c-min').value || 2); }
         save(); closeModal('edit-chore-modal');
     };
 
-    function resetAllChoreChecks() { if(confirm("Deep Reset progress?")) { state.chores.forEach(c => { c.lastCompleted = null; c.timesCompleted = 0; }); state.approvals = []; save(); } }
+    function resetAllChoreChecks() { if(confirm("Deep Reset Progress?")) { state.chores.forEach(c => { c.lastCompleted = null; c.timesCompleted = 0; }); state.approvals = []; save(); } }
     function toggleAccordion(key) { state[key] = !state[key]; save(); }
     function togglePointForm(sel, sR, dR) { const t = document.getElementById(sel).value; document.getElementById(sR).classList.toggle('hidden', t !== 'static'); document.getElementById(dR).classList.toggle('hidden', t !== 'dynamic'); }
     function exportData() { const blob = new Blob([JSON.stringify(state)], {type:"application/json"}); const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `FamilyHub_Backup.json`; a.click(); }
@@ -356,7 +329,6 @@
         document.getElementById('approval-badge').classList.toggle('hidden', state.approvals.length === 0);
         document.getElementById('quote-box').innerText = `"${quotes[new Date().getDate() % quotes.length]}"`;
         
-        // CHORES DASHBOARD
         const dash = document.getElementById('chores-body');
         dash.innerHTML = state.members.map(m => {
             const chores = state.chores.filter(c => c.assigneeId === m.id);
@@ -365,7 +337,7 @@
                 <div class="card-celebration" id="celebrate-${m.id}"><div class="card-celebration-msg"></div></div>
                 <div class="user-header"><h3>${m.name}</h3><span class="currency-pill">${m.points} ${cur}</span></div>
                 <div class="chore-list">
-                ${chores.length===0?'<p style="padding:15px;">No chores.</p>':chores.map(c => {
+                ${chores.length===0?'<p style="padding:15px;">No chores assigned.</p>':chores.map(c => {
                     const isP = state.approvals.some(a => a.choreId === c.id); const isD = c.lastCompleted === today;
                     let progHtml = "";
                     if(c.goal > 0) { 
@@ -377,18 +349,18 @@
                 }).join('')}</div></div>`;
         }).join('');
         
-        // ADMIN TABLES (RE-ADDED EDIT BUTTONS)
         document.getElementById('member-list-body').innerHTML = state.members.map(m => `<tr><td><strong>${m.name}</strong></td><td>${m.role}</td><td>${m.points} <button class="btn-adjust" onclick="adjustPoints(${m.id}, ${m.points})">±</button></td><td><button class="btn-edit" onclick="openEditMember(${m.id})" style="margin-right:5px">Edit</button><button class="btn-danger" onclick="state.members=state.members.filter(x=>x.id!==${m.id}); save();">Del</button></td></tr>`).join('');
         document.getElementById('chore-list-body').innerHTML = state.chores.map(c => `<tr><td><strong>${c.name}</strong></td><td>${c.goal || '--'}</td><td>${state.members.find(x=>x.id===c.assigneeId)?.name}</td><td><button class="btn-edit" onclick="openEditChore(${c.id})" style="margin-right:5px">Edit</button><button class="btn-danger" onclick="state.chores=state.chores.filter(x=>x.id!==${c.id}); save();">Del</button></td></tr>`).join('');
         document.getElementById('approval-list-body').innerHTML = state.approvals.map(a => `<tr><td>${state.members.find(m=>m.id===a.memberId)?.name}</td><td>${a.choreName}</td><td>${a.points}</td><td><button class="btn-primary" style="background:var(--success); padding:5px 10px;" onclick="approveChore(${a.id})">Approve</button> <button class="btn-danger" style="padding:5px 10px;" onclick="rejectChore(${a.id})">Reject</button></td></tr>`).join('');
         
-        // UI Sync
         document.getElementById('chores-body').classList.toggle('hidden', !state.choresVisible);
         document.getElementById('cal-body').classList.toggle('hidden', !state.calVisible);
-        document.getElementById('cal-controls').classList.toggle('hidden', !state.calVisible);
         document.getElementById('chores-icon').style.transform = state.choresVisible ? 'rotate(180deg)' : 'rotate(0deg)';
         document.getElementById('cal-icon').style.transform = state.calVisible ? 'rotate(180deg)' : 'rotate(0deg)';
-        if(state.calVisible && state.calendarUrl && !document.querySelector('#calendar-slot iframe')) switchCalendarView(state.currentCalMode || 'WEEK');
+        
+        if(state.calVisible && state.calendarUrl && !document.querySelector('#calendar-slot iframe')) {
+            document.getElementById('calendar-slot').innerHTML = `<iframe src="${state.calendarUrl}"></iframe>`;
+        }
     }
     
     if(state.calendarUrl) document.getElementById('cal-url-input').value = state.calendarUrl;
