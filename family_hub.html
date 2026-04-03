@@ -7,7 +7,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>Family Hub</title>
     
-    <link rel="manifest" href='data:application/manifest+json,{"name":"Family Hub","short_name":"FamilyHub","start_url":"/family-hub/","display":"standalone","background_color":"#2c3e50","theme_color":"#2c3e50","icons":[{"src":"https://cdn-icons-png.flaticon.com/512/609/609803.png","sizes":"512x512","type":"image/png","purpose":"any maskable"}]}'>
+    <link rel="manifest" href='data:application/manifest+json,{"name":"Family Hub","short_name":"FamilyHub","start_url":"/family_hub/family_hub.html","display":"standalone","background_color":"#2c3e50","theme_color":"#2c3e50","icons":[{"src":"https://cdn-icons-png.flaticon.com/512/609/609803.png","sizes":"512x512","type":"image/png","purpose":"any maskable"}]}'>
 
     <style>
         :root { 
@@ -43,7 +43,6 @@
 
         .card { background: white; padding: 25px; border-radius: 15px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); margin-bottom: 20px; position: relative; }
         .header-row { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
-        #clock-box { text-align: right; }
         
         .user-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; padding-top: 15px; }
         .user-card { background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 5px 15px rgba(0,0,0,0.05); border-top: 5px solid var(--accent); position: relative; display: flex; flex-direction: column; min-height: 150px; }
@@ -58,7 +57,7 @@
         .progress-fill { background: linear-gradient(90deg, var(--accent), var(--success)); height: 100%; transition: 0.5s ease-out; }
         .milestone-text { font-size: 11px; color: var(--text-muted); font-weight: 700; margin-top: 4px; text-transform: uppercase; }
 
-        input[type="checkbox"] { width: 26px; height: 26px; cursor: pointer; }
+        input[type="checkbox"] { width: 28px; height: 28px; cursor: pointer; }
 
         .card-celebration { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: none; flex-direction: column; justify-content: center; align-items: center; z-index: 200; text-align: center; border-radius: 12px; pointer-events: none; padding: 20px; box-sizing: border-box; }
         .kid-theme { background: rgba(44, 62, 80, 0.98); color: white; border: 4px solid var(--accent); }
@@ -72,10 +71,10 @@
         .form-group { display: flex; flex-direction: column; gap: 8px; }
         label { font-size: 0.85rem; font-weight: 800; color: var(--secondary); text-transform: uppercase; }
         input, select, textarea { padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-family: inherit; font-size: 14px; }
-        .btn-primary { background: var(--accent); color: white; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer; font-weight: bold; }
+        .btn-primary { background: var(--accent); color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: bold; }
         .btn-danger { background: white; color: var(--danger); border: 1px solid var(--danger); padding: 6px 12px; border-radius: 6px; cursor: pointer; }
-        .btn-nuclear { background: var(--danger); color: white; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer; font-weight: bold; width: 100%; margin-top: 20px; border: 2px solid #c0392b; transition: 0.2s; }
-        .btn-nuclear:hover { background: #c0392b; transform: scale(0.98); }
+        .btn-toggle { background: #eee; border: 1px solid #ccc; padding: 5px 12px; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: bold; }
+        .btn-toggle.active { background: var(--accent); color: white; border-color: var(--accent); }
         
         .hidden { display: none !important; }
         table { width: 100%; border-collapse: collapse; margin-top: 10px; }
@@ -108,7 +107,7 @@
     <section id="dashboard" class="content-section">
         <div class="header-row">
             <h1>Family Hub</h1>
-            <div id="clock-box">
+            <div id="clock-box" style="text-align:right">
                 <div id="current-date" style="font-weight:bold"></div>
                 <div id="current-time"></div>
             </div>
@@ -124,11 +123,17 @@
         </div>
 
         <div class="card">
-            <div class="section-header" style="display:flex; justify-content:space-between; cursor:pointer;" onclick="toggleAccordion('weekVisible')">
-                <h3 style="margin:0">📅 Weekly Schedule</h3><span id="week-icon">▼</span>
+            <div class="section-header" style="display:flex; justify-content:space-between; align-items:center;">
+                <div style="display:flex; align-items:center; gap:10px; cursor:pointer;" onclick="toggleAccordion('calVisible')">
+                    <h3 id="calendar-title" style="margin:0">📅 Weekly Schedule</h3><span id="cal-icon">▼</span>
+                </div>
+                <div id="cal-controls" class="hidden" style="display:flex; gap:5px;">
+                    <button id="btn-week" class="btn-toggle active" onclick="switchCalendarView('WEEK')">Week</button>
+                    <button id="btn-month" class="btn-toggle" onclick="switchCalendarView('MONTH')">Month</button>
+                </div>
             </div>
-            <div id="week-body" class="hidden">
-                <div class="calendar-container" id="week-calendar-slot">
+            <div id="cal-body" class="hidden">
+                <div class="calendar-container" id="calendar-slot">
                     <div style="color:#888; font-style:italic;">Setup calendar link in Admin Settings</div>
                 </div>
             </div>
@@ -147,18 +152,17 @@
             
             <div style="background: #fdfefe; border: 1px dashed var(--accent); padding: 20px; border-radius: 12px; margin-top: 20px;">
                 <h3>🛡️ Private Calendar Setup</h3>
-                <input type="text" id="cal-url-input" placeholder="Paste Embed URL here..." style="width:100%">
+                <input type="text" id="cal-url-input" placeholder="Paste Google Calendar Embed URL..." style="width:100%">
                 <button class="btn-primary" style="margin-top:10px" onclick="saveCalendarUrl()">Save Calendar</button>
             </div>
 
             <div style="background: #f4f7f9; padding: 20px; border-radius: 12px; margin-top: 20px;">
                 <strong>Data Management:</strong><br><br>
-                <button class="btn-primary" style="background:var(--success); margin-bottom: 5px;" onclick="exportData()">📤 Export Backup (.json)</button>
+                <button class="btn-primary" style="background:var(--success); margin-bottom: 5px;" onclick="exportData()">📤 Export Backup</button>
                 <button class="btn-primary" style="background:var(--secondary); margin-bottom: 5px;" onclick="document.getElementById('importFile').click()">📥 Import Backup</button>
                 <input type="file" id="importFile" class="hidden" accept=".json" onchange="importData(event)">
-                
                 <hr style="border:0; border-top:1px solid #ddd; margin:15px 0;">
-                <button class="btn-nuclear" onclick="nuclearReset()">☢️ Nuclear Reset: Wipe All App Data</button>
+                <button onclick="nuclearReset()" style="color:var(--danger); border:none; background:none; cursor:pointer; font-size:12px;">☢️ Nuclear Reset</button>
             </div>
         </div>
     </section>
@@ -179,6 +183,7 @@
             <button class="btn-primary" onclick="addChore()">Save Chore</button>
         </div>
         <div class="card">
+            <button class="btn-danger" onclick="resetAllChoreChecks()" style="margin-bottom:15px;">🧪 Reset Progress + Goals</button>
             <table><thead><tr><th>Chore</th><th>Goal</th><th>Assigned</th><th>Action</th></tr></thead><tbody id="chore-list-body"></tbody></table>
         </div>
     </section>
@@ -191,27 +196,23 @@
 <script>
     const ADMIN_PASSCODE = "1234";
     const kidMessages = ["BOOM! 🚀", "YOU WIN! 🏆", "LEGEND! 🔥"];
-    const teenMessages = ["Impressive. 🙄", "One closer. 📱", "Functional. 👏"];
-    const quotes = ["Hub Active.", "Speedrun starts now.", "Work hard, play hard."];
+    const teenMessages = ["Impressive. 🙄", "Functional human. 👏"];
+    const quotes = ["Hub Active.", "Work hard, play hard."];
 
     let isUnlocked = false; 
     let sidebarTimer;
     let state = JSON.parse(localStorage.getItem('familyHubData')) || { 
         members: [], chores: [], approvals: [], 
         lastResetDate: new Date().toDateString(), 
-        choresVisible: true, weekVisible: false, calendarUrl: "" 
+        choresVisible: true, calVisible: false, 
+        calendarUrl: "", currentCalMode: "WEEK"
     };
     const currencyMap = { kid: "tokens", teen: "minutes", adult: "" };
 
     function save() { localStorage.setItem('familyHubData', JSON.stringify(state)); renderAll(); }
 
     function nuclearReset() {
-        if(confirm("DANGER: This will permanently delete EVERY setting, member, and chore recorded in this app.")) {
-            if(confirm("LAST WARNING: Are you absolutely sure?")) {
-                localStorage.removeItem('familyHubData');
-                location.reload();
-            }
-        }
+        if(confirm("Permanently delete EVERYTHING?")) { localStorage.removeItem('familyHubData'); location.reload(); }
     }
 
     function updateClock() {
@@ -225,18 +226,26 @@
     }
     setInterval(updateClock, 1000); updateClock();
 
+    // CALENDAR TOGGLE LOGIC
     function saveCalendarUrl() {
         const url = document.getElementById('cal-url-input').value.trim();
         if(url.includes('calendar.google.com')) { state.calendarUrl = url; save(); location.reload(); }
         else { alert("Invalid URL."); }
     }
 
-    function loadCalendars() {
-        if (state.calendarUrl && document.getElementById('week-calendar-slot')) {
-            const weekUrl = state.calendarUrl.replace(/mode=[A-Z]+/, "mode=WEEK");
-            document.getElementById('week-calendar-slot').innerHTML = `<iframe src="${weekUrl}"></iframe>`;
-            document.getElementById('cal-url-input').value = state.calendarUrl;
-        }
+    function switchCalendarView(mode) {
+        state.currentCalMode = mode;
+        const url = state.calendarUrl;
+        if (!url) return;
+
+        const newUrl = url.replace(/mode=[A-Z]+/, "mode=" + mode);
+        document.getElementById('calendar-slot').innerHTML = `<iframe src="${newUrl}"></iframe>`;
+        
+        document.getElementById('calendar-title').innerText = mode === "WEEK" ? "📅 Weekly Schedule" : "🗓️ Monthly Overview";
+        document.getElementById('btn-week').classList.toggle('active', mode === "WEEK");
+        document.getElementById('btn-month').classList.toggle('active', mode === "MONTH");
+        
+        save();
     }
 
     function toggleAdminLock() {
@@ -257,6 +266,7 @@
     }
     function resetSidebarTimer() { clearTimeout(sidebarTimer); sidebarTimer = setTimeout(() => { if (!isUnlocked && window.innerWidth > 768) toggleSidebar(true); }, 8000); }
     function handleAdminNav(id) { if (isUnlocked) showSection(id); else toggleAdminLock(); }
+    
     function showSection(id) {
         document.querySelectorAll('.content-section').forEach(s => s.classList.add('hidden'));
         document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
@@ -303,21 +313,23 @@
         if(mem) mem.points += app.points; if(chore) chore.lastCompleted = app.date;
         state.approvals = state.approvals.filter(a => a.id !== appId); save();
     }
-    function resetAllChoreChecks() { if(confirm("Deep Reset Progress?")) { state.chores.forEach(c => { c.lastCompleted = null; c.timesCompleted = 0; }); state.approvals = []; save(); } }
+    function resetAllChoreChecks() { if(confirm("Reset progress?")) { state.chores.forEach(c => { c.lastCompleted = null; c.timesCompleted = 0; }); state.approvals = []; save(); } }
     function addMember() { const n = document.getElementById('m-name'); if(!n.value) return; state.members.push({id:Date.now(), name:n.value, role:document.getElementById('m-role').value, points:0}); n.value=''; save(); }
     function adjustPoints(id, current) { const m = state.members.find(x => x.id === id); const val = parseInt(prompt(`Adjust ${m.name}?`, -current)); if(!isNaN(val)) { m.points += val; save(); } }
     function updateAssigneeDropdowns() { const html = state.members.map(m => `<option value="${m.id}">${m.name}</option>`).join(''); document.getElementById('c-assignee').innerHTML = html; }
     function addChore() { const n = document.getElementById('c-name'); if(!n.value) return; state.chores.push({ id: Date.now(), name: n.value, desc: document.getElementById('c-desc').value, assigneeId: parseInt(document.getElementById('c-assignee').value), lastCompleted: null, points: parseInt(document.getElementById('c-points').value), type: document.getElementById('c-type').value, dynamic: { max: parseInt(document.getElementById('c-max').value), min: parseInt(document.getElementById('c-min').value) }, goal: parseInt(document.getElementById('c-goal').value) || 0, prize: document.getElementById('c-prize').value || "", timesCompleted: 0 }); n.value=''; save(); }
     function toggleAccordion(key) { state[key] = !state[key]; save(); }
     function togglePointForm(sel, sR, dR) { const t = document.getElementById(sel).value; document.getElementById(sR).classList.toggle('hidden', t !== 'static'); document.getElementById(dR).classList.toggle('hidden', t !== 'dynamic'); }
-    function exportData() { const blob = new Blob([JSON.stringify(state)], {type:"application/json"}); const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `FamilyHub_Backup.json`; a.click(); }
-    function importData(e) { const r = new FileReader(); r.onload = (x) => { try { state = JSON.parse(x.target.result); save(); location.reload(); } catch(err) { alert("Invalid File"); } }; r.readAsText(e.target.files[0]); }
+    function exportData() { const blob = new Blob([JSON.stringify(state)], {type:"application/json"}); const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `HubBackup.json`; a.click(); }
+    function importData(e) { const r = new FileReader(); r.onload = (x) => { state = JSON.parse(x.target.result); save(); location.reload(); }; r.readAsText(e.target.files[0]); }
 
     function renderAll() {
         const today = new Date().toDateString();
         document.getElementById('approval-badge').innerText = state.approvals.length;
         document.getElementById('approval-badge').classList.toggle('hidden', state.approvals.length === 0);
         document.getElementById('quote-box').innerText = `"${quotes[new Date().getDate() % quotes.length]}"`;
+        
+        // Chores
         const dash = document.getElementById('chores-body');
         dash.innerHTML = state.members.map(m => {
             const chores = state.chores.filter(c => c.assigneeId === m.id);
@@ -333,13 +345,28 @@
                     return `<div class="chore-item ${isD?'completed':(isP?'pending':'')}"><input type="checkbox" ${isD||isP?'checked disabled':''} onchange="toggleChoreCompletion(${c.id}, ${m.id})"><div class="chore-info"><strong>${c.name}</strong><small>${c.desc||''}</small>${progHtml}</div><div class="chore-val">${m.role!=='adult'?calculateVal(c):''}</div></div>`;
                 }).join('')}</div></div>`;
         }).join('');
+        
+        // Members & Chores & Approvals
         document.getElementById('member-list-body').innerHTML = state.members.map(m => `<tr><td><strong>${m.name}</strong></td><td>${m.role}</td><td>${m.points} <button class="btn-adjust" onclick="adjustPoints(${m.id}, ${m.points})">±</button></td><td><button class="btn-danger" onclick="state.members=state.members.filter(x=>x.id!==${m.id}); save();">Del</button></td></tr>`).join('');
         document.getElementById('chore-list-body').innerHTML = state.chores.map(c => `<tr><td><strong>${c.name}</strong></td><td>${c.goal || '--'}</td><td>${state.members.find(x=>x.id===c.assigneeId)?.name}</td><td><button class="btn-danger" onclick="state.chores=state.chores.filter(x=>x.id!==${c.id}); save();">Del</button></td></tr>`).join('');
         document.getElementById('approval-list-body').innerHTML = state.approvals.map(a => `<tr><td>${state.members.find(m=>m.id===a.memberId)?.name}</td><td>${a.choreName}</td><td>${a.points}</td><td><button class="btn-primary" style="background:var(--success); padding:5px 10px;" onclick="approveChore(${a.id})">Approve</button> <button class="btn-danger" style="padding:5px 10px;" onclick="rejectChore(${a.id})">Reject</button></td></tr>`).join('');
+        
+        // UI Sync
         document.getElementById('chores-body').classList.toggle('hidden', !state.choresVisible);
-        document.getElementById('week-body').classList.toggle('hidden', !state.weekVisible);
+        document.getElementById('cal-body').classList.toggle('hidden', !state.calVisible);
+        document.getElementById('cal-controls').classList.toggle('hidden', !state.calVisible);
+        document.getElementById('chores-icon').style.transform = state.choresVisible ? 'rotate(180deg)' : 'rotate(0deg)';
+        document.getElementById('cal-icon').style.transform = state.calVisible ? 'rotate(180deg)' : 'rotate(0deg)';
+
+        // Initial Calendar Load
+        if(state.calVisible && state.calendarUrl && !document.querySelector('#calendar-slot iframe')) {
+            switchCalendarView(state.currentCalMode || 'WEEK');
+        }
     }
-    loadCalendars(); renderAll(); showSection('dashboard');
+    
+    // Initial Load setup
+    if(state.calendarUrl) document.getElementById('cal-url-input').value = state.calendarUrl;
+    renderAll(); showSection('dashboard');
 </script>
 </body>
 </html>
