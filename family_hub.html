@@ -30,6 +30,7 @@
         nav.collapsed { width: 0; }
         nav h2 { padding: 20px; text-align: center; border-bottom: 1px solid var(--border); margin: 0; font-size: 0.9rem; color: var(--accent); letter-spacing: 1px; }
         nav button { width: 100%; padding: 12px 20px; background: none; border: none; color: var(--nav-text); text-align: left; font-size: 14px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
+        nav button:hover { background: var(--secondary); color: white; }
         nav button.active { background: rgba(78, 204, 163, 0.1); color: var(--accent); border-left: 3px solid var(--accent); }
         .badge { background: var(--danger); color: white; padding: 1px 6px; border-radius: 4px; font-size: 10px; font-weight: bold; }
 
@@ -46,7 +47,7 @@
         }
 
         .card { background: var(--card-bg); padding: 20px; border-radius: 16px; margin-bottom: 20px; border: 1px solid var(--border); }
-        .user-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 15px; }
+        .user-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 15px; }
         .user-card { background: var(--card-bg); border-radius: 12px; border: 1px solid var(--border); overflow: hidden; position: relative; }
         .user-header { padding: 12px 15px; background: rgba(255,255,255,0.02); display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); }
         .currency-pill { font-size: 0.8rem; font-weight: 800; color: var(--accent); background: rgba(78, 204, 163, 0.1); padding: 4px 12px; border-radius: 20px; }
@@ -56,6 +57,7 @@
         .chore-item.pending { background: rgba(243, 156, 18, 0.1); }
         .chore-info { flex: 1; display: flex; flex-direction: column; }
         .chore-info strong { font-size: 0.85rem; color: var(--text-main); }
+        .chore-info small { font-size: 0.7rem; color: var(--text-muted); margin-top: 2px; }
         
         .progress-container { width: 100%; background: rgba(0,0,0,0.15); border-radius: 10px; height: 5px; margin-top: 6px; overflow: hidden; }
         .progress-fill { background: var(--accent); height: 100%; transition: 0.5s; }
@@ -70,6 +72,7 @@
         .btn-primary { background: var(--accent); color: #000; border: none; padding: 12px 20px; border-radius: 8px; cursor: pointer; font-weight: 800; font-size: 13px; }
         .btn-edit { background: none; color: var(--accent); border: 1px solid var(--accent); padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 11px; margin-right: 5px; }
         .btn-danger { background: none; color: var(--danger); border: 1px solid var(--danger); padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 11px; }
+        .btn-test { background: rgba(78, 204, 163, 0.1); color: var(--accent); border: 1px solid var(--accent); padding: 10px 15px; border-radius: 8px; cursor: pointer; font-size: 12px; margin-bottom: 15px; font-weight: 700; }
 
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); backdrop-filter: blur(10px); display: none; justify-content: center; align-items: center; z-index: 1000; }
         .modal-content { background: var(--card-bg); color: var(--text-main); width: 90%; max-width: 450px; padding: 30px; border-radius: 20px; border: 1px solid var(--border); }
@@ -79,6 +82,7 @@
         body.dark-mode { --calendar-filter: invert(0.92) hue-rotate(180deg) brightness(1.1); }
         .hidden { display: none !important; }
 
+        .danger-zone { margin-top: 40px; padding: 20px; border: 1px dashed var(--danger); border-radius: 12px; background: rgba(255, 77, 77, 0.05); }
         .card-celebration { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: none; flex-direction: column; justify-content: center; align-items: center; z-index: 200; text-align: center; background: rgba(0,0,0,0.9); color: var(--accent); pointer-events: none; }
     </style>
 </head>
@@ -86,9 +90,9 @@
 
 <div id="setup-wizard" class="modal-overlay">
     <div class="modal-content">
-        <h2 style="color: var(--accent);">Initial Setup</h2>
-        <p>Choose a Master Passcode for your family.</p>
-        <input type="password" id="setup-passcode" placeholder="Enter Code" style="text-align: center; font-size: 20px;">
+        <h2 style="color: var(--accent); margin-top:0;">Initialize Hub</h2>
+        <p>Set a Master Passcode to lock the admin controls.</p>
+        <input type="password" id="setup-passcode" placeholder="Set Code" style="text-align: center; font-size: 20px; letter-spacing: 4px;">
         <button class="btn-primary" style="width: 100%; margin-top: 20px;" onclick="finalizeSetup()">Create Hub</button>
     </div>
 </div>
@@ -120,10 +124,12 @@
                 <div id="current-time" style="font-weight: 900; font-size: 1.4rem; color: var(--accent);"></div>
             </div>
         </div>
+        
         <div class="card">
             <h3 style="margin:0 0 15px 0" onclick="toggleAccordion('choresVisible')">🧹 Daily Chores</h3>
             <div id="chores-body" class="user-grid"></div>
         </div>
+
         <div class="card">
             <h3 style="margin:0 0 15px 0; cursor:pointer;" onclick="toggleAccordion('calVisible')">📅 Family Schedule</h3>
             <div id="cal-body" class="hidden">
@@ -141,14 +147,22 @@
                 <button class="btn-primary" onclick="addMember()">Add Member</button>
             </div>
             <table><thead><tr><th>Name</th><th>Role</th><th>Points</th><th>Action</th></tr></thead><tbody id="member-list-body"></tbody></table>
+            
             <div style="margin-top:20px; border: 1px solid var(--border); padding: 15px; border-radius: 12px;">
                 <label>Private Google Embed URL</label>
                 <input type="text" id="cal-url-input" placeholder="Paste link here...">
                 <button class="btn-primary" style="margin-top:10px" onclick="saveCalendarUrl()">Save Schedule</button>
             </div>
-            <div style="margin-top:20px; display:flex; gap:10px;">
-                <button class="btn-primary" style="background:#222; color:white;" onclick="exportData()">📤 Backup</button>
-                <button class="btn-danger" onclick="nuclearReset()">☢️ Reset</button>
+
+            <div style="margin-top:20px; display:flex; gap:10px; align-items:center;">
+                <button class="btn-primary" style="background:#222; color:white; border: 1px solid #444;" onclick="exportData()">📤 Backup Hub</button>
+                <button class="btn-primary" style="background:#222; color:white; border: 1px solid #444;" onclick="document.getElementById('importFile').click()">📥 Restore Hub</button>
+                <input type="file" id="importFile" class="hidden" accept=".json" onchange="importData(event)">
+            </div>
+
+            <div class="danger-zone">
+                <h4 style="color:var(--danger); margin-top:0;">Emergency Actions</h4>
+                <button onclick="nuclearReset()" class="btn-danger" style="width:100%; padding:10px;">☢️ Nuclear Reset: Wipe All Data</button>
             </div>
         </div>
     </section>
@@ -156,13 +170,15 @@
     <section id="admin-chores" class="content-section hidden">
         <div class="card">
             <h1>Chore Configuration</h1>
+            <button class="btn-test" onclick="resetAllChoreChecks()">🧪 Reset Daily Progress (Testing)</button>
             <div class="admin-form-box">
-                <div class="form-group"><label>Name</label><input type="text" id="c-name"></div>
-                <div class="form-group"><label>Assignee</label><select id="c-assignee"></select></div>
+                <div class="form-group"><label>Chore Name</label><input type="text" id="c-name"></div>
+                <div class="form-group"><label>User</label><select id="c-assignee"></select></div>
+                <div class="form-group"><label>Description</label><input type="text" id="c-desc"></div>
                 <div class="form-group"><label>Goal</label><input type="number" id="c-goal" value="0"></div>
                 <div class="form-group"><label>Points</label><input type="number" id="c-points" value="5"></div>
-                <div id="c-static" class="form-group"><label>Type</label><select id="c-type"><option value="static">Static</option><option value="dynamic">Dynamic</option></select></div>
-                <button class="btn-primary" onclick="addChore()">Save</button>
+                <div class="form-group"><label>Type</label><select id="c-type"><option value="static">Static</option><option value="dynamic">Dynamic</option></select></div>
+                <button class="btn-primary" onclick="addChore()">Save Chore</button>
             </div>
             <table><thead><tr><th>Chore</th><th>Goal</th><th>User</th><th>Action</th></tr></thead><tbody id="chore-list-body"></tbody></table>
         </div>
@@ -173,8 +189,8 @@
     </section>
 </main>
 
-<div id="edit-member-modal" class="modal-overlay"><div class="modal-content"><h3>Edit Member</h3><div class="admin-form-box"><div class="form-group"><label>Name</label><input type="text" id="edit-m-name"></div><div class="form-group"><label>Role</label><select id="edit-m-role"><option value="kid">Kid</option><option value="teen">Teen</option><option value="adult">Adult</option></select></div></div><button class="btn-primary" id="save-member-btn">Save</button><button class="btn-danger" onclick="closeModal('edit-member-modal')">Cancel</button></div></div>
-<div id="edit-chore-modal" class="modal-overlay"><div class="modal-content"><h3>Edit Chore</h3><div class="admin-form-box"><div class="form-group"><label>Name</label><input type="text" id="edit-c-name"></div><div class="form-group"><label>User</label><select id="edit-c-assignee"></select></div><div class="form-group"><label>Goal</label><input type="number" id="edit-c-goal"></div><div class="form-group"><label>Points</label><input type="number" id="edit-c-points"></div></div><button class="btn-primary" id="save-chore-btn">Save</button><button class="btn-danger" onclick="closeModal('edit-chore-modal')">Cancel</button></div></div>
+<div id="edit-member-modal" class="modal-overlay"><div class="modal-content"><h3>Edit Member</h3><div class="admin-form-box"><div class="form-group"><label>Name</label><input type="text" id="edit-m-name"></div><div class="form-group"><label>Role</label><select id="edit-m-role"><option value="kid">Kid</option><option value="teen">Teen</option><option value="adult">Adult</option></select></div></div><button class="btn-primary" id="save-member-btn">Save</button><button class="btn-danger" onclick="closeModal('edit-member-modal')" style="margin-left:10px">Cancel</button></div></div>
+<div id="edit-chore-modal" class="modal-overlay"><div class="modal-content"><h3>Edit Chore</h3><div class="admin-form-box"><div class="form-group"><label>Name</label><input type="text" id="edit-c-name"></div><div class="form-group"><label>Description</label><input type="text" id="edit-c-desc"></div><div class="form-group"><label>User</label><select id="edit-c-assignee"></select></div><div class="form-group"><label>Goal</label><input type="number" id="edit-c-goal"></div><div class="form-group"><label>Points</label><input type="number" id="edit-c-points"></div></div><button class="btn-primary" id="save-chore-btn">Save</button><button class="btn-danger" onclick="closeModal('edit-chore-modal')" style="margin-left:10px">Cancel</button></div></div>
 
 <script>
     let state = JSON.parse(localStorage.getItem('familyHubData')) || { 
@@ -221,7 +237,7 @@
                     const isP = state.approvals.some(a => a.choreId === c.id && a.memberId === m.id);
                     const isD = c.lastCompleted === today;
                     let prog = ""; if(c.goal > 0) { const pct = Math.min(100, ((c.timesCompleted||0)/c.goal)*100); prog = `<div class="progress-container"><div class="progress-fill" style="width:${pct}%"></div></div><div class="milestone-text">${c.timesCompleted||0}/${c.goal}</div>`; }
-                    return `<div class="chore-item ${isD?'completed':(isP?'pending':'')}"><input type="checkbox" ${isD||isP?'checked disabled':''} onchange="completeChore(${c.id}, ${m.id})"><div class="chore-info"><strong>${c.name}</strong>${prog}</div></div>`;
+                    return `<div class="chore-item ${isD?'completed':(isP?'pending':'')}"><input type="checkbox" ${isD||isP?'checked disabled':''} onchange="completeChore(${c.id}, ${m.id})"><div class="chore-info"><strong>${c.name}</strong><small>${c.desc || ''}</small>${prog}</div></div>`;
                 }).join('')}</div></div>`;
         }).join('');
 
@@ -262,18 +278,19 @@
     function openEditMember(id) { editTargetId = id; const m = state.members.find(x => x.id === id); document.getElementById('edit-m-name').value = m.name; document.getElementById('edit-m-role').value = m.role; document.getElementById('edit-member-modal').style.display = 'flex'; }
     document.getElementById('save-member-btn').onclick = () => { const m = state.members.find(x => x.id === editTargetId); m.name = document.getElementById('edit-m-name').value; m.role = document.getElementById('edit-m-role').value; save(); closeModal('edit-member-modal'); };
 
-    function addChore() { const n = document.getElementById('c-name').value; if(!n) return; state.chores.push({id:Date.now(), name:n, assigneeId:parseInt(document.getElementById('c-assignee').value), lastCompleted:null, points:parseInt(document.getElementById('c-points').value), goal:parseInt(document.getElementById('c-goal').value), timesCompleted:0}); save(); }
+    function addChore() { const n = document.getElementById('c-name').value; if(!n) return; state.chores.push({id:Date.now(), name:n, desc:document.getElementById('c-desc').value, assigneeId:parseInt(document.getElementById('c-assignee').value), lastCompleted:null, points:parseInt(document.getElementById('c-points').value), goal:parseInt(document.getElementById('c-goal').value), timesCompleted:0}); save(); }
     function deleteChore(id) { state.chores = state.chores.filter(x => x.id !== id); save(); }
-    function openEditChore(id) { editTargetId = id; const c = state.chores.find(x => x.id === id); document.getElementById('edit-c-name').value = c.name; document.getElementById('edit-c-assignee').value = c.assigneeId; document.getElementById('edit-c-goal').value = c.goal; document.getElementById('edit-c-points').value = c.points; document.getElementById('edit-chore-modal').style.display = 'flex'; }
-    document.getElementById('save-chore-btn').onclick = () => { const c = state.chores.find(x => x.id === editTargetId); c.name = document.getElementById('edit-c-name').value; c.assigneeId = parseInt(document.getElementById('edit-c-assignee').value); c.goal = parseInt(document.getElementById('edit-c-goal').value); c.points = parseInt(document.getElementById('edit-c-points').value); save(); closeModal('edit-chore-modal'); };
+    function openEditChore(id) { editTargetId = id; const c = state.chores.find(x => x.id === id); updateAssigneeDropdowns(); document.getElementById('edit-c-name').value = c.name; document.getElementById('edit-c-desc').value = c.desc || ''; document.getElementById('edit-c-assignee').value = c.assigneeId; document.getElementById('edit-c-goal').value = c.goal; document.getElementById('edit-c-points').value = c.points; document.getElementById('edit-chore-modal').style.display = 'flex'; }
+    document.getElementById('save-chore-btn').onclick = () => { const c = state.chores.find(x => x.id === editTargetId); c.name = document.getElementById('edit-c-name').value; c.desc = document.getElementById('edit-c-desc').value; c.assigneeId = parseInt(document.getElementById('edit-c-assignee').value); c.goal = parseInt(document.getElementById('edit-c-goal').value); c.points = parseInt(document.getElementById('edit-c-points').value); save(); closeModal('edit-chore-modal'); };
 
     function updateAssigneeDropdowns() { const h = state.members.map(m => `<option value="${m.id}">${m.name}</option>`).join(''); document.getElementById('c-assignee').innerHTML = h; document.getElementById('edit-c-assignee').innerHTML = h; }
     function saveCalendarUrl() { state.calendarUrl = document.getElementById('cal-url-input').value; save(); location.reload(); }
     function toggleSidebar() { document.getElementById('sidebar').classList.toggle('collapsed'); document.getElementById('main-content').classList.toggle('expanded'); }
     function resetSidebarTimer() { clearTimeout(sidebarTimer); sidebarTimer = setTimeout(() => { if (!isUnlocked && window.innerWidth > 768) toggleSidebar(); }, 10000); }
-    function handleAdminNav(id) { showSection(id); }
     function exportData() { const b = new Blob([JSON.stringify(state)], {type:"application/json"}); const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `Backup.json`; a.click(); }
-    function nuclearReset() { if(confirm("Wipe everything?")) { localStorage.removeItem('familyHubData'); location.reload(); } }
+    function importData(e) { const r = new FileReader(); r.onload = (x) => { state = JSON.parse(x.target.result); save(); location.reload(); }; r.readAsText(e.target.files[0]); }
+    function resetAllChoreChecks() { if(confirm("Reset progress for testing? This will not delete users or chores.")) { state.chores.forEach(c => { c.lastCompleted = null; }); state.approvals = []; save(); } }
+    function nuclearReset() { if(confirm("Wipe everything? This cannot be undone!")) { localStorage.removeItem('familyHubData'); location.reload(); } }
 
     if (!state.adminPasscode) document.getElementById('setup-wizard').style.display = 'flex';
     if (state.calendarUrl) document.getElementById('cal-url-input').value = state.calendarUrl;
