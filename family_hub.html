@@ -13,7 +13,7 @@
         }
         body { font-family: 'Inter', 'Segoe UI', sans-serif; margin: 0; display: flex; background: var(--bg); color: var(--text-main); transition: 0.3s; overflow-x: hidden; -webkit-tap-highlight-color: transparent; }
         
-        /* Sidebar Navigation */
+        /* Sidebar */
         nav { width: 240px; background: var(--primary); color: white; height: 100vh; position: fixed; z-index: 100; transition: 0.3s ease-in-out; overflow-x: hidden; border-right: 1px solid rgba(255,255,255,0.05); visibility: visible; opacity: 1; }
         nav.collapsed { width: 0; visibility: hidden; opacity: 0; }
         nav h2 { padding: 20px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.05); margin: 0; font-size: 1rem; color: var(--accent); text-transform: uppercase; }
@@ -32,17 +32,12 @@
         .user-card { background: #fff; border-radius: 10px; border: 1px solid #ddd; overflow: hidden; position: relative; }
         .user-header { padding: 12px 15px; background: #f8f9fa; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #ddd; }
         
-        /* High Contrast Currency Pill */
         .currency-pill { font-size: 0.75rem; font-weight: 800; color: var(--success); background: #fff; border: 1px solid var(--success); padding: 2px 10px; border-radius: 12px; }
-        
         .chore-item { display: flex; align-items: flex-start; gap: 12px; padding: 15px; border-bottom: 1px solid #eee; }
-        .chore-item.completed { opacity: 0.5; background: #f9f9f9; }
         .chore-item.pending { background: #fffef0; border-left: 4px solid var(--warning); }
         .chore-info { flex: 1; display: flex; flex-direction: column; gap: 2px; }
         .chore-info strong { font-size: 0.95rem; color: #111; }
         .chore-info small { font-size: 11px; color: var(--text-muted); font-weight: 500; }
-        
-        /* High Contrast Point Value */
         .chore-val { font-weight: 900; color: var(--primary); font-size: 13px; background: #eee; padding: 2px 6px; border-radius: 4px; }
 
         .progress-container { width: 100%; background: #ddd; border-radius: 10px; height: 8px; margin-top: 8px; overflow: hidden; }
@@ -51,7 +46,7 @@
 
         input[type="checkbox"] { width: 24px; height: 24px; cursor: pointer; accent-color: var(--accent); }
 
-        /* Forms */
+        /* Admin Forms */
         .admin-form-box { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; background: #f9fafb; padding: 20px; border-radius: 10px; border: 1px solid #eee; margin-bottom: 20px; }
         .form-group { display: flex; flex-direction: column; gap: 8px; }
         label { font-size: 11px; font-weight: 800; color: #666; text-transform: uppercase; }
@@ -61,9 +56,13 @@
         th { text-align: left; font-size: 11px; font-weight: 700; color: #888; text-transform: uppercase; padding: 12px 10px; border-bottom: 2px solid #eee; }
         td { padding: 12px 10px; border-bottom: 1px solid #f5f5f5; font-size: 14px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
         
-        .btn-primary { background: var(--primary); color: white; border: none; padding: 10px 18px; border-radius: 8px; cursor: pointer; font-weight: 700; }
-        .btn-danger { background: #fff; color: var(--danger); border: 1px solid var(--danger); padding: 5px 10px; border-radius: 6px; cursor: pointer; font-weight: 700; }
+        .btn-primary { background: var(--primary); color: white; border: none; padding: 12px 20px; border-radius: 8px; cursor: pointer; font-weight: 700; }
+        .btn-danger { background: var(--danger); color: white; border: none; padding: 10px 15px; border-radius: 8px; cursor: pointer; font-weight: 700; }
         .btn-edit { background: #fff; color: var(--secondary); border: 1px solid #ccc; padding: 5px 10px; border-radius: 6px; cursor: pointer; }
+
+        /* FIXED: Dynamic Calendar Slot */
+        .calendar-container { width: 100%; min-height: 700px; border-radius: 8px; overflow: hidden; margin-top: 15px; border: 1px solid #eee; background: #f9f9f9; display: flex; }
+        .calendar-container iframe { width: 100%; height: 100%; border: 0; min-height: 700px; }
         
         .hidden { display: none !important; }
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(26, 26, 46, 0.95); backdrop-filter: blur(8px); display: none; justify-content: center; align-items: center; z-index: 1000; }
@@ -115,18 +114,20 @@
         </div>
         <div class="card">
             <h3 style="margin:0 0 15px 0; cursor:pointer;" onclick="toggleAccordion('calVisible')">📅 Family Schedule</h3>
-            <div id="cal-body" class="hidden"><div id="calendar-slot" class="calendar-container"></div></div>
+            <div id="cal-body" class="hidden">
+                <div id="calendar-slot" class="calendar-container"></div>
+            </div>
         </div>
     </section>
 
     <section id="admin-members" class="content-section hidden">
         <div class="card">
             <h1>Family Members</h1>
-            <button class="btn-primary" style="background:var(--danger); margin-bottom:15px;" onclick="clearAllPoints()">💰 Reset Balances</button>
+            <button class="btn-danger" style="margin-bottom:15px; padding:12px 20px;" onclick="clearAllPoints()">💰 RESET ALL BALANCES</button>
             <div class="admin-form-box">
                 <div class="form-group"><label>Name</label><input type="text" id="m-name"></div>
                 <div class="form-group"><label>Role</label><select id="m-role"><option value="kid">Kid</option><option value="teen">Teen</option><option value="adult">Adult</option></select></div>
-                <button class="btn-primary" onclick="addMember()">Add</button>
+                <button class="btn-primary" onclick="addMember()">Add Member</button>
             </div>
             <table><thead><tr><th>Name</th><th>Role</th><th>Points</th><th style="text-align:right">Action</th></tr></thead><tbody id="member-list-body"></tbody></table>
         </div>
@@ -135,18 +136,18 @@
     <section id="admin-chores" class="content-section hidden">
         <div class="card">
             <h1>Chore Configuration</h1>
-            <button class="btn-primary" style="background:var(--accent); color:var(--primary); margin-bottom:15px;" onclick="resetAllChoreChecks()">🧪 Reset Daily Progress</button>
+            <button class="btn-primary" style="background:var(--accent); color:var(--primary); margin-bottom:15px; padding:12px 20px;" onclick="resetAllChoreChecks()">🧪 RESET DAILY PROGRESS</button>
             <div class="admin-form-box">
                 <div class="form-group"><label>Chore Name</label><input type="text" id="c-name"></div>
                 <div class="form-group"><label>Assignee</label><select id="c-assignee"></select></div>
                 <div class="form-group"><label>Goal</label><input type="number" id="c-goal" value="0"></div>
                 <div class="form-group"><label>Prize</label><input type="text" id="c-prize"></div>
-                <div class="form-group"><label>Point Type</label><select id="c-type" onchange="togglePointForm('c-type','c-static','c-dynamic')"><option value="static">Static</option><option value="dynamic">Dynamic</option></select></div>
+                <div class="form-group"><label>Type</label><select id="c-type" onchange="togglePointForm('c-type','c-static','c-dynamic')"><option value="static">Static</option><option value="dynamic">Dynamic</option></select></div>
                 <div id="c-static" class="form-group"><label>Points</label><input type="number" id="c-points" value="5"></div>
                 <div id="c-dynamic" class="hidden" style="display:flex; gap:10px;"><div class="form-group"><label>Max</label><input type="number" id="c-max" value="10"></div><div class="form-group"><label>Min</label><input type="number" id="c-min" value="2"></div></div>
                 <div class="form-group" style="grid-column: 1 / -1;"><label>Description</label><input type="text" id="c-desc"></div>
             </div>
-            <button class="btn-primary" style="width:100%" onclick="addChore()">Save</button>
+            <button class="btn-primary" style="width:100%" onclick="addChore()">Save Chore</button>
             <table style="margin-top:20px;"><thead><tr><th>Chore</th><th>Assigned</th><th>Goal</th><th style="text-align:right">Action</th></tr></thead><tbody id="chore-list-body"></tbody></table>
         </div>
     </section>
@@ -159,28 +160,25 @@
                 <div class="form-group" style="grid-column: 1 / -1;"><label>Master Passcode</label><input type="password" id="change-pass-input"><button class="btn-primary" style="margin-top:10px" onclick="updatePasscode()">Update Code</button></div>
             </div>
             <div style="display:flex; gap:10px; margin-bottom:30px;">
-                <button class="btn-primary" style="flex:1; background:var(--secondary);" onclick="exportData()">📤 Backup</button>
-                <button class="btn-primary" style="flex:1; background:var(--secondary);" onclick="document.getElementById('importFile').click()">📥 Restore</button>
+                <button class="btn-primary" style="flex:1; background:var(--secondary);" onclick="exportData()">📤 Backup Hub</button>
+                <button class="btn-primary" style="flex:1; background:var(--secondary);" onclick="document.getElementById('importFile').click()">📥 Restore Hub</button>
                 <input type="file" id="importFile" class="hidden" accept=".json" onchange="importData(event)">
             </div>
-            <button onclick="nuclearReset()" class="btn-danger" style="width:100%; font-weight:800; padding:15px;">☢️ Nuclear Reset</button>
+            <button onclick="nuclearReset()" class="btn-danger" style="width:100%; font-weight:800; padding:15px; border-radius:12px;">☢️ NUCLEAR HUB RESET</button>
         </div>
     </section>
 
     <section id="admin-approvals" class="content-section hidden">
-        <div class="card">
-            <h1>Approval Queue</h1>
-            <table><thead><tr><th>Name</th><th>Chore</th><th>Val</th><th style="text-align:right">Action</th></tr></thead><tbody id="approval-list-body"></tbody></table>
-        </div>
+        <div class="card"><h1>Approval Queue</h1><table><thead><tr><th>Name</th><th>Chore</th><th>Val</th><th style="text-align:right">Action</th></tr></thead><tbody id="approval-list-body"></tbody></table></div>
     </section>
 </main>
 
-<div id="edit-member-modal" class="modal-overlay hidden"><div class="modal-content"><h3>Edit Member</h3><div class="admin-form-box"><div class="form-group"><label>Name</label><input type="text" id="edit-m-name"></div><div class="form-group"><label>Role</label><select id="edit-m-role"><option value="kid">Kid</option><option value="teen">Teen</option><option value="adult">Adult</option></select></div></div><button class="btn-primary" id="save-member-btn">Save</button><button class="btn-danger" onclick="closeModal('edit-member-modal')">Cancel</button></div></div>
+<div id="edit-member-modal" class="modal-overlay hidden"><div class="modal-content"><h3>Edit Member</h3><div class="admin-form-box"><div class="form-group"><label>Name</label><input type="text" id="edit-m-name"></div><div class="form-group"><label>Role</label><select id="edit-m-role"><option value="kid">Kid</option><option value="teen">Teen</option><option value="adult">Adult</option></select></div></div><button class="btn-primary" id="save-member-btn">Save</button><button class="btn-danger" onclick="closeModal('edit-member-modal')" style="background:#fff; color:var(--danger); border:1px solid var(--danger);">Cancel</button></div></div>
 <div id="edit-chore-modal" class="modal-overlay hidden"><div class="modal-content"><h3>Edit Chore</h3><div class="admin-form-box">
     <div class="form-group"><label>Name</label><input type="text" id="edit-c-name"></div><div class="form-group"><label>Assignee</label><select id="edit-c-assignee"></select></div>
     <div class="form-group"><label>Goal</label><input type="number" id="edit-c-goal"></div><div class="form-group"><label>Prize</label><input type="text" id="edit-c-prize"></div>
     <div class="form-group" style="grid-column: 1 / -1;"><label>Desc</label><input type="text" id="edit-c-desc"></div>
-</div><button class="btn-primary" id="save-chore-btn">Save</button><button class="btn-danger" onclick="closeModal('edit-chore-modal')">Cancel</button></div></div>
+</div><button class="btn-primary" id="save-chore-btn">Save</button><button class="btn-danger" onclick="closeModal('edit-chore-modal')" style="background:#fff; color:var(--danger); border:1px solid var(--danger);">Cancel</button></div></div>
 
 <script>
     const kidMessages = ["BOOM! 🔥", "LEGEND! 🏆", "CLUTCH! ⚡", "BOOYAH! 🚀", "Gamer Mode: ON 🎮"];
@@ -223,13 +221,8 @@
         if(m) m.points += a.points; if(c) { c.lastCompleted = new Date().toDateString(); if(c.goal > 0) c.timesCompleted = (c.timesCompleted || 0) + 1; }
         state.approvals = state.approvals.filter(x => x.id !== id); save();
     }
-
-    // NEW REJECT LOGIC
-    function rejectChore(id) {
-        if(confirm("Reject this chore? User will need to uncheck and re-check to resubmit.")) {
-            state.approvals = state.approvals.filter(x => x.id !== id); save();
-        }
-    }
+    
+    function rejectChore(id) { if(confirm("Reject this?")) { state.approvals = state.approvals.filter(x => x.id !== id); save(); } }
 
     function renderAll() {
         const today = new Date().toDateString();
@@ -251,20 +244,18 @@
                 }).join('')}</div></div>`;
         }).join('');
 
-        document.getElementById('member-list-body').innerHTML = state.members.map(m => `<tr><td><strong>${m.name}</strong></td><td>${m.role}</td><td>${m.points}</td><td style="text-align:right"><button class="btn-edit" onclick="openEditMember(${m.id})">Edit</button><button class="btn-danger" onclick="deleteMember(${m.id})">X</button></td></tr>`).join('');
-        document.getElementById('chore-list-body').innerHTML = state.chores.map(c => `<tr><td><strong>${c.name}</strong></td><td>${state.members.find(x=>x.id===c.assigneeId)?.name || 'None'}</td><td>${c.goal||'--'}</td><td style="text-align:right"><button class="btn-edit" onclick="openEditChore(${c.id})">Edit</button><button class="btn-danger" onclick="deleteChore(${c.id})">X</button></td></tr>`).join('');
-        
-        // ADDED REJECT BUTTON TO QUEUE
-        document.getElementById('approval-list-body').innerHTML = state.approvals.map(a => `<tr><td>${state.members.find(m=>m.id===a.memberId)?.name}</td><td>${a.choreName}</td><td>${a.points}</td><td style="text-align:right"><button class="btn-primary" style="padding:5px 10px; margin-right:5px; background:var(--success);" onclick="approveChore(${a.id})">Approve</button><button class="btn-danger" onclick="rejectChore(${a.id})">Reject</button></td></tr>`).join('');
+        document.getElementById('member-list-body').innerHTML = state.members.map(m => `<tr><td><strong>${m.name}</strong></td><td>${m.role}</td><td>${m.points}</td><td style="text-align:right"><button class="btn-edit" onclick="openEditMember(${m.id})">Edit</button><button class="btn-danger" style="padding:4px 8px;" onclick="deleteMember(${m.id})">X</button></td></tr>`).join('');
+        document.getElementById('chore-list-body').innerHTML = state.chores.map(c => `<tr><td><strong>${c.name}</strong></td><td>${state.members.find(x=>x.id===c.assigneeId)?.name || 'None'}</td><td>${c.goal||'--'}</td><td style="text-align:right"><button class="btn-edit" onclick="openEditChore(${c.id})">Edit</button><button class="btn-danger" style="padding:4px 8px;" onclick="deleteChore(${c.id})">X</button></td></tr>`).join('');
+        document.getElementById('approval-list-body').innerHTML = state.approvals.map(a => `<tr><td>${state.members.find(m=>m.id===a.memberId)?.name}</td><td>${a.choreName}</td><td>${a.points}</td><td style="text-align:right"><button class="btn-primary" style="padding:5px 10px; margin-right:5px; background:var(--success);" onclick="approveChore(${a.id})">Approve</button><button class="btn-danger" style="padding:5px 10px;" onclick="rejectChore(${a.id})">Reject</button></td></tr>`).join('');
         
         const calC = document.getElementById('cal-body'); if (state.calVisible) { calC.classList.remove('hidden'); if (state.calendarUrl && !document.querySelector('#calendar-slot iframe')) document.getElementById('calendar-slot').innerHTML = `<iframe src="${state.calendarUrl}"></iframe>`; } else { calC.classList.add('hidden'); }
         updateAssigneeDropdowns();
     }
     function toggleAccordion(k) { state[k] = !state[k]; save(); }
     function showSection(id) { document.querySelectorAll('.content-section').forEach(s => s.classList.add('hidden')); document.getElementById(id).classList.remove('hidden'); document.querySelectorAll('nav button').forEach(b => b.classList.remove('active')); }
-    function handleAdminNav(id) { if (isUnlocked) showSection(id); }
+    function handleAdminNav(id) { showSection(id); }
     function addMember() { const n = document.getElementById('m-name'); if(n.value) { state.members.push({id:Date.now(), name:n.value, role:document.getElementById('m-role').value, points:0}); save(); n.value=''; } }
-    function deleteMember(id) { state.members = state.members.filter(x => x.id !== id); save(); }
+    function deleteMember(id) { if(confirm("Delete Member?")) { state.members = state.members.filter(x => x.id !== id); save(); } }
     function openEditMember(id) { editTargetId = id; const m = state.members.find(x => x.id === id); document.getElementById('edit-m-name').value = m.name; document.getElementById('edit-m-role').value = m.role; document.getElementById('edit-member-modal').classList.remove('hidden'); }
     document.getElementById('save-member-btn').onclick = () => { const m = state.members.find(x => x.id === editTargetId); m.name = document.getElementById('edit-m-name').value; m.role = document.getElementById('edit-m-role').value; save(); closeModal('edit-member-modal'); };
     function addChore() { const n = document.getElementById('c-name'); if(n.value) { state.chores.push({id:Date.now(), name:n.value, desc:document.getElementById('c-desc').value, assigneeId:parseInt(document.getElementById('c-assignee').value), lastCompleted:null, points:parseInt(document.getElementById('c-points').value), type:document.getElementById('c-type').value, dynamic:{max:parseInt(document.getElementById('c-max').value), min:parseInt(document.getElementById('c-min').value)}, goal:parseInt(document.getElementById('c-goal').value), prize:document.getElementById('c-prize').value, timesCompleted:0}); save(); n.value=''; } }
@@ -276,7 +267,7 @@
     function exportData() { const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(state)); const dl = document.createElement('a'); dl.setAttribute("href", dataStr); dl.setAttribute("download", "FamilyHub.json"); document.body.appendChild(dl); dl.click(); dl.remove(); }
     function importData(e) { const r = new FileReader(); r.onload = (x) => { state = JSON.parse(x.target.result); save(); location.reload(); }; r.readAsText(e.target.files[0]); }
     function clearAllPoints() { if(confirm("Reset ALL balances?")) { state.members.forEach(m => m.points = 0); save(); } }
-    function resetAllChoreChecks() { if(confirm("Reset all checkboxes?")) { state.chores.forEach(c => c.lastCompleted = null); save(); } }
+    function resetAllChoreChecks() { if(confirm("Reset progress?")) { state.chores.forEach(c => c.lastCompleted = null); save(); } }
     function nuclearReset() { if(confirm("Wipe Everything?")) { localStorage.removeItem('familyHubData'); location.reload(); } }
     function togglePointForm(s, r1, r2) { const v = document.getElementById(s).value; document.getElementById(r1).classList.toggle('hidden', v !== 'static'); document.getElementById(r2).classList.toggle('hidden', v !== 'dynamic'); }
     function updateAssigneeDropdowns() { const h = state.members.map(m => `<option value="${m.id}">${m.name}</option>`).join(''); document.getElementById('c-assignee').innerHTML = h; document.getElementById('edit-c-assignee').innerHTML = h; }
