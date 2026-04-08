@@ -8,18 +8,13 @@
     <style>
         :root { 
             --primary: #1a1a2e; --secondary: #16213e; --accent: #4ecca3; 
-            --success: #4ecca3; --danger: #e94560; --light: #f4f4f2; --warning: #f39c12;
-            --text-main: #333; --text-muted: #666; --bg: #f0f2f5;
+            --success: #27ae60; --danger: #e94560; --light: #f4f4f2; --warning: #f39c12;
+            --text-main: #333; --text-muted: #555; --bg: #f0f2f5;
         }
         body { font-family: 'Inter', 'Segoe UI', sans-serif; margin: 0; display: flex; background: var(--bg); color: var(--text-main); transition: 0.3s; overflow-x: hidden; -webkit-tap-highlight-color: transparent; }
         
-        /* Sidebar Logic */
-        nav { 
-            width: 240px; background: var(--primary); color: white; height: 100vh; 
-            position: fixed; z-index: 100; transition: 0.3s ease-in-out; 
-            overflow-x: hidden; border-right: 1px solid rgba(255,255,255,0.05);
-            visibility: visible; opacity: 1;
-        }
+        /* Sidebar Navigation */
+        nav { width: 240px; background: var(--primary); color: white; height: 100vh; position: fixed; z-index: 100; transition: 0.3s ease-in-out; overflow-x: hidden; border-right: 1px solid rgba(255,255,255,0.05); visibility: visible; opacity: 1; }
         nav.collapsed { width: 0; visibility: hidden; opacity: 0; }
         nav h2 { padding: 20px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.05); margin: 0; font-size: 1rem; color: var(--accent); text-transform: uppercase; }
         nav button { width: 100%; padding: 15px 20px; background: none; border: none; color: #999; text-align: left; font-size: 14px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
@@ -34,46 +29,47 @@
 
         .card { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.02); margin-bottom: 20px; border: 1px solid #eee; position: relative; }
         .user-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 20px; }
-        .user-card { background: #fff; border-radius: 10px; border: 1px solid #eee; overflow: hidden; position: relative; min-height: 100px; }
-        .user-header { padding: 12px 15px; background: #fafafa; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eee; }
-        .currency-pill { font-size: 0.75rem; font-weight: 800; color: var(--success); background: #eefdf7; padding: 3px 10px; border-radius: 12px; }
+        .user-card { background: #fff; border-radius: 10px; border: 1px solid #ddd; overflow: hidden; position: relative; }
+        .user-header { padding: 12px 15px; background: #f8f9fa; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #ddd; }
         
-        .chore-item { display: flex; align-items: flex-start; gap: 12px; padding: 15px; border-bottom: 1px solid #f9f9f9; }
-        .chore-item.completed { opacity: 0.5; background: #fdfdfd; }
+        /* High Contrast Currency Pill */
+        .currency-pill { font-size: 0.75rem; font-weight: 800; color: var(--success); background: #fff; border: 1px solid var(--success); padding: 2px 10px; border-radius: 12px; }
+        
+        .chore-item { display: flex; align-items: flex-start; gap: 12px; padding: 15px; border-bottom: 1px solid #eee; }
+        .chore-item.completed { opacity: 0.5; background: #f9f9f9; }
+        .chore-item.pending { background: #fffef0; border-left: 4px solid var(--warning); }
         .chore-info { flex: 1; display: flex; flex-direction: column; gap: 2px; }
-        .chore-info strong { font-size: 0.9rem; color: #333; }
-        .chore-info small { font-size: 11px; color: #888; }
-        .chore-val { font-weight: 800; color: var(--accent); font-size: 12px; }
+        .chore-info strong { font-size: 0.95rem; color: #111; }
+        .chore-info small { font-size: 11px; color: var(--text-muted); font-weight: 500; }
+        
+        /* High Contrast Point Value */
+        .chore-val { font-weight: 900; color: var(--primary); font-size: 13px; background: #eee; padding: 2px 6px; border-radius: 4px; }
 
-        .progress-container { width: 100%; background: #eee; border-radius: 10px; height: 6px; margin-top: 8px; overflow: hidden; }
+        .progress-container { width: 100%; background: #ddd; border-radius: 10px; height: 8px; margin-top: 8px; overflow: hidden; }
         .progress-fill { background: var(--accent); height: 100%; transition: 0.5s; }
-        .milestone-text { font-size: 9px; color: #aaa; font-weight: 800; margin-top: 4px; text-transform: uppercase; }
+        .milestone-text { font-size: 9px; color: #777; font-weight: 800; margin-top: 4px; text-transform: uppercase; }
 
-        /* Admin Forms */
+        input[type="checkbox"] { width: 24px; height: 24px; cursor: pointer; accent-color: var(--accent); }
+
+        /* Forms */
         .admin-form-box { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; background: #f9fafb; padding: 20px; border-radius: 10px; border: 1px solid #eee; margin-bottom: 20px; }
         .form-group { display: flex; flex-direction: column; gap: 8px; }
         label { font-size: 11px; font-weight: 800; color: #666; text-transform: uppercase; }
         input, select, textarea { padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 14px; width: 100%; box-sizing: border-box; }
 
-        /* Table Alignment */
         table { width: 100%; border-collapse: collapse; table-layout: fixed; }
         th { text-align: left; font-size: 11px; font-weight: 700; color: #888; text-transform: uppercase; padding: 12px 10px; border-bottom: 2px solid #eee; }
         td { padding: 12px 10px; border-bottom: 1px solid #f5f5f5; font-size: 14px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
         
-        .btn-primary { background: var(--primary); color: white; border: none; padding: 12px 20px; border-radius: 8px; cursor: pointer; font-weight: 700; }
-        .btn-danger { background: #fff; color: var(--danger); border: 1px solid var(--danger); padding: 5px 10px; border-radius: 6px; cursor: pointer; }
+        .btn-primary { background: var(--primary); color: white; border: none; padding: 10px 18px; border-radius: 8px; cursor: pointer; font-weight: 700; }
+        .btn-danger { background: #fff; color: var(--danger); border: 1px solid var(--danger); padding: 5px 10px; border-radius: 6px; cursor: pointer; font-weight: 700; }
         .btn-edit { background: #fff; color: var(--secondary); border: 1px solid #ccc; padding: 5px 10px; border-radius: 6px; cursor: pointer; }
-        .btn-test { background: rgba(78, 204, 163, 0.1); color: var(--accent); border: 1px solid var(--accent); padding: 10px 15px; border-radius: 8px; cursor: pointer; font-size: 12px; margin-bottom: 15px; font-weight: 700; }
         
         .hidden { display: none !important; }
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(26, 26, 46, 0.95); backdrop-filter: blur(8px); display: none; justify-content: center; align-items: center; z-index: 1000; }
         .modal-content { background: white; width: 90%; max-width: 450px; padding: 30px; border-radius: 20px; border: 1px solid #eee; }
         
-        .calendar-container { width: 100%; height: 600px; border-radius: 8px; overflow: hidden; margin-top: 10px; border: 1px solid #eee; display: flex; align-items: center; justify-content: center; background: #f9f9f9; }
-        .calendar-container iframe { width: 100%; height: 100%; border: 0; }
-
-        /* Celebration Animation Scoped to Card */
-        .card-celebration { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: none; flex-direction: column; justify-content: center; align-items: center; z-index: 200; text-align: center; background: rgba(26, 26, 46, 0.95); color: white; padding: 10px; border-radius: 10px; pointer-events: none; }
+        .card-celebration { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: none; flex-direction: column; justify-content: center; align-items: center; z-index: 200; text-align: center; background: rgba(26, 26, 46, 0.96); color: white; padding: 10px; border-radius: 10px; pointer-events: none; }
         .card-celebration-msg { font-size: 1.4rem; font-weight: 900; animation: bounceIn 0.5s; color: var(--accent); }
         @keyframes bounceIn { 0% { transform: scale(0.3); opacity: 0; } 50% { transform: scale(1.05); } 100% { transform: scale(1); opacity: 1; } }
     </style>
@@ -90,12 +86,12 @@
 
 <nav id="sidebar">
     <h2>Family Hub</h2>
-    <button id="nav-dashboard" class="active" onclick="showSection('dashboard')">🏠 Dashboard</button>
+    <button id="nav-dashboard" class="active" onclick="showSection('dashboard')"><span>🏠 Dashboard</span></button>
     <div id="admin-menu" style="display:none;">
         <button onclick="handleAdminNav('admin-approvals')">✅ Approvals <span id="approval-badge" class="badge hidden">0</span></button>
         <button onclick="handleAdminNav('admin-members')">👥 Family Members</button>
         <button onclick="handleAdminNav('admin-chores')">⚙️ Chore Config</button>
-        <button onclick="handleAdminNav('admin-settings')">🛠️ Settings</button>
+        <button onclick="handleAdminNav('admin-settings')">🛠️ Hub Settings</button>
     </div>
     <div style="margin-top:20px; padding:0 20px;">
         <button id="unlock-btn" style="color:var(--warning); padding:0; background:none; border:none; cursor:pointer;" onclick="toggleAdminLock()"><span>🔒 Admin Unlock</span></button>
@@ -119,14 +115,14 @@
         </div>
         <div class="card">
             <h3 style="margin:0 0 15px 0; cursor:pointer;" onclick="toggleAccordion('calVisible')">📅 Family Schedule</h3>
-            <div id="cal-body" class="hidden"><div class="calendar-container" id="calendar-slot"></div></div>
+            <div id="cal-body" class="hidden"><div id="calendar-slot" class="calendar-container"></div></div>
         </div>
     </section>
 
     <section id="admin-members" class="content-section hidden">
         <div class="card">
             <h1>Family Members</h1>
-            <button class="btn-test" style="border-color:var(--danger); color:var(--danger); background:rgba(233,69,96,0.05);" onclick="clearAllPoints()">💰 Reset Balances</button>
+            <button class="btn-primary" style="background:var(--danger); margin-bottom:15px;" onclick="clearAllPoints()">💰 Reset Balances</button>
             <div class="admin-form-box">
                 <div class="form-group"><label>Name</label><input type="text" id="m-name"></div>
                 <div class="form-group"><label>Role</label><select id="m-role"><option value="kid">Kid</option><option value="teen">Teen</option><option value="adult">Adult</option></select></div>
@@ -139,10 +135,10 @@
     <section id="admin-chores" class="content-section hidden">
         <div class="card">
             <h1>Chore Configuration</h1>
-            <button class="btn-test" onclick="resetAllChoreChecks()">🧪 Reset Progress</button>
+            <button class="btn-primary" style="background:var(--accent); color:var(--primary); margin-bottom:15px;" onclick="resetAllChoreChecks()">🧪 Reset Daily Progress</button>
             <div class="admin-form-box">
-                <div class="form-group"><label>Name</label><input type="text" id="c-name"></div>
-                <div class="form-group"><label>User</label><select id="c-assignee"></select></div>
+                <div class="form-group"><label>Chore Name</label><input type="text" id="c-name"></div>
+                <div class="form-group"><label>Assignee</label><select id="c-assignee"></select></div>
                 <div class="form-group"><label>Goal</label><input type="number" id="c-goal" value="0"></div>
                 <div class="form-group"><label>Prize</label><input type="text" id="c-prize"></div>
                 <div class="form-group"><label>Point Type</label><select id="c-type" onchange="togglePointForm('c-type','c-static','c-dynamic')"><option value="static">Static</option><option value="dynamic">Dynamic</option></select></div>
@@ -163,16 +159,19 @@
                 <div class="form-group" style="grid-column: 1 / -1;"><label>Master Passcode</label><input type="password" id="change-pass-input"><button class="btn-primary" style="margin-top:10px" onclick="updatePasscode()">Update Code</button></div>
             </div>
             <div style="display:flex; gap:10px; margin-bottom:30px;">
-                <button class="btn-edit" style="flex:1" onclick="exportData()">📤 Backup</button>
-                <button class="btn-edit" style="flex:1" onclick="document.getElementById('importFile').click()">📥 Restore</button>
+                <button class="btn-primary" style="flex:1; background:var(--secondary);" onclick="exportData()">📤 Backup</button>
+                <button class="btn-primary" style="flex:1; background:var(--secondary);" onclick="document.getElementById('importFile').click()">📥 Restore</button>
                 <input type="file" id="importFile" class="hidden" accept=".json" onchange="importData(event)">
             </div>
-            <div style="border:1px solid var(--danger); padding:15px; border-radius:8px;"><button onclick="nuclearReset()" class="btn-danger" style="width:100%; font-weight:800;">☢️ Factory Reset</button></div>
+            <button onclick="nuclearReset()" class="btn-danger" style="width:100%; font-weight:800; padding:15px;">☢️ Nuclear Reset</button>
         </div>
     </section>
 
     <section id="admin-approvals" class="content-section hidden">
-        <div class="card"><h1>Approval Queue</h1><table id="approval-list-body"></table></div>
+        <div class="card">
+            <h1>Approval Queue</h1>
+            <table><thead><tr><th>Name</th><th>Chore</th><th>Val</th><th style="text-align:right">Action</th></tr></thead><tbody id="approval-list-body"></tbody></table>
+        </div>
     </section>
 </main>
 
@@ -205,20 +204,16 @@
         return (c.lastCompleted === yesterday) ? (c.dynamic?.min || 2) : (c.dynamic?.max || 10);
     }
 
-    // FIXED CELEBRATION LOGIC
     function completeChore(cid, mid) {
         const c = state.chores.find(x => x.id === cid);
         const m = state.members.find(x => x.id === mid);
         state.approvals.push({ id: Date.now(), choreId: cid, memberId: mid, points: calculateVal(c), choreName: c.name });
-        
         const card = document.getElementById(`card-${mid}`);
         const ov = card.querySelector('.card-celebration');
-        
         if (ov && m.role !== 'adult') {
             let msg = m.role === 'kid' ? kidMessages[Math.floor(Math.random()*kidMessages.length)] : teenMessages[Math.floor(Math.random()*teenMessages.length)];
             if (m.role === 'kid' && c.goal > 0 && (c.timesCompleted + 1) >= c.goal) msg = `PRIZE! 🎁<br><small>${c.prize}</small>`;
-            ov.querySelector('.card-celebration-msg').innerHTML = msg; 
-            ov.style.display = 'flex';
+            ov.querySelector('.card-celebration-msg').innerHTML = msg; ov.style.display = 'flex';
             setTimeout(() => { ov.style.display = 'none'; save(); }, 3000);
         } else { save(); }
     }
@@ -229,24 +224,25 @@
         state.approvals = state.approvals.filter(x => x.id !== id); save();
     }
 
+    // NEW REJECT LOGIC
+    function rejectChore(id) {
+        if(confirm("Reject this chore? User will need to uncheck and re-check to resubmit.")) {
+            state.approvals = state.approvals.filter(x => x.id !== id); save();
+        }
+    }
+
     function renderAll() {
         const today = new Date().toDateString();
         document.getElementById('approval-badge').innerText = state.approvals.length;
         document.getElementById('approval-badge').classList.toggle('hidden', state.approvals.length === 0);
-
         const dash = document.getElementById('chores-body');
         dash.innerHTML = state.members.map(m => {
             const chores = state.chores.filter(c => c.assigneeId === m.id);
-            return `<div class="user-card" id="card-${m.id}">
-                <div class="card-celebration"><div class="card-celebration-msg"></div></div>
+            return `<div class="user-card" id="card-${m.id}"><div class="card-celebration"><div class="card-celebration-msg"></div></div>
                 <div class="user-header"><h3>${m.name}</h3><span class="currency-pill">${m.points} ${currencyMap[m.role]}</span></div>
                 <div class="chore-list">${chores.map(c => {
-                    const isP = state.approvals.some(a => a.choreId === c.id);
-                    const isD = c.lastCompleted === today;
-                    let prog = ""; if(c.goal > 0) { 
-                        const pct = Math.min(100, ((c.timesCompleted||0)/c.goal)*100); 
-                        prog = `<div class="progress-container"><div class="progress-fill" style="width:${pct}%"></div></div><div class="milestone-text">${c.timesCompleted||0}/${c.goal} to ${c.prize || 'Prize'}</div>`; 
-                    }
+                    const isP = state.approvals.some(a => a.choreId === c.id); const isD = c.lastCompleted === today;
+                    let prog = ""; if(c.goal > 0) { const pct = Math.min(100, ((c.timesCompleted||0)/c.goal)*100); prog = `<div class="progress-container"><div class="progress-fill" style="width:${pct}%"></div></div><div class="milestone-text">${c.timesCompleted||0}/${c.goal} to ${c.prize || 'Prize'}</div>`; }
                     return `<div class="chore-item ${isD?'completed':(isP?'pending':'')}">
                         <input type="checkbox" ${isD||isP?'checked disabled':''} onchange="completeChore(${c.id}, ${m.id})">
                         <div class="chore-info"><strong>${c.name}</strong><small>${c.desc||''}</small>${prog}</div>
@@ -255,19 +251,20 @@
                 }).join('')}</div></div>`;
         }).join('');
 
-        document.getElementById('member-list-body').innerHTML = state.members.map(m => `<tr><td>${m.name}</td><td>${m.role}</td><td>${m.points}</td><td style="text-align:right"><button class="btn-edit" onclick="openEditMember(${m.id})">Edit</button><button class="btn-danger" onclick="deleteMember(${m.id})">X</button></td></tr>`).join('');
-        document.getElementById('chore-list-body').innerHTML = state.chores.map(c => `<tr><td>${c.name}</td><td>${state.members.find(x=>x.id===c.assigneeId)?.name || 'None'}</td><td>${c.goal||'--'}</td><td style="text-align:right"><button class="btn-edit" onclick="openEditChore(${c.id})">Edit</button><button class="btn-danger" onclick="deleteChore(${c.id})">X</button></td></tr>`).join('');
-        document.getElementById('approval-list-body').innerHTML = state.approvals.map(a => `<tr><td>${state.members.find(m=>m.id===a.memberId)?.name}</td><td>${a.choreName}</td><td>${a.points}</td><td style="text-align:right"><button class="btn-primary" onclick="approveChore(${a.id})">Approve</button></td></tr>`).join('');
-
+        document.getElementById('member-list-body').innerHTML = state.members.map(m => `<tr><td><strong>${m.name}</strong></td><td>${m.role}</td><td>${m.points}</td><td style="text-align:right"><button class="btn-edit" onclick="openEditMember(${m.id})">Edit</button><button class="btn-danger" onclick="deleteMember(${m.id})">X</button></td></tr>`).join('');
+        document.getElementById('chore-list-body').innerHTML = state.chores.map(c => `<tr><td><strong>${c.name}</strong></td><td>${state.members.find(x=>x.id===c.assigneeId)?.name || 'None'}</td><td>${c.goal||'--'}</td><td style="text-align:right"><button class="btn-edit" onclick="openEditChore(${c.id})">Edit</button><button class="btn-danger" onclick="deleteChore(${c.id})">X</button></td></tr>`).join('');
+        
+        // ADDED REJECT BUTTON TO QUEUE
+        document.getElementById('approval-list-body').innerHTML = state.approvals.map(a => `<tr><td>${state.members.find(m=>m.id===a.memberId)?.name}</td><td>${a.choreName}</td><td>${a.points}</td><td style="text-align:right"><button class="btn-primary" style="padding:5px 10px; margin-right:5px; background:var(--success);" onclick="approveChore(${a.id})">Approve</button><button class="btn-danger" onclick="rejectChore(${a.id})">Reject</button></td></tr>`).join('');
+        
         const calC = document.getElementById('cal-body'); if (state.calVisible) { calC.classList.remove('hidden'); if (state.calendarUrl && !document.querySelector('#calendar-slot iframe')) document.getElementById('calendar-slot').innerHTML = `<iframe src="${state.calendarUrl}"></iframe>`; } else { calC.classList.add('hidden'); }
         updateAssigneeDropdowns();
     }
-
     function toggleAccordion(k) { state[k] = !state[k]; save(); }
     function showSection(id) { document.querySelectorAll('.content-section').forEach(s => s.classList.add('hidden')); document.getElementById(id).classList.remove('hidden'); document.querySelectorAll('nav button').forEach(b => b.classList.remove('active')); }
     function handleAdminNav(id) { if (isUnlocked) showSection(id); }
     function addMember() { const n = document.getElementById('m-name'); if(n.value) { state.members.push({id:Date.now(), name:n.value, role:document.getElementById('m-role').value, points:0}); save(); n.value=''; } }
-    function deleteMember(id) { if(confirm("Delete Member?")) { state.members = state.members.filter(x => x.id !== id); save(); } }
+    function deleteMember(id) { state.members = state.members.filter(x => x.id !== id); save(); }
     function openEditMember(id) { editTargetId = id; const m = state.members.find(x => x.id === id); document.getElementById('edit-m-name').value = m.name; document.getElementById('edit-m-role').value = m.role; document.getElementById('edit-member-modal').classList.remove('hidden'); }
     document.getElementById('save-member-btn').onclick = () => { const m = state.members.find(x => x.id === editTargetId); m.name = document.getElementById('edit-m-name').value; m.role = document.getElementById('edit-m-role').value; save(); closeModal('edit-member-modal'); };
     function addChore() { const n = document.getElementById('c-name'); if(n.value) { state.chores.push({id:Date.now(), name:n.value, desc:document.getElementById('c-desc').value, assigneeId:parseInt(document.getElementById('c-assignee').value), lastCompleted:null, points:parseInt(document.getElementById('c-points').value), type:document.getElementById('c-type').value, dynamic:{max:parseInt(document.getElementById('c-max').value), min:parseInt(document.getElementById('c-min').value)}, goal:parseInt(document.getElementById('c-goal').value), prize:document.getElementById('c-prize').value, timesCompleted:0}); save(); n.value=''; } }
@@ -279,8 +276,8 @@
     function exportData() { const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(state)); const dl = document.createElement('a'); dl.setAttribute("href", dataStr); dl.setAttribute("download", "FamilyHub.json"); document.body.appendChild(dl); dl.click(); dl.remove(); }
     function importData(e) { const r = new FileReader(); r.onload = (x) => { state = JSON.parse(x.target.result); save(); location.reload(); }; r.readAsText(e.target.files[0]); }
     function clearAllPoints() { if(confirm("Reset ALL balances?")) { state.members.forEach(m => m.points = 0); save(); } }
-    function resetAllChoreChecks() { if(confirm("Reset progress?")) { state.chores.forEach(c => c.lastCompleted = null); save(); } }
-    function nuclearReset() { if(confirm("Nuclear Reset?")) { localStorage.removeItem('familyHubData'); location.reload(); } }
+    function resetAllChoreChecks() { if(confirm("Reset all checkboxes?")) { state.chores.forEach(c => c.lastCompleted = null); save(); } }
+    function nuclearReset() { if(confirm("Wipe Everything?")) { localStorage.removeItem('familyHubData'); location.reload(); } }
     function togglePointForm(s, r1, r2) { const v = document.getElementById(s).value; document.getElementById(r1).classList.toggle('hidden', v !== 'static'); document.getElementById(r2).classList.toggle('hidden', v !== 'dynamic'); }
     function updateAssigneeDropdowns() { const h = state.members.map(m => `<option value="${m.id}">${m.name}</option>`).join(''); document.getElementById('c-assignee').innerHTML = h; document.getElementById('edit-c-assignee').innerHTML = h; }
     function toggleSidebar() { document.getElementById('sidebar').classList.toggle('collapsed'); document.getElementById('main-content').classList.toggle('expanded'); }
