@@ -59,9 +59,16 @@
 
         input[type="checkbox"] { width: 20px; height: 20px; cursor: pointer; accent-color: var(--accent); }
 
-        .card-celebration { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: none; flex-direction: column; justify-content: center; align-items: center; z-index: 200; text-align: center; border-radius: 10px; pointer-events: none; background: rgba(26, 26, 46, 0.95); color: white; padding: 10px; }
-        .card-celebration-msg { font-size: 1.5rem; font-weight: 900; animation: bounceIn 0.5s; color: var(--accent); }
-        @keyframes bounceIn { 0% { transform: scale(0.3); opacity: 0; } 50% { transform: scale(1.05); } 100% { transform: scale(1); opacity: 1; } }
+        /* TABLE FIXES */
+        table { width: 100%; border-collapse: collapse; table-layout: fixed; margin-top: 10px; }
+        th { text-align: left; font-size: 11px; font-weight: 700; color: #888; text-transform: uppercase; padding: 12px 10px; border-bottom: 2px solid #eee; }
+        td { padding: 12px 10px; border-bottom: 1px solid #f5f5f5; font-size: 13px; vertical-align: middle; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        
+        /* Column Widths */
+        .col-name { width: 30%; }
+        .col-role { width: 15%; }
+        .col-val { width: 25%; }
+        .col-actions { width: 30%; text-align: right; }
 
         .admin-form-box { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; background: #f9fafb; padding: 15px; border-radius: 8px; margin-bottom: 15px; }
         label { font-size: 11px; font-weight: 700; color: #888; text-transform: uppercase; margin-bottom: 4px; }
@@ -138,8 +145,15 @@
                 <div class="form-group"><label>Role</label><select id="m-role"><option value="kid">Kid</option><option value="teen">Teen</option><option value="adult">Adult</option></select></div>
                 <button class="btn-primary" onclick="addMember()">Add</button>
             </div>
-            <table style="width:100%; border-collapse: collapse;">
-                <thead><tr><th>Name</th><th>Role</th><th>Points</th><th>Action</th></tr></thead>
+            <table>
+                <thead>
+                    <tr>
+                        <th class="col-name">Name</th>
+                        <th class="col-role">Role</th>
+                        <th class="col-val">Points</th>
+                        <th class="col-actions">Action</th>
+                    </tr>
+                </thead>
                 <tbody id="member-list-body"></tbody>
             </table>
             <div style="margin-top: 15px; border-top:1px solid #eee; padding-top:15px;">
@@ -165,15 +179,35 @@
                 <div class="form-group" style="grid-column: span 2;"><label>Description</label><input type="text" id="c-desc"></div>
             </div>
             <button class="btn-primary" onclick="addChore()">Save Chore</button>
-            <table style="width:100%; border-collapse: collapse; margin-top:20px;">
-                <thead><tr><th>Chore</th><th>Assigned</th><th>Action</th></tr></thead>
+            <table>
+                <thead>
+                    <tr>
+                        <th class="col-name">Chore</th>
+                        <th class="col-role">User</th>
+                        <th class="col-val">Details</th>
+                        <th class="col-actions">Action</th>
+                    </tr>
+                </thead>
                 <tbody id="chore-list-body"></tbody>
             </table>
         </div>
     </section>
 
     <section id="admin-approvals" class="content-section hidden">
-        <div class="card"><h1>Approval Queue</h1><table style="width:100%; border-collapse: collapse;"><thead><tr><th>Name</th><th>Chore</th><th>Val</th><th>Action</th></tr></thead><tbody id="approval-list-body"></tbody></table></div>
+        <div class="card">
+            <h1>Approval Queue</h1>
+            <table>
+                <thead>
+                    <tr>
+                        <th class="col-name">Name</th>
+                        <th class="col-name">Chore</th>
+                        <th class="col-role">Val</th>
+                        <th class="col-actions">Action</th>
+                    </tr>
+                </thead>
+                <tbody id="approval-list-body"></tbody>
+            </table>
+        </div>
     </section>
 </main>
 
@@ -249,13 +283,15 @@
                 <div class="user-header"><h3>${m.name}</h3><span class="currency-pill">${m.points} ${currencyMap[m.role]}</span></div>
                 <div class="chore-list">${chores.map(c => {
                     const isP = state.approvals.some(a => a.choreId === c.id); const isD = c.lastCompleted === today;
-                    let prog = ""; if(c.goal > 0) { const pct = Math.min(100, ((c.timesCompleted||0)/c.goal)*100); prog = `<div class="progress-container"><div class="progress-fill" style="width:${pct}%"></div></div><div class="milestone-text">${c.timesCompleted||0}/${c.goal} to ${c.prize || 'Reward'}</div>`; }
+                    let prog = ""; if(c.goal > 0) { const pct = Math.min(100, ((c.timesCompleted||0)/c.goal)*100); prog = `<div class="progress-container"><div class="progress-fill" style="width:${pct}%"></div></div><div class="milestone-text">${c.timesCompleted||0}/${c.goal} to ${c.prize}</div>`; }
                     return `<div class="chore-item ${isD?'completed':(isP?'pending':'')}"><input type="checkbox" ${isD||isP?'checked disabled':''} onchange="toggleChoreCompletion(${c.id}, ${m.id})"><div class="chore-info"><strong>${c.name}</strong><small>${c.desc || ''}</small>${prog}</div><div class="chore-val">${m.role!=='adult'?calculateVal(c):''}</div></div>`;
                 }).join('')}</div></div>`;
         }).join('');
-        document.getElementById('member-list-body').innerHTML = state.members.map(m => `<tr><td>${m.name}</td><td>${m.role}</td><td>${m.points}</td><td><button class="btn-edit" onclick="openEditMember(${m.id})">Edit</button> <button class="btn-danger" onclick="state.members=state.members.filter(x=>x.id!==${m.id}); save();">X</button></td></tr>`).join('');
-        document.getElementById('chore-list-body').innerHTML = state.chores.map(c => `<tr><td>${c.name}</td><td>${state.members.find(x=>x.id===c.assigneeId)?.name}</td><td><button class="btn-edit" onclick="openEditChore(${c.id})">Edit</button> <button class="btn-danger" onclick="state.chores=state.chores.filter(x=>x.id!==${c.id}); save();">X</button></td></tr>`).join('');
-        document.getElementById('approval-list-body').innerHTML = state.approvals.map(a => `<tr><td>${state.members.find(m=>m.id===a.memberId)?.name}</td><td>${a.choreName}</td><td>${a.points}</td><td><button class="btn-primary" onclick="approveChore(${a.id})">Approve</button></td></tr>`).join('');
+
+        document.getElementById('member-list-body').innerHTML = state.members.map(m => `<tr><td><strong>${m.name}</strong></td><td>${m.role}</td><td>${m.points} <button class="btn-edit" onclick="adjustPoints(${m.id}, ${m.points})">±</button></td><td class="col-actions"><button class="btn-edit" onclick="openEditMember(${m.id})">Edit</button> <button class="btn-danger" onclick="state.members=state.members.filter(x=>x.id!==${m.id}); save();">X</button></td></tr>`).join('');
+        document.getElementById('chore-list-body').innerHTML = state.chores.map(c => `<tr><td><strong>${c.name}</strong></td><td>${state.members.find(x=>x.id===c.assigneeId)?.name}</td><td>${c.goal||'--'} Goal</td><td class="col-actions"><button class="btn-edit" onclick="openEditChore(${c.id})">Edit</button> <button class="btn-danger" onclick="state.chores=state.chores.filter(x=>x.id!==${c.id}); save();">X</button></td></tr>`).join('');
+        document.getElementById('approval-list-body').innerHTML = state.approvals.map(a => `<tr><td><strong>${state.members.find(m=>m.id===a.memberId)?.name}</strong></td><td>${a.choreName}</td><td>${a.points}</td><td class="col-actions"><button class="btn-primary" onclick="approveChore(${a.id})">Approve</button> <button class="btn-danger" onclick="state.approvals=state.approvals.filter(x=>x.id!==${a.id}); save();">X</button></td></tr>`).join('');
+        
         if(state.calVisible && state.calendarUrl) document.getElementById('calendar-slot').innerHTML = `<iframe src="${state.calendarUrl}"></iframe>`;
     }
 
@@ -266,14 +302,16 @@
     }
     function save() { localStorage.setItem('familyHubData', JSON.stringify(state)); renderAll(); }
     function closeModal(id) { document.getElementById(id).style.display = 'none'; }
-    function nuclearReset() { if(confirm("Nuclear Wipe?")) { localStorage.removeItem('familyHubData'); location.reload(); } }
-    function resetAllChoreChecks() { state.chores.forEach(c => { c.lastCompleted = null; }); state.approvals = []; save(); }
-    function exportData() { const b = new Blob([JSON.stringify(state)], {type:"application/json"}); const a = document.createElement('a'); a.href = URL.createObjectURL(b); a.download = `Backup.json`; a.click(); }
+    function nuclearReset() { if(confirm("Wipe everything?")) { localStorage.removeItem('familyHubData'); location.reload(); } }
+    function resetAllChoreChecks() { state.chores.forEach(c => { c.lastCompleted = null; c.timesCompleted = 0; }); state.approvals = []; save(); }
+    function exportData() { const b = new Blob([JSON.stringify(state)], {type:"application/json"}); const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `Backup.json`; a.click(); }
     function importData(e) { const r = new FileReader(); r.onload = (x) => { state = JSON.parse(x.target.result); save(); location.reload(); }; r.readAsText(e.target.files[0]); }
     function toggleAccordion(k) { state[k] = !state[k]; save(); }
     function showSection(id) { document.querySelectorAll('.content-section').forEach(s => s.classList.add('hidden')); document.getElementById(id).classList.remove('hidden'); }
-    function handleAdminNav(id) { if (isUnlocked) showSection(id); }
+    function handleAdminNav(id) { if (isUnlocked) showSection(id); else toggleAdminLock(); }
     function addMember() { const n = document.getElementById('m-name').value; if(!n) return; state.members.push({id:Date.now(), name:n, role:document.getElementById('m-role').value, points:0}); save(); }
+    function adjustPoints(id, current) { const m = state.members.find(x => x.id === id); const val = parseInt(prompt(`Adjust ${m.name}?`, -current)); if(!isNaN(val)) { m.points += val; save(); } }
+    function updateAssigneeDropdowns() { const h = state.members.map(m => `<option value="${m.id}">${m.name}</option>`).join(''); document.getElementById('c-assignee').innerHTML = h; document.getElementById('edit-c-assignee').innerHTML = h; }
     function addChore() { const n = document.getElementById('c-name').value; if(!n) return; state.chores.push({id:Date.now(), name:n, desc:document.getElementById('c-desc').value, assigneeId:parseInt(document.getElementById('c-assignee').value), lastCompleted:null, points:parseInt(document.getElementById('c-points').value), type:document.getElementById('c-type').value, dynamic:{max:parseInt(document.getElementById('c-max').value), min:parseInt(document.getElementById('c-min').value)}, goal:parseInt(document.getElementById('c-goal').value), prize:document.getElementById('c-prize').value, timesCompleted:0}); save(); }
     function openEditMember(id) { editTargetId = id; const m = state.members.find(x => x.id === id); document.getElementById('edit-m-name').value = m.name; document.getElementById('edit-m-role').value = m.role; document.getElementById('edit-member-modal').style.display = 'flex'; }
     document.getElementById('save-member-btn').onclick = () => { const m = state.members.find(x => x.id === editTargetId); m.name = document.getElementById('edit-m-name').value; m.role = document.getElementById('edit-m-role').value; save(); closeModal('edit-member-modal'); };
@@ -292,9 +330,10 @@
         c.points = parseInt(document.getElementById('edit-c-points').value); c.dynamic = { max: parseInt(document.getElementById('edit-c-max').value), min: parseInt(document.getElementById('edit-c-min').value) };
         save(); closeModal('edit-chore-modal');
     };
-    function updateAssigneeDropdowns() { const h = state.members.map(m => `<option value="${m.id}">${m.name}</option>`).join(''); document.getElementById('c-assignee').innerHTML = h; document.getElementById('edit-c-assignee').innerHTML = h; }
     function saveCalendarUrl() { state.calendarUrl = document.getElementById('cal-url-input').value; save(); location.reload(); }
     function togglePointForm(sel, sR, dR) { const t = document.getElementById(sel).value; document.getElementById(sR).classList.toggle('hidden', t !== 'static'); document.getElementById(dR).classList.toggle('hidden', t !== 'dynamic'); }
+    function toggleSidebar() { document.getElementById('sidebar').classList.toggle('collapsed'); document.getElementById('main-content').classList.toggle('expanded'); }
+    function resetSidebarTimer() { clearTimeout(sidebarTimer); sidebarTimer = setTimeout(() => { if (!isUnlocked && window.innerWidth > 768) toggleSidebar(); }, 10000); }
     if (!state.adminPasscode) document.getElementById('setup-wizard').style.display = 'flex';
     renderAll();
 </script>
