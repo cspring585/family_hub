@@ -27,11 +27,10 @@
         @media (max-width: 768px) { main { margin-left: 0; padding: 15px; padding-top: 80px; } #nav-toggle { left: 15px !important; } }
 
         .card { background: white; padding: 15px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.02); margin-bottom: 15px; border: 1px solid #eee; position: relative; }
-        .user-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 15px; }
+        .user-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 12px; }
         .user-card { background: #fff; border-radius: 10px; border: 1px solid #ddd; overflow: hidden; position: relative; }
         
-        /* INCREASED FONT SIZES & TIGHT VERTICAL SPACE */
-        .user-header { padding: 4px 15px; background: #f8f9fa; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #ddd; }
+        .user-header { padding: 6px 12px; background: #f8f9fa; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #ddd; }
         .user-header h3 { margin: 4px 0; font-size: 1.2rem; font-weight: 800; color: var(--primary); }
         .currency-pill { font-size: 0.85rem; font-weight: 800; color: var(--success); background: #fff; border: 1.5px solid var(--success); padding: 2px 10px; border-radius: 12px; }
         
@@ -62,12 +61,13 @@
         
         table { width: 100%; border-collapse: collapse; table-layout: fixed; }
         th { text-align: left; font-size: 11px; font-weight: 700; color: #888; text-transform: uppercase; padding: 12px 10px; border-bottom: 2px solid #eee; }
-        td { padding: 12px 10px; border-bottom: 1px solid #f5f5f5; font-size: 14px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        td { padding: 12px 10px; border-bottom: 1px solid #f5f5f5; font-size: 14px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; vertical-align: middle; }
         
         .btn-outline-primary { background: transparent; color: var(--primary); border: 1px solid var(--primary); padding: 8px 15px; border-radius: 6px; cursor: pointer; font-weight: 700; transition: 0.2s; }
         .btn-outline-primary:hover { background: var(--primary); color: white; }
         .btn-outline-danger { background: transparent; color: var(--danger); border: 1px solid var(--danger); padding: 8px 15px; border-radius: 6px; cursor: pointer; font-weight: 700; transition: 0.2s; }
         .btn-outline-danger:hover { background: var(--danger); color: white; }
+        .btn-mini { padding: 4px 8px; font-size: 11px; margin-right: 5px; border-radius: 4px; }
 
         .hidden { display: none !important; }
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(26, 26, 46, 0.9); backdrop-filter: blur(8px); display: none; justify-content: center; align-items: center; z-index: 1000; }
@@ -120,7 +120,7 @@
             <div id="chores-body" class="user-grid"></div>
         </div>
         <div class="card">
-            <h3 style="margin:0 0 10px 0; cursor:pointer;" onclick="toggleAccordion('calVisible')">📅 Family Schedule</h3>
+            <h3 style="margin:0 0 15px 0; cursor:pointer;" onclick="toggleAccordion('calVisible')">📅 Family Schedule</h3>
             <div id="cal-body" class="hidden"><div id="calendar-slot" class="calendar-container"></div></div>
         </div>
     </section>
@@ -150,7 +150,7 @@
                 <div class="form-group"><label>Assignee</label><select id="c-assignee"></select></div>
                 <div class="form-group"><label>Goal</label><input type="number" id="c-goal" value="0"></div>
                 <div class="form-group"><label>Prize</label><input type="text" id="c-prize"></div>
-                <div class="form-group"><label>Logic</label><select id="c-type" onchange="togglePointForm('c-type','c-static','c-dynamic')"><option value="static">Static</option><option value="dynamic">Dynamic</option></select></div>
+                <div class="form-group"><label>Type</label><select id="c-type" onchange="togglePointForm('c-type','c-static','c-dynamic')"><option value="static">Static</option><option value="dynamic">Dynamic</option></select></div>
                 <div id="c-static" class="form-group"><label>Points</label><input type="number" id="c-points" value="5"></div>
                 <div id="c-dynamic" class="hidden" style="display:flex; gap:10px;"><div class="form-group"><label>Max</label><input type="number" id="c-max" value="10"></div><div class="form-group"><label>Min</label><input type="number" id="c-min" value="2"></div></div>
                 <div class="form-group" style="grid-column: 1 / -1;"><label>Description</label><input type="text" id="c-desc"></div>
@@ -181,9 +181,16 @@
     </section>
 </main>
 
+<div id="edit-member-modal" class="modal-overlay hidden"><div class="modal-content"><h3>Edit Member</h3><div class="admin-form-box"><div class="form-group"><label>Name</label><input type="text" id="edit-m-name"></div><div class="form-group"><label>Role</label><select id="edit-m-role"><option value="kid">Kid</option><option value="teen">Teen</option><option value="adult">Adult</option></select></div></div><button class="btn-outline-primary" id="save-member-btn">Save</button><button class="btn-outline-danger btn-mini" style="margin-left:10px" onclick="closeModal('edit-member-modal')">Cancel</button></div></div>
+<div id="edit-chore-modal" class="modal-overlay hidden"><div class="modal-content"><h3>Edit Chore</h3><div class="admin-form-box">
+    <div class="form-group"><label>Name</label><input type="text" id="edit-c-name"></div><div class="form-group"><label>Assignee</label><select id="edit-c-assignee"></select></div>
+    <div class="form-group"><label>Goal</label><input type="number" id="edit-c-goal"></div><div class="form-group"><label>Prize</label><input type="text" id="edit-c-prize"></div>
+    <div class="form-group" style="grid-column: 1 / -1;"><label>Desc</label><input type="text" id="edit-c-desc"></div>
+</div><button class="btn-outline-primary" id="save-chore-btn">Save</button><button class="btn-outline-danger btn-mini" style="margin-left:10px" onclick="closeModal('edit-chore-modal')">Cancel</button></div></div>
+
 <script>
-    const kidMessages = ["BOOM! 🔥", "LEGEND! 🏆", "CLUTCH! ⚡", "BOOYAH! 🚀", "W! 👑", "POG! 😲", "CRACKED! 💎", "SHEESH! 🔥", "ELITE! ⭐", "HYPED! 🔊", "GOATED! 🐐", "SUPREME! 💎", "ULTIMATE! 🔥", "WINNING! 🏁", "NO CAP! 🧢", "LEVEL UP! 🆙", "INSANE! 🧠", "BOSS MOVE! 😎", "PRIME! ⚡", "FLAWLESS! ✨", "PERFECT! 🎯", "UNSTOPPABLE! 🚄", "CLEAN! 🧼", "MONSTER! 👾", "KING! 👑", "QUEEN! 👸"];
-    const teenMessages = ["K.", "Cool.", "Nice.", "Done.", "Yep.", "Fine.", "Sure.", "Word.", "Bruh.", "Bet.", "Sus.", "Fr.", "Easy.", "Lit.", "Fire.", "Chill.", "Solid.", "Tough.", "Oof.", "Whatever.", "It's done.", "Okay.", "Living the dream."];
+    const kidMessages = ["BOOM! 🔥", "LEGEND! 🏆", "CLUTCH! ⚡", "BOOYAH! 🚀", "W! 👑", "POG! 😲", "CRACKED! 💎", "SHEESH! 🔥", "ELITE! ⭐", "HYPED! 🔊", "GOATED! 🐐", "ULTIMATE! 🔥", "WINNING! 🏁", "NO CAP! 🧢", "LEVEL UP! 🆙", "INSANE! 🧠", "BOSS MOVE! 😎", "PRIME! ⚡", "FLAWLESS! ✨", "PERFECT! 🎯", "UNSTOPPABLE! 🚄", "CLEAN! 🧼", "MONSTER! 👾", "KING! 👑", "QUEEN! 👸", "VIBING! 🌊"];
+    const teenMessages = ["K.", "Cool.", "Nice.", "Done.", "Yep.", "Fine.", "Sure.", "Word.", "Bruh.", "Bet.", "Sus.", "Fr.", "Valid.", "Easy.", "Lit.", "Fire.", "Chill.", "Solid.", "Tough.", "Oof.", "Mood.", "Whatever.", "Okay.", "Living the dream."];
 
     let state = JSON.parse(localStorage.getItem('familyHubData')) || { members: [], chores: [], approvals: [], lastResetDate: new Date().toDateString(), choresVisible: true, calVisible: false, calendarUrl: "", adminPasscode: "" };
     let isUnlocked = false; let editTargetId = null; let sidebarTimer;
@@ -242,10 +249,7 @@
                 <div class="user-header"><h3>${m.name}</h3><span class="currency-pill">${m.points} ${currencyMap[m.role]}</span></div>
                 <div class="chore-list">${chores.map(c => {
                     const isP = state.approvals.some(a => a.choreId === c.id); const isD = c.lastCompleted === today;
-                    let prog = ""; if(c.goal > 0) { 
-                        const pct = Math.min(100, ((c.timesCompleted||0)/c.goal)*100); 
-                        prog = `<div class="progress-container"><div class="progress-fill" style="width:${pct}%"></div></div><div class="milestone-text">${c.timesCompleted||0}/${c.goal} to ${c.prize || 'Prize'}</div>`; 
-                    }
+                    let prog = ""; if(c.goal > 0) { const pct = Math.min(100, ((c.timesCompleted||0)/c.goal)*100); prog = `<div class="progress-container"><div class="progress-fill" style="width:${pct}%"></div></div><div class="milestone-text">${c.timesCompleted||0}/${c.goal} to ${c.prize || 'Prize'}</div>`; }
                     return `<div class="chore-item ${isD?'completed':(isP?'pending':'')}">
                         <input type="checkbox" ${isD||isP?'checked disabled':''} onchange="completeChore(${c.id}, ${m.id}, this)">
                         <div class="chore-info"><strong>${c.name}</strong><small>${c.desc||''}</small>${prog}</div>
@@ -254,7 +258,7 @@
                 }).join('')}</div></div>`;
         }).join('');
 
-        document.getElementById('member-list-body').innerHTML = state.members.map(m => `<tr><td><strong>${m.name}</strong></td><td>${m.role}</td><td>${m.points}</td><td style="text-align:right"><button class="btn-outline-primary btn-mini" onclick="openEditMember(${m.id})">Edit</button><button class="btn-outline-danger btn-mini" onclick="deleteMember(${m.id})">X</button></td></tr>`).join('');
+        document.getElementById('member-list-body').innerHTML = state.members.map(m => `<tr><td><strong>${m.name}</strong></td><td>${m.role}</td><td>${m.points}</td><td style="text-align:right"><button class="btn-outline-danger btn-mini" onclick="resetOneMember(${m.id})">Reset</button><button class="btn-outline-primary btn-mini" onclick="openEditMember(${m.id})">Edit</button><button class="btn-outline-danger btn-mini" onclick="deleteMember(${m.id})">X</button></td></tr>`).join('');
         document.getElementById('chore-list-body').innerHTML = state.chores.map(c => `<tr><td><strong>${c.name}</strong></td><td>${state.members.find(x=>x.id===c.assigneeId)?.name || 'None'}</td><td>${c.goal||'--'}</td><td style="text-align:right"><button class="btn-outline-primary btn-mini" onclick="openEditChore(${c.id})">Edit</button><button class="btn-outline-danger btn-mini" onclick="deleteChore(${c.id})">X</button></td></tr>`).join('');
         document.getElementById('approval-list-body').innerHTML = state.approvals.map(a => `<tr><td>${state.members.find(m=>m.id===a.memberId)?.name}</td><td>${a.choreName}${a.isPrize ? '<span class="prize-badge">🎁 PRIZE</span>' : ''}</td><td>${a.points}</td><td style="text-align:right"><button class="btn-outline-accent btn-mini" style="background:var(--success); color:white; border:none;" onclick="approveChore(${a.id})">Approve</button><button class="btn-outline-danger btn-mini" onclick="rejectChore(${a.id})">Reject</button></td></tr>`).join('');
         const calC = document.getElementById('cal-body'); if (state.calVisible) { calC.classList.remove('hidden'); if (state.calendarUrl && !document.querySelector('#calendar-slot iframe')) document.getElementById('calendar-slot').innerHTML = `<iframe src="${state.calendarUrl}"></iframe>`; } else { calC.classList.add('hidden'); }
@@ -265,6 +269,7 @@
     function handleAdminNav(id) { showSection(id); }
     function addMember() { const n = document.getElementById('m-name'); if(n.value) { state.members.push({id:Date.now(), name:n.value, role:document.getElementById('m-role').value, points:0}); save(); n.value=''; } }
     function deleteMember(id) { if(confirm("Delete Member?")) { state.members = state.members.filter(x => x.id !== id); save(); } }
+    function resetOneMember(id) { const m = state.members.find(x => x.id === id); if(m) m.points = 0; save(); }
     function openEditMember(id) { editTargetId = id; const m = state.members.find(x => x.id === id); document.getElementById('edit-m-name').value = m.name; document.getElementById('edit-m-role').value = m.role; document.getElementById('edit-member-modal').classList.remove('hidden'); }
     document.getElementById('save-member-btn').onclick = () => { const m = state.members.find(x => x.id === editTargetId); m.name = document.getElementById('edit-m-name').value; m.role = document.getElementById('edit-m-role').value; save(); closeModal('edit-member-modal'); };
     function addChore() { const n = document.getElementById('c-name'); if(n.value) { state.chores.push({id:Date.now(), name:n.value, desc:document.getElementById('c-desc').value, assigneeId:parseInt(document.getElementById('c-assignee').value), lastCompleted:null, points:parseInt(document.getElementById('c-points').value), type:document.getElementById('c-type').value, dynamic:{max:parseInt(document.getElementById('c-max').value), min:parseInt(document.getElementById('c-min').value)}, goal:parseInt(document.getElementById('c-goal').value), prize:document.getElementById('c-prize').value, timesCompleted:0}); save(); n.value=''; } }
@@ -280,7 +285,7 @@
     function resetAllChoreChecks() { state.chores.forEach(c => c.lastCompleted = null); state.approvals = []; save(); }
     function resetAllChoreGoals() { state.chores.forEach(c => c.timesCompleted = 0); save(); }
     
-    function nuclearReset() { if(confirm("Wipe Everything?")) { localStorage.removeItem('familyHubData'); location.reload(); } }
+    function nuclearReset() { if(confirm("NUCLEAR RESET?")) { localStorage.removeItem('familyHubData'); location.reload(); } }
     function togglePointForm(s, r1, r2) { const v = document.getElementById(s).value; document.getElementById(r1).classList.toggle('hidden', v !== 'static'); document.getElementById(r2).classList.toggle('hidden', v !== 'dynamic'); }
     function updateAssigneeDropdowns() { const h = state.members.map(m => `<option value="${m.id}">${m.name}</option>`).join(''); document.getElementById('c-assignee').innerHTML = h; document.getElementById('edit-c-assignee').innerHTML = h; }
     function toggleSidebar() { document.getElementById('sidebar').classList.toggle('collapsed'); document.getElementById('main-content').classList.toggle('expanded'); }
