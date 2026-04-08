@@ -27,25 +27,24 @@
         @media (max-width: 768px) { main { margin-left: 0; padding: 15px; padding-top: 80px; } #nav-toggle { left: 15px !important; } }
 
         .card { background: white; padding: 15px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.02); margin-bottom: 15px; border: 1px solid #eee; position: relative; }
-        .user-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 12px; }
+        .user-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 15px; }
         .user-card { background: #fff; border-radius: 10px; border: 1px solid #ddd; overflow: hidden; position: relative; }
         
-        .user-header { padding: 6px 12px; background: #f8f9fa; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #ddd; }
-        .user-header h3 { margin: 2px 0; font-size: 0.95rem; }
-        .currency-pill { font-size: 0.7rem; font-weight: 800; color: var(--success); background: #fff; border: 1px solid var(--success); padding: 1px 6px; border-radius: 8px; }
+        /* INCREASED FONT SIZES & TIGHT VERTICAL SPACE */
+        .user-header { padding: 4px 15px; background: #f8f9fa; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #ddd; }
+        .user-header h3 { margin: 4px 0; font-size: 1.2rem; font-weight: 800; color: var(--primary); }
+        .currency-pill { font-size: 0.85rem; font-weight: 800; color: var(--success); background: #fff; border: 1.5px solid var(--success); padding: 2px 10px; border-radius: 12px; }
         
-        .chore-item { display: flex; align-items: flex-start; gap: 8px; padding: 8px 12px; border-bottom: 1px solid #eee; }
-        .chore-item.pending { background: #fffef0; border-left: 4px solid var(--warning); }
-        .chore-info { flex: 1; display: flex; flex-direction: column; }
-        .chore-info strong { font-size: 0.88rem; color: #111; line-height: 1.2; }
-        .chore-info small { font-size: 10px; color: var(--text-muted); line-height: 1.1; }
-        .chore-val { font-weight: 900; color: var(--primary); font-size: 11px; background: #eee; padding: 1px 4px; border-radius: 3px; }
+        .chore-item { display: flex; align-items: flex-start; gap: 12px; padding: 12px 15px; border-bottom: 1px solid #eee; }
+        .chore-info strong { font-size: 1.1rem; color: #111; line-height: 1.3; display: block; }
+        .chore-info small { font-size: 13px; color: var(--text-muted); line-height: 1.4; display: block; margin-top: 2px; }
+        .chore-val { font-weight: 900; color: var(--primary); font-size: 13px; background: #eee; padding: 2px 6px; border-radius: 5px; margin-top: 2px; }
 
-        .progress-container { width: 100%; background: #ddd; border-radius: 10px; height: 6px; margin-top: 4px; overflow: hidden; }
+        .progress-container { width: 100%; background: #ddd; border-radius: 10px; height: 8px; margin-top: 8px; overflow: hidden; }
         .progress-fill { background: var(--accent); height: 100%; transition: 0.5s; }
-        .milestone-text { font-size: 8.5px; color: #777; font-weight: 800; margin-top: 1px; text-transform: uppercase; }
+        .milestone-text { font-size: 10px; color: #555; font-weight: 800; margin-top: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
 
-        input[type="checkbox"] { width: 20px; height: 20px; cursor: pointer; accent-color: var(--accent); flex-shrink: 0; }
+        input[type="checkbox"] { width: 26px; height: 26px; cursor: pointer; accent-color: var(--accent); flex-shrink: 0; margin-top: 3px; }
         input[type="checkbox"]:disabled { cursor: not-allowed; opacity: 0.5; }
 
         .card-celebration { 
@@ -54,7 +53,7 @@
             z-index: 500; text-align: center; background: rgba(26, 26, 46, 0.97); color: white; 
             padding: 10px; border-radius: 10px; pointer-events: all; cursor: pointer;
         }
-        .card-celebration-msg { font-size: 1.3rem; font-weight: 900; animation: bounceIn 0.4s; color: var(--accent); line-height: 1.2; text-transform: uppercase; }
+        .card-celebration-msg { font-size: 1.5rem; font-weight: 900; animation: bounceIn 0.4s; color: var(--accent); line-height: 1.2; text-transform: uppercase; }
         
         .admin-form-box { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 15px; background: #f9fafb; padding: 15px; border-radius: 10px; border: 1px solid #eee; margin-bottom: 15px; }
         .form-group { display: flex; flex-direction: column; gap: 5px; }
@@ -62,13 +61,11 @@
         input, select, textarea { padding: 10px; border: 1px solid #ddd; border-radius: 8px; font-size: 13px; }
         
         table { width: 100%; border-collapse: collapse; table-layout: fixed; }
-        th { text-align: left; font-size: 10px; font-weight: 700; color: #888; text-transform: uppercase; padding: 10px; border-bottom: 2px solid #eee; }
-        td { padding: 10px; border-bottom: 1px solid #f5f5f5; font-size: 13px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        th { text-align: left; font-size: 11px; font-weight: 700; color: #888; text-transform: uppercase; padding: 12px 10px; border-bottom: 2px solid #eee; }
+        td { padding: 12px 10px; border-bottom: 1px solid #f5f5f5; font-size: 14px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
         
-        /* UNIFORM OUTLINED BUTTONS */
         .btn-outline-primary { background: transparent; color: var(--primary); border: 1px solid var(--primary); padding: 8px 15px; border-radius: 6px; cursor: pointer; font-weight: 700; transition: 0.2s; }
         .btn-outline-primary:hover { background: var(--primary); color: white; }
-        
         .btn-outline-danger { background: transparent; color: var(--danger); border: 1px solid var(--danger); padding: 8px 15px; border-radius: 6px; cursor: pointer; font-weight: 700; transition: 0.2s; }
         .btn-outline-danger:hover { background: var(--danger); color: white; }
 
@@ -123,7 +120,7 @@
             <div id="chores-body" class="user-grid"></div>
         </div>
         <div class="card">
-            <h3 style="margin:0 0 15px 0; cursor:pointer;" onclick="toggleAccordion('calVisible')">📅 Family Schedule</h3>
+            <h3 style="margin:0 0 10px 0; cursor:pointer;" onclick="toggleAccordion('calVisible')">📅 Family Schedule</h3>
             <div id="cal-body" class="hidden"><div id="calendar-slot" class="calendar-container"></div></div>
         </div>
     </section>
@@ -153,7 +150,7 @@
                 <div class="form-group"><label>Assignee</label><select id="c-assignee"></select></div>
                 <div class="form-group"><label>Goal</label><input type="number" id="c-goal" value="0"></div>
                 <div class="form-group"><label>Prize</label><input type="text" id="c-prize"></div>
-                <div class="form-group"><label>Type</label><select id="c-type" onchange="togglePointForm('c-type','c-static','c-dynamic')"><option value="static">Static</option><option value="dynamic">Dynamic</option></select></div>
+                <div class="form-group"><label>Logic</label><select id="c-type" onchange="togglePointForm('c-type','c-static','c-dynamic')"><option value="static">Static</option><option value="dynamic">Dynamic</option></select></div>
                 <div id="c-static" class="form-group"><label>Points</label><input type="number" id="c-points" value="5"></div>
                 <div id="c-dynamic" class="hidden" style="display:flex; gap:10px;"><div class="form-group"><label>Max</label><input type="number" id="c-max" value="10"></div><div class="form-group"><label>Min</label><input type="number" id="c-min" value="2"></div></div>
                 <div class="form-group" style="grid-column: 1 / -1;"><label>Description</label><input type="text" id="c-desc"></div>
@@ -175,7 +172,7 @@
                 <button class="btn-outline-primary" style="flex:1" onclick="document.getElementById('importFile').click()">📥 Restore Hub</button>
                 <input type="file" id="importFile" class="hidden" accept=".json" onchange="importData(event)">
             </div>
-            <button onclick="nuclearReset()" class="btn-outline-danger" style="width:100%; font-weight:800; padding:15px; border-radius:12px;">☢️ NUCLEAR HUB RESET (Confirmation Required)</button>
+            <button onclick="nuclearReset()" class="btn-outline-danger" style="width:100%; font-weight:800; padding:15px; border-radius:12px;">☢️ NUCLEAR HUB RESET</button>
         </div>
     </section>
 
@@ -184,16 +181,9 @@
     </section>
 </main>
 
-<div id="edit-member-modal" class="modal-overlay hidden"><div class="modal-content"><h3>Edit Member</h3><div class="admin-form-box"><div class="form-group"><label>Name</label><input type="text" id="edit-m-name"></div><div class="form-group"><label>Role</label><select id="edit-m-role"><option value="kid">Kid</option><option value="teen">Teen</option><option value="adult">Adult</option></select></div></div><button class="btn-outline-primary" id="save-member-btn">Save</button><button class="btn-outline-danger" style="padding:4px 10px; font-size:11px; margin-left:10px;" onclick="closeModal('edit-member-modal')">Cancel</button></div></div>
-<div id="edit-chore-modal" class="modal-overlay hidden"><div class="modal-content"><h3>Edit Chore</h3><div class="admin-form-box">
-    <div class="form-group"><label>Name</label><input type="text" id="edit-c-name"></div><div class="form-group"><label>Assignee</label><select id="edit-c-assignee"></select></div>
-    <div class="form-group"><label>Goal</label><input type="number" id="edit-c-goal"></div><div class="form-group"><label>Prize</label><input type="text" id="edit-c-prize"></div>
-    <div class="form-group" style="grid-column: 1 / -1;"><label>Desc</label><input type="text" id="edit-c-desc"></div>
-</div><button class="btn-outline-primary" id="save-chore-btn">Save</button><button class="btn-outline-danger" style="padding:4px 10px; font-size:11px; margin-left:10px;" onclick="closeModal('edit-chore-modal')">Cancel</button></div></div>
-
 <script>
-    const kidMessages = ["BOOM! 🔥", "LEGEND! 🏆", "CLUTCH! ⚡", "BOOYAH! 🚀", "W! 👑", "POG! 😲", "CRACKED! 💎", "SHEESH! 🔥", "ELITE! ⭐", "FIRE! 🧨", "WINNING! 🏁", "NO CAP! 🧢", "LEVEL UP! 🆙", "PRIME! ⚡", "UNREAL! 🌌", "FLAWLESS! ✨", "PERFECT! 🎯", "UNSTOPPABLE! 🚄", "CLEAN! 🧼", "MONSTER! 👾", "✨✨✨", "👑👑👑"];
-    const teenMessages = ["K.", "Cool.", "Nice.", "Done.", "Yep.", "Fine.", "Sure.", "Word.", "Lit.", "W.", "Chill.", "Solid.", "Tough.", "Oof.", "Bruh.", "Whatever.", "I guess.", "It's done.", "Mission accomplished.", "Okay.", "Cool story.", "Living the dream.", "I'm out."];
+    const kidMessages = ["BOOM! 🔥", "LEGEND! 🏆", "CLUTCH! ⚡", "BOOYAH! 🚀", "W! 👑", "POG! 😲", "CRACKED! 💎", "SHEESH! 🔥", "ELITE! ⭐", "HYPED! 🔊", "GOATED! 🐐", "SUPREME! 💎", "ULTIMATE! 🔥", "WINNING! 🏁", "NO CAP! 🧢", "LEVEL UP! 🆙", "INSANE! 🧠", "BOSS MOVE! 😎", "PRIME! ⚡", "FLAWLESS! ✨", "PERFECT! 🎯", "UNSTOPPABLE! 🚄", "CLEAN! 🧼", "MONSTER! 👾", "KING! 👑", "QUEEN! 👸"];
+    const teenMessages = ["K.", "Cool.", "Nice.", "Done.", "Yep.", "Fine.", "Sure.", "Word.", "Bruh.", "Bet.", "Sus.", "Fr.", "Easy.", "Lit.", "Fire.", "Chill.", "Solid.", "Tough.", "Oof.", "Whatever.", "It's done.", "Okay.", "Living the dream."];
 
     let state = JSON.parse(localStorage.getItem('familyHubData')) || { members: [], chores: [], approvals: [], lastResetDate: new Date().toDateString(), choresVisible: true, calVisible: false, calendarUrl: "", adminPasscode: "" };
     let isUnlocked = false; let editTargetId = null; let sidebarTimer;
@@ -274,7 +264,7 @@
     function showSection(id) { document.querySelectorAll('.content-section').forEach(s => s.classList.add('hidden')); document.getElementById(id).classList.remove('hidden'); document.querySelectorAll('nav button').forEach(b => b.classList.remove('active')); }
     function handleAdminNav(id) { showSection(id); }
     function addMember() { const n = document.getElementById('m-name'); if(n.value) { state.members.push({id:Date.now(), name:n.value, role:document.getElementById('m-role').value, points:0}); save(); n.value=''; } }
-    function deleteMember(id) { state.members = state.members.filter(x => x.id !== id); save(); }
+    function deleteMember(id) { if(confirm("Delete Member?")) { state.members = state.members.filter(x => x.id !== id); save(); } }
     function openEditMember(id) { editTargetId = id; const m = state.members.find(x => x.id === id); document.getElementById('edit-m-name').value = m.name; document.getElementById('edit-m-role').value = m.role; document.getElementById('edit-member-modal').classList.remove('hidden'); }
     document.getElementById('save-member-btn').onclick = () => { const m = state.members.find(x => x.id === editTargetId); m.name = document.getElementById('edit-m-name').value; m.role = document.getElementById('edit-m-role').value; save(); closeModal('edit-member-modal'); };
     function addChore() { const n = document.getElementById('c-name'); if(n.value) { state.chores.push({id:Date.now(), name:n.value, desc:document.getElementById('c-desc').value, assigneeId:parseInt(document.getElementById('c-assignee').value), lastCompleted:null, points:parseInt(document.getElementById('c-points').value), type:document.getElementById('c-type').value, dynamic:{max:parseInt(document.getElementById('c-max').value), min:parseInt(document.getElementById('c-min').value)}, goal:parseInt(document.getElementById('c-goal').value), prize:document.getElementById('c-prize').value, timesCompleted:0}); save(); n.value=''; } }
