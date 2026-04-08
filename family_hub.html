@@ -12,16 +12,33 @@
             --text-main: #333; --text-muted: #666; --bg: #f0f2f5;
         }
         body { font-family: 'Inter', 'Segoe UI', sans-serif; margin: 0; display: flex; background: var(--bg); color: var(--text-main); transition: 0.3s; overflow-x: hidden; -webkit-tap-highlight-color: transparent; }
-        nav { width: 240px; background: var(--primary); color: white; height: 100vh; position: fixed; z-index: 100; transition: 0.3s; overflow-x: hidden; border-right: 1px solid rgba(255,255,255,0.05); }
-        nav.collapsed { width: 0; }
-        nav h2 { padding: 20px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.05); margin: 0; font-size: 1rem; color: var(--accent); text-transform: uppercase; }
-        nav button { width: 100%; padding: 15px 20px; background: none; border: none; color: #999; text-align: left; font-size: 14px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; transition: 0.2s; }
+        
+        /* FIXED SIDEBAR HIDING LOGIC */
+        nav { 
+            width: 240px; background: var(--primary); color: white; height: 100vh; 
+            position: fixed; z-index: 100; transition: 0.3s ease-in-out; 
+            overflow-x: hidden; border-right: 1px solid rgba(255,255,255,0.05);
+            visibility: visible; opacity: 1;
+        }
+        nav.collapsed { 
+            width: 0; 
+            visibility: hidden; /* Physically removes it from view */
+            opacity: 0; /* Smooth fade out */
+        }
+        
+        nav h2 { padding: 20px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.05); margin: 0; font-size: 1rem; color: var(--accent); text-transform: uppercase; white-space: nowrap; }
+        nav button { width: 100%; padding: 15px 20px; background: none; border: none; color: #999; text-align: left; font-size: 14px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; white-space: nowrap; }
         nav button.active { background: rgba(78, 204, 163, 0.1); color: var(--accent); border-left: 3px solid var(--accent); }
+
         #nav-toggle { position: fixed; left: 15px; top: 15px; z-index: 101; background: white; color: var(--primary); border: none; padding: 10px 12px; border-radius: 6px; cursor: pointer; transition: 0.3s; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
         nav:not(.collapsed) + #nav-toggle { left: 255px; }
-        main { margin-left: 240px; padding: 25px 40px; width: 100%; box-sizing: border-box; transition: 0.3s; }
+
+        main { margin-left: 240px; padding: 25px 40px; width: 100%; box-sizing: border-box; transition: 0.3s; position: relative; z-index: 1; }
         main.expanded { margin-left: 0; padding-left: 80px; }
+        
         @media (max-width: 768px) { main { margin-left: 0; padding: 15px; padding-top: 80px; } #nav-toggle { left: 15px !important; } }
+        
+        /* Dashboard Chores UI */
         .card { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.02); margin-bottom: 20px; border: 1px solid #eee; position: relative; }
         .user-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 20px; }
         .user-card { background: #fff; border-radius: 10px; border: 1px solid #eee; overflow: hidden; }
@@ -31,25 +48,31 @@
         .chore-item.completed { opacity: 0.5; background: #fdfdfd; }
         .chore-info { flex: 1; display: flex; flex-direction: column; gap: 2px; }
         .chore-info strong { font-size: 0.9rem; color: #333; }
-        .chore-info small { color: #888; font-size: 11px; }
+        .chore-info small { font-size: 11px; color: #888; }
         .progress-container { width: 100%; background: #eee; border-radius: 10px; height: 6px; margin-top: 8px; overflow: hidden; }
         .progress-fill { background: var(--accent); height: 100%; transition: 0.5s; }
         .milestone-text { font-size: 9px; color: #aaa; font-weight: 800; margin-top: 4px; text-transform: uppercase; }
         input[type="checkbox"] { width: 22px; height: 22px; cursor: pointer; accent-color: var(--accent); }
-        .admin-form-box { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; background: #f9fafb; padding: 20px; border-radius: 10px; border: 1px solid #eee; margin-bottom: 20px; }
+
+        /* Admin Forms & Tables */
+        .admin-form-box { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; background: #f9fafb; padding: 20px; border-radius: 10px; border: 1px solid #eee; margin-bottom: 20px; }
         .form-group { display: flex; flex-direction: column; gap: 8px; }
         label { font-size: 11px; font-weight: 800; color: #666; text-transform: uppercase; }
         input, select, textarea { padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 14px; width: 100%; box-sizing: border-box; }
         table { width: 100%; border-collapse: collapse; table-layout: fixed; }
         th { text-align: left; font-size: 11px; font-weight: 700; color: #888; text-transform: uppercase; padding: 12px 10px; border-bottom: 2px solid #eee; }
         td { padding: 12px 10px; border-bottom: 1px solid #f5f5f5; font-size: 14px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        
         .btn-primary { background: var(--primary); color: white; border: none; padding: 12px 20px; border-radius: 8px; cursor: pointer; font-weight: 700; }
         .btn-danger { background: #fff; color: var(--danger); border: 1px solid var(--danger); padding: 5px 10px; border-radius: 6px; cursor: pointer; }
         .btn-edit { background: #fff; color: var(--secondary); border: 1px solid #ccc; padding: 5px 10px; border-radius: 6px; cursor: pointer; }
-        .btn-test { background: rgba(78, 204, 163, 0.1); color: var(--accent); border: 1px solid var(--accent); padding: 10px 15px; border-radius: 8px; cursor: pointer; font-size: 12px; margin-bottom: 15px; font-weight: 700; margin-right: 10px; }
+        .btn-test { background: rgba(78, 204, 163, 0.1); color: var(--accent); border: 1px solid var(--accent); padding: 10px 15px; border-radius: 8px; cursor: pointer; font-size: 12px; margin-bottom: 15px; font-weight: 700; }
+        
+        .hidden { display: none !important; }
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(26, 26, 46, 0.95); backdrop-filter: blur(8px); display: none; justify-content: center; align-items: center; z-index: 1000; }
+        .modal-content { background: white; width: 90%; max-width: 450px; padding: 30px; border-radius: 20px; border: 1px solid #eee; }
         .calendar-container { width: 100%; height: 650px; border-radius: 8px; overflow: hidden; margin-top: 10px; border: 1px solid #eee; background: #f9f9f9; display: flex; align-items: center; justify-content: center; }
         .calendar-container iframe { width: 100%; height: 100%; border: 0; }
-        .hidden { display: none !important; }
         .card-celebration { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: none; flex-direction: column; justify-content: center; align-items: center; z-index: 200; text-align: center; background: rgba(26, 26, 46, 0.95); color: white; padding: 10px; border-radius: 10px; pointer-events: none; }
         .card-celebration-msg { font-size: 1.5rem; font-weight: 900; animation: bounceIn 0.5s; color: var(--accent); }
         @keyframes bounceIn { 0% { transform: scale(0.3); opacity: 0; } 50% { transform: scale(1.05); } 100% { transform: scale(1); opacity: 1; } }
@@ -75,7 +98,7 @@
         <button onclick="handleAdminNav('admin-settings')">🛠️ Settings</button>
     </div>
     <div style="margin-top:20px; padding:0 20px;">
-        <button id="unlock-btn" style="color:var(--warning); padding:0; background:none; border:none; cursor:pointer;" onclick="toggleAdminLock()"><span>🔒 Admin Unlock</span></button>
+        <button id="unlock-btn" style="color:var(--warning); padding:0; background:none; border:none; cursor:pointer;" onclick="toggleAdminLock()">🔒 Admin Unlock</button>
     </div>
 </nav>
 
@@ -105,9 +128,9 @@
             <h1>Family Members</h1>
             <button class="btn-test" style="border-color:var(--danger); color:var(--danger); background:rgba(233,69,96,0.05);" onclick="clearAllPoints()">💰 Reset All Balances</button>
             <div class="admin-form-box">
-                <div class="form-group"><label>Full Name</label><input type="text" id="m-name" placeholder="Name"></div>
+                <div class="form-group"><label>Name</label><input type="text" id="m-name"></div>
                 <div class="form-group"><label>Role</label><select id="m-role"><option value="kid">Kid</option><option value="teen">Teen</option><option value="adult">Adult</option></select></div>
-                <div class="form-group" style="justify-content: flex-end;"><button class="btn-primary" onclick="addMember()">Add Member</button></div>
+                <button class="btn-primary" onclick="addMember()">Add</button>
             </div>
             <table><thead><tr><th>Name</th><th>Role</th><th>Points</th><th style="text-align:right">Action</th></tr></thead><tbody id="member-list-body"></tbody></table>
         </div>
@@ -116,19 +139,19 @@
     <section id="admin-chores" class="content-section hidden">
         <div class="card">
             <h1>Chore Configuration</h1>
-            <button class="btn-test" onclick="resetAllChoreChecks()">🧪 Reset Daily Progress (Testing)</button>
+            <button class="btn-test" onclick="resetAllChoreChecks()">🧪 Reset Daily Progress</button>
             <div class="admin-form-box">
                 <div class="form-group"><label>Chore Name</label><input type="text" id="c-name"></div>
                 <div class="form-group"><label>Assigned To</label><select id="c-assignee"></select></div>
-                <div class="form-group"><label>Goal (Times)</label><input type="number" id="c-goal" value="0"></div>
-                <div class="form-group"><label>Prize/Reward</label><input type="text" id="c-prize"></div>
-                <div class="form-group"><label>Points Logic</label><select id="c-type" onchange="togglePointForm('c-type','c-static','c-dynamic')"><option value="static">Static</option><option value="dynamic">Dynamic Decay</option></select></div>
+                <div class="form-group"><label>Goal</label><input type="number" id="c-goal" value="0"></div>
+                <div class="form-group"><label>Prize</label><input type="text" id="c-prize"></div>
+                <div class="form-group"><label>Points Type</label><select id="c-type" onchange="togglePointForm('c-type','c-static','c-dynamic')"><option value="static">Static</option><option value="dynamic">Dynamic</option></select></div>
                 <div id="c-static" class="form-group"><label>Points</label><input type="number" id="c-points" value="5"></div>
                 <div id="c-dynamic" class="hidden" style="display:flex; gap:10px;"><div class="form-group"><label>Max</label><input type="number" id="c-max" value="10"></div><div class="form-group"><label>Min</label><input type="number" id="c-min" value="2"></div></div>
                 <div class="form-group" style="grid-column: 1 / -1;"><label>Description</label><input type="text" id="c-desc"></div>
             </div>
             <button class="btn-primary" style="width:100%" onclick="addChore()">Save Chore</button>
-            <table style="margin-top:20px;"><thead><tr><th>Chore</th><th>Assigned</th><th>Goal</th><th style="text-align:right">Action</th></tr></thead><tbody id="chore-list-body"></tbody></table>
+            <table style="margin-top:20px;"><thead><tr><th>Chore</th><th>User</th><th>Goal</th><th style="text-align:right">Action</th></tr></thead><tbody id="chore-list-body"></tbody></table>
         </div>
     </section>
 
@@ -137,14 +160,14 @@
             <h1>Hub Settings</h1>
             <div class="admin-form-box">
                 <div class="form-group" style="grid-column: 1 / -1;"><label>Calendar URL</label><input type="text" id="cal-url-input"><button class="btn-primary" style="margin-top:10px;" onclick="saveCalendarUrl()">Save URL</button></div>
-                <div class="form-group" style="grid-column: 1 / -1;"><label>Master Passcode</label><input type="password" id="change-pass-input"><button class="btn-primary" style="margin-top:10px" onclick="updatePasscode()">Update Passcode</button></div>
+                <div class="form-group" style="grid-column: 1 / -1;"><label>Passcode</label><input type="password" id="change-pass-input"><button class="btn-primary" style="margin-top:10px" onclick="updatePasscode()">Update Code</button></div>
             </div>
             <div style="display:flex; gap:10px; margin-bottom:30px;">
                 <button class="btn-edit" style="flex:1" onclick="exportData()">📤 Backup Hub</button>
                 <button class="btn-edit" style="flex:1" onclick="document.getElementById('importFile').click()">📥 Restore Hub</button>
                 <input type="file" id="importFile" class="hidden" accept=".json" onchange="importData(event)">
             </div>
-            <div style="border:1px solid var(--danger); padding:15px; border-radius:8px; background:#fffcfc;"><h4 style="color:var(--danger); margin:0 0 10px 0;">DANGER ZONE</h4><button onclick="nuclearReset()" class="btn-danger" style="width:100%; font-weight:800;">☢️ Factory Reset</button></div>
+            <div style="border:1px solid var(--danger); padding:15px; border-radius:8px; background:#fffcfc;"><button onclick="nuclearReset()" class="btn-danger" style="width:100%; font-weight:800;">☢️ Factory Reset</button></div>
         </div>
     </section>
 
@@ -155,12 +178,14 @@
 
 <div id="edit-member-modal" class="modal-overlay hidden"><div class="modal-content"><h3>Edit Member</h3><div class="admin-form-box"><div class="form-group"><label>Name</label><input type="text" id="edit-m-name"></div><div class="form-group"><label>Role</label><select id="edit-m-role"><option value="kid">Kid</option><option value="teen">Teen</option><option value="adult">Adult</option></select></div></div><button class="btn-primary" id="save-member-btn">Save</button><button class="btn-danger" onclick="closeModal('edit-member-modal')">Cancel</button></div></div>
 <div id="edit-chore-modal" class="modal-overlay hidden"><div class="modal-content"><h3>Edit Chore</h3><div class="admin-form-box">
-    <div class="form-group"><label>Name</label><input type="text" id="edit-c-name"></div><div class="form-group"><label>Assignee</label><select id="edit-c-assignee"></select></div><div class="form-group"><label>Goal</label><input type="number" id="edit-c-goal"></div><div class="form-group"><label>Prize</label><input type="text" id="edit-c-prize"></div><div class="form-group" style="grid-column: 1 / -1;"><label>Desc</label><input type="text" id="edit-c-desc"></div>
+    <div class="form-group"><label>Name</label><input type="text" id="edit-c-name"></div><div class="form-group"><label>Assignee</label><select id="edit-c-assignee"></select></div>
+    <div class="form-group"><label>Goal</label><input type="number" id="edit-c-goal"></div><div class="form-group"><label>Prize</label><input type="text" id="edit-c-prize"></div>
+    <div class="form-group" style="grid-column: 1 / -1;"><label>Desc</label><input type="text" id="edit-c-desc"></div>
 </div><button class="btn-primary" id="save-chore-btn">Save</button><button class="btn-danger" onclick="closeModal('edit-chore-modal')">Cancel</button></div></div>
 
 <script>
     const kidMessages = ["BOOM! 🔥", "LEGEND! 🏆", "CLUTCH! ⚡", "BOOYAH! 🚀"];
-    const teenMessages = ["Impressive. 🙄", "One closer. 📱", "Functional human. 👏"];
+    const teenMessages = ["Impressive. 🙄", "One closer. 📱", "Functional. 👏"];
     let state = JSON.parse(localStorage.getItem('familyHubData')) || { members: [], chores: [], approvals: [], lastResetDate: new Date().toDateString(), choresVisible: true, calVisible: false, calendarUrl: "", adminPasscode: "" };
     let isUnlocked = false; let editTargetId = null; let sidebarTimer;
     const currencyMap = { kid: "tokens", teen: "minutes", adult: "" };
@@ -170,7 +195,7 @@
     function finalizeSetup() { const p = document.getElementById('setup-passcode').value; if(p) { state.adminPasscode = p; save(); document.getElementById('setup-wizard').classList.add('hidden'); } }
     function toggleAdminLock() {
         if (isUnlocked) { isUnlocked = false; document.getElementById('admin-menu').style.display = 'none'; document.getElementById('unlock-btn').innerHTML = "🔒 Admin Unlock"; showSection('dashboard'); }
-        else { const e = prompt("Passcode:"); if (e === state.adminPasscode) { isUnlocked = true; document.getElementById('admin-menu').style.display = 'block'; document.getElementById('unlock-btn').innerHTML = "🔓 Unlocked"; } }
+        else { const e = prompt("Passcode:"); if (e === state.adminPasscode) { isUnlocked = true; document.getElementById('admin-menu').style.display = 'block'; document.getElementById('unlock-btn').innerHTML = "<span>🔓 Unlocked</span>"; } }
     }
     function calculateVal(c) {
         if(c.type === 'static') return c.points || 5;
@@ -218,7 +243,7 @@
     function showSection(id) { document.querySelectorAll('.content-section').forEach(s => s.classList.add('hidden')); document.getElementById(id).classList.remove('hidden'); document.querySelectorAll('nav button').forEach(b => b.classList.remove('active')); }
     function handleAdminNav(id) { if (isUnlocked) showSection(id); }
     function addMember() { const n = document.getElementById('m-name'); if(n.value) { state.members.push({id:Date.now(), name:n.value, role:document.getElementById('m-role').value, points:0}); save(); n.value=''; } }
-    function deleteMember(id) { if(confirm("Delete Member?")) { state.members = state.members.filter(x => x.id !== id); save(); } }
+    function deleteMember(id) { state.members = state.members.filter(x => x.id !== id); save(); }
     function openEditMember(id) { editTargetId = id; const m = state.members.find(x => x.id === id); document.getElementById('edit-m-name').value = m.name; document.getElementById('edit-m-role').value = m.role; document.getElementById('edit-member-modal').classList.remove('hidden'); }
     document.getElementById('save-member-btn').onclick = () => { const m = state.members.find(x => x.id === editTargetId); m.name = document.getElementById('edit-m-name').value; m.role = document.getElementById('edit-m-role').value; save(); closeModal('edit-member-modal'); };
     function addChore() { const n = document.getElementById('c-name'); if(n.value) { state.chores.push({id:Date.now(), name:n.value, desc:document.getElementById('c-desc').value, assigneeId:parseInt(document.getElementById('c-assignee').value), lastCompleted:null, points:parseInt(document.getElementById('c-points').value), type:document.getElementById('c-type').value, dynamic:{max:parseInt(document.getElementById('c-max').value), min:parseInt(document.getElementById('c-min').value)}, goal:parseInt(document.getElementById('c-goal').value), prize:document.getElementById('c-prize').value, timesCompleted:0}); save(); n.value=''; } }
@@ -227,22 +252,11 @@
     document.getElementById('save-chore-btn').onclick = () => { const c = state.chores.find(x => x.id === editTargetId); c.name = document.getElementById('edit-c-name').value; c.assigneeId = parseInt(document.getElementById('edit-c-assignee').value); c.desc = document.getElementById('edit-c-desc').value; c.goal = parseInt(document.getElementById('edit-c-goal').value); c.prize = document.getElementById('edit-c-prize').value; save(); closeModal('edit-chore-modal'); };
     function saveCalendarUrl() { state.calendarUrl = document.getElementById('cal-url-input').value; save(); location.reload(); }
     function updatePasscode() { const p = document.getElementById('change-pass-input').value; if(p) { state.adminPasscode = p; save(); alert("Updated!"); } }
-    
-    // FIXED BACKUP BUTTON
-    function exportData() {
-        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(state));
-        const downloadAnchorNode = document.createElement('a');
-        downloadAnchorNode.setAttribute("href", dataStr);
-        downloadAnchorNode.setAttribute("download", "FamilyHub_Backup.json");
-        document.body.appendChild(downloadAnchorNode);
-        downloadAnchorNode.click();
-        downloadAnchorNode.remove();
-    }
-    
+    function exportData() { const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(state)); const dl = document.createElement('a'); dl.setAttribute("href", dataStr); dl.setAttribute("download", "FamilyHub.json"); document.body.appendChild(dl); dl.click(); dl.remove(); }
     function importData(e) { const r = new FileReader(); r.onload = (x) => { state = JSON.parse(x.target.result); save(); location.reload(); }; r.readAsText(e.target.files[0]); }
-    function clearAllPoints() { if(confirm("Reset ALL member points to zero?")) { state.members.forEach(m => m.points = 0); save(); } }
+    function clearAllPoints() { if(confirm("Reset ALL balances?")) { state.members.forEach(m => m.points = 0); save(); } }
     function resetAllChoreChecks() { if(confirm("Reset all daily checkboxes?")) { state.chores.forEach(c => c.lastCompleted = null); save(); } }
-    function nuclearReset() { if(confirm("FACTORY RESET? ALL DATA WILL BE WIPED.")) { localStorage.removeItem('familyHubData'); location.reload(); } }
+    function nuclearReset() { if(confirm("Wipe Everything?")) { localStorage.removeItem('familyHubData'); location.reload(); } }
     function togglePointForm(s, r1, r2) { const v = document.getElementById(s).value; document.getElementById(r1).classList.toggle('hidden', v !== 'static'); document.getElementById(r2).classList.toggle('hidden', v !== 'dynamic'); }
     function updateAssigneeDropdowns() { const h = state.members.map(m => `<option value="${m.id}">${m.name}</option>`).join(''); document.getElementById('c-assignee').innerHTML = h; document.getElementById('edit-c-assignee').innerHTML = h; }
     function toggleSidebar() { document.getElementById('sidebar').classList.toggle('collapsed'); document.getElementById('main-content').classList.toggle('expanded'); }
