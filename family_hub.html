@@ -28,13 +28,12 @@
 
         .card { background: white; padding: 15px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.02); margin-bottom: 15px; border: 1px solid #eee; position: relative; }
         .section-header { display: flex; justify-content: space-between; align-items: center; cursor: pointer; user-select: none; }
-        .section-header h3 { margin: 0; font-size: 1.1rem; }
         .toggle-icon { font-family: monospace; font-weight: bold; color: var(--accent); font-size: 1.2rem; }
 
         .user-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 12px; margin-top: 15px; }
         .user-card { background: #fff; border-radius: 10px; border: 1px solid #ddd; overflow: hidden; position: relative; }
-        .user-header { padding: 4px 15px; background: #f8f9fa; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #ddd; }
-        .user-header h3 { margin: 4px 0; font-size: 1.2rem; font-weight: 800; color: var(--primary); }
+        .user-header { padding: 6px 12px; background: #f8f9fa; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #ddd; }
+        .user-header h3 { margin: 2px 0; font-size: 1.2rem; font-weight: 800; color: var(--primary); }
         .currency-pill { font-size: 0.85rem; font-weight: 800; color: var(--success); background: #fff; border: 1.5px solid var(--success); padding: 2px 10px; border-radius: 12px; }
         
         .chore-item { display: flex; align-items: flex-start; gap: 12px; padding: 12px 15px; border-bottom: 1px solid #eee; }
@@ -58,8 +57,8 @@
         input, select, textarea { padding: 10px; border: 1px solid #ddd; border-radius: 8px; font-size: 13px; width: 100%; box-sizing: border-box; }
         
         table { width: 100%; border-collapse: collapse; table-layout: fixed; }
-        th { text-align: left; font-size: 11px; font-weight: 700; color: #888; text-transform: uppercase; padding: 12px 10px; border-bottom: 2px solid #eee; }
-        td { padding: 10px; border-bottom: 1px solid #f5f5f5; font-size: 14px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; vertical-align: middle; }
+        th { text-align: left; font-size: 10px; font-weight: 700; color: #888; text-transform: uppercase; padding: 10px; border-bottom: 2px solid #eee; }
+        td { padding: 10px; border-bottom: 1px solid #f5f5f5; font-size: 13px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; vertical-align: middle; }
         
         .btn-outline-primary { background: transparent; color: var(--primary); border: 1px solid var(--primary); padding: 8px 15px; border-radius: 6px; cursor: pointer; font-weight: 700; transition: 0.2s; }
         .btn-outline-primary:hover { background: var(--primary); color: white; }
@@ -183,16 +182,16 @@
     </section>
 </main>
 
-<div id="edit-member-modal" class="modal-overlay hidden"><div class="modal-content"><h3>Edit Member</h3><div class="admin-form-box"><div class="form-group"><label>Name</label><input type="text" id="edit-m-name"></div><div class="form-group"><label>Role</label><select id="edit-m-role"><option value="kid">Kid</option><option value="teen">Teen</option><option value="adult">Adult</option></select></div></div><button class="btn-outline-primary" id="save-member-btn">Save</button><button class="btn-outline-danger btn-mini" style="margin-left:10px" onclick="closeModal('edit-member-modal')">Cancel</button></div></div>
+<div id="edit-member-modal" class="modal-overlay hidden"><div class="modal-content"><h3>Edit Member</h3><div class="admin-form-box"><div class="form-group"><label>Name</label><input type="text" id="edit-m-name"></div><div class="form-group"><label>Role</label><select id="edit-m-role"><option value="kid">Kid</option><option value="teen">Teen</option><option value="adult">Adult</option></select></div></div><button class="btn-outline-primary" onclick="submitMemberEdit()">Save</button><button class="btn-outline-danger btn-mini" style="margin-left:10px" onclick="closeModal('edit-member-modal')">Cancel</button></div></div>
 <div id="edit-chore-modal" class="modal-overlay hidden"><div class="modal-content"><h3>Edit Chore</h3><div class="admin-form-box">
     <div class="form-group"><label>Name</label><input type="text" id="edit-c-name"></div><div class="form-group"><label>Assignee</label><select id="edit-c-assignee"></select></div>
     <div class="form-group"><label>Goal Streak</label><input type="number" id="edit-c-goal"></div><div class="form-group"><label>Prize</label><input type="text" id="edit-c-prize"></div>
     <div class="form-group" style="grid-column: 1 / -1;"><label>Description</label><input type="text" id="edit-c-desc"></div>
-</div><button class="btn-outline-primary" id="save-chore-btn">Save</button><button class="btn-outline-danger btn-mini" style="margin-left:10px" onclick="closeModal('edit-chore-modal')">Cancel</button></div></div>
+</div><button class="btn-outline-primary" onclick="submitChoreEdit()">Save</button><button class="btn-outline-danger btn-mini" style="margin-left:10px" onclick="closeModal('edit-chore-modal')">Cancel</button></div></div>
 
 <script>
     const kidMessages = ["BOOM! 🔥", "LEGEND! 🏆", "CLUTCH! ⚡", "BOOYAH! 🚀", "W! 👑", "POG! 😲", "SHEESH! 🔥", "GOATED! 🐐", "ULTIMATE! 🔥", "WINNING! 🏁", "NO CAP! 🧢", "LEVEL UP! 🆙", "INSANE! 🧠", "KING! 👑", "QUEEN! 👸", "MONSTER! 👾"];
-    const teenMessages = ["K.", "Cool.", "Nice.", "Yep.", "Fine.", "Sure.", "Word.", "Bruh.", "Bet.", "Sus.", "Fr.", "Valid.", "Easy.", "Lit.", "Fire.", "Chill.", "Solid.", "Tough.", "Whatever.", "It's done.", "Okay.", "Living the dream."];
+    const teenMessages = ["K.", "Cool.", "Nice.", "Done.", "Yep.", "Fine.", "Sure.", "Word.", "Bruh.", "Bet.", "Sus.", "Fr.", "Valid.", "Easy.", "Lit.", "Fire.", "Chill.", "Solid.", "Tough.", "Whatever.", "It's done.", "Okay.", "Living the dream."];
 
     let state = JSON.parse(localStorage.getItem('familyHubData')) || { 
         members: [], chores: [], approvals: [], lastResetDate: new Date().toDateString(), 
@@ -227,13 +226,13 @@
         const isExactMomentOfGoal = c.goal > 0 && currentProgress === c.goal;
 
         state.approvals.push({ id: Date.now(), choreId: cid, memberId: mid, points: calculateVal(c), choreName: c.name, type: 'points' });
-        if (isExactMomentOfGoal) state.approvals.push({ id: Date.now() + 1, choreId: cid, memberId: mid, points: 0, choreName: `REWARD: ${c.prize}`, type: 'prize' });
+        if (isPrizeHit = isExactMomentOfGoal) state.approvals.push({ id: Date.now() + 1, choreId: cid, memberId: mid, points: 0, choreName: `REWARD: ${c.prize}`, type: 'prize' });
         
         const card = document.getElementById(`card-${mid}`);
         const ov = card.querySelector('.card-celebration');
         if (ov && m.role !== 'adult') {
             let msg = m.role === 'kid' ? kidMessages[Math.floor(Math.random()*kidMessages.length)] : teenMessages[Math.floor(Math.random()*teenMessages.length)];
-            if (isExactMomentOfGoal) msg = `🎯 STREAK MET!<br>CLAIM: ${c.prize}`;
+            if (isPrizeHit) msg = `🎯 STREAK MET!<br>CLAIM: ${c.prize}`;
             ov.querySelector('.card-celebration-msg').innerHTML = msg; 
             ov.style.display = 'flex';
             setTimeout(() => { if(ov) ov.style.display = 'none'; save(); }, 3500);
@@ -251,6 +250,7 @@
         state.approvals = state.approvals.filter(x => x.id !== id); save();
     }
 
+    // --- GLOBAL MODAL FUNCTIONS ---
     function openEditMember(id) {
         editTargetId = id;
         const m = state.members.find(x => x.id === id);
@@ -259,17 +259,17 @@
         document.getElementById('edit-member-modal').classList.remove('hidden');
     }
 
-    document.getElementById('save-member-btn').onclick = () => {
+    function submitMemberEdit() {
         const m = state.members.find(x => x.id === editTargetId);
         m.name = document.getElementById('edit-m-name').value;
         m.role = document.getElementById('edit-m-role').value;
         save(); closeModal('edit-member-modal');
-    };
+    }
 
     function openEditChore(id) {
         editTargetId = id;
         const c = state.chores.find(x => x.id === id);
-        updateAssigneeDropdowns();
+        updateAssigneeDropdowns(); // Refresh dropdowns
         document.getElementById('edit-c-name').value = c.name;
         document.getElementById('edit-c-desc').value = c.desc || '';
         document.getElementById('edit-c-assignee').value = c.assigneeId;
@@ -278,7 +278,7 @@
         document.getElementById('edit-chore-modal').classList.remove('hidden');
     }
 
-    document.getElementById('save-chore-btn').onclick = () => {
+    function submitChoreEdit() {
         const c = state.chores.find(x => x.id === editTargetId);
         c.name = document.getElementById('edit-c-name').value;
         c.assigneeId = parseInt(document.getElementById('edit-c-assignee').value);
@@ -286,14 +286,14 @@
         c.goal = parseInt(document.getElementById('edit-c-goal').value);
         c.prize = document.getElementById('edit-c-prize').value;
         save(); closeModal('edit-chore-modal');
-    };
+    }
 
     function renderAll() {
         const today = new Date().toDateString();
         document.getElementById('approval-badge').innerText = state.approvals.length;
         document.getElementById('approval-badge').classList.toggle('hidden', state.approvals.length === 0);
         
-        // Synced Accordion Logic
+        // Sync Accordion Icons and Visibility
         document.getElementById('chores-icon').innerText = state.choresVisible ? '−' : '+';
         document.getElementById('cal-icon').innerText = state.calVisible ? '−' : '+';
         document.getElementById('chores-body').classList.toggle('hidden', !state.choresVisible);
@@ -321,11 +321,15 @@
         document.getElementById('member-list-body').innerHTML = state.members.map(m => `<tr><td><strong>${m.name}</strong></td><td>${m.role}</td><td>${m.points}</td><td style="text-align:right"><button class="btn-outline-danger btn-mini" onclick="resetOneMember(${m.id})">Reset</button><button class="btn-outline-primary btn-mini" onclick="openEditMember(${m.id})">Edit</button><button class="btn-outline-danger btn-mini" onclick="deleteMember(${m.id})">X</button></td></tr>`).join('');
         document.getElementById('chore-list-body').innerHTML = state.chores.map(c => `<tr><td><strong>${c.name}</strong></td><td>${state.members.find(x=>x.id===c.assigneeId)?.name || 'None'}</td><td>${c.goal||'--'} Streak</td><td style="text-align:right"><button class="btn-outline-primary btn-mini" onclick="openEditChore(${c.id})">Edit</button><button class="btn-outline-danger btn-mini" onclick="deleteChore(${c.id})">X</button></td></tr>`).join('');
         document.getElementById('approval-list-body').innerHTML = state.approvals.map(a => `<tr><td>${state.members.find(m=>m.id===a.memberId)?.name}</td><td>${a.choreName}${a.type === 'prize' ? '<span class="prize-badge">🎁 REWARD</span>' : ''}</td><td>${a.points || '--'}</td><td style="text-align:right"><button class="btn-outline-accent btn-mini" style="background:var(--success); color:white; border:none;" onclick="approveItem(${a.id})">Approve</button><button class="btn-outline-danger btn-mini" onclick="rejectChore(${a.id})">Reject</button></td></tr>`).join('');
-        if (state.calVisible && state.calendarUrl && !document.querySelector('#calendar-slot iframe')) document.getElementById('calendar-slot').innerHTML = `<iframe src="${state.calendarUrl}"></iframe>`;
+        
+        if (state.calVisible && state.calendarUrl && !document.querySelector('#calendar-slot iframe')) {
+            document.getElementById('calendar-slot').innerHTML = `<iframe src="${state.calendarUrl}"></iframe>`;
+        }
+        updateAssigneeDropdowns();
     }
 
     function toggleAccordion(k) { state[k] = !state[k]; save(); }
-    function showSection(id) { document.querySelectorAll('.content-section').forEach(s => s.classList.add('hidden')); document.getElementById(id).classList.remove('hidden'); document.querySelectorAll('nav button').forEach(b => b.classList.remove('active')); if(id==='dashboard') renderAll(); }
+    function showSection(id) { document.querySelectorAll('.content-section').forEach(s => s.classList.add('hidden')); document.getElementById(id).classList.remove('hidden'); document.querySelectorAll('nav button').forEach(b => b.classList.remove('active')); }
     function handleAdminNav(id) { showSection(id); }
     function addMember() { const n = document.getElementById('m-name'); if(n.value) { state.members.push({id:Date.now(), name:n.value, role:document.getElementById('m-role').value, points:0}); save(); n.value=''; } }
     function deleteMember(id) { if(confirm("Delete Member?")) { state.members = state.members.filter(x => x.id !== id); save(); } }
@@ -340,7 +344,11 @@
     function resetAllChoreGoals() { state.chores.forEach(c => c.timesCompleted = 0); save(); }
     function nuclearReset() { if(confirm("NUCLEAR RESET?")) { localStorage.removeItem('familyHubData'); location.reload(); } }
     function togglePointForm(s, r1, r2) { const v = document.getElementById(s).value; document.getElementById(r1).classList.toggle('hidden', v !== 'static'); document.getElementById(r2).classList.toggle('hidden', v !== 'dynamic'); }
-    function updateAssigneeDropdowns() { const h = state.members.map(m => `<option value="${m.id}">${m.name}</option>`).join(''); document.getElementById('c-assignee').innerHTML = h; document.getElementById('edit-c-assignee').innerHTML = h; }
+    function updateAssigneeDropdowns() { 
+        const h = state.members.map(m => `<option value="${m.id}">${m.name}</option>`).join(''); 
+        document.getElementById('c-assignee').innerHTML = h; 
+        document.getElementById('edit-c-assignee').innerHTML = h; 
+    }
     function toggleSidebar() { document.getElementById('sidebar').classList.toggle('collapsed'); document.getElementById('main-content').classList.toggle('expanded'); }
     function resetSidebarTimer() { clearTimeout(sidebarTimer); sidebarTimer = setTimeout(() => { if (!isUnlocked && window.innerWidth > 768) toggleSidebar(); }, 10000); }
     if (!state.adminPasscode) document.getElementById('setup-wizard').classList.remove('hidden');
