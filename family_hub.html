@@ -1,4 +1,4 @@
-<!--Phase 16.9.41-->
+<!--Phase 16.9.42-->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -147,15 +147,15 @@
 
     <section id="admin-settings" class="content-section hidden">
         <div class="card">
-            <h1>Settings</h1>
+            <h1>Hub Settings</h1>
             
             <div class="admin-form-box">
-                <div class="form-group" style="grid-column: 1 / -1;"><label>Calendar URL</label><input type="text" id="cal-url-input" placeholder="Google Calendar Embed URL"></div>
+                <div class="form-group" style="grid-column: 1 / -1;"><label>Google Calendar Embed URL</label><input type="text" id="cal-url-input"></div>
                 <button class="btn-outline-primary" onclick="saveCalendarUrl()">Save URL</button>
             </div>
 
             <div class="admin-form-box">
-                <div class="form-group" style="grid-column: 1 / -1;"><label>Change Master Passcode</label><input type="password" id="change-pass-input" placeholder="Enter New Code"></div>
+                <div class="form-group" style="grid-column: 1 / -1;"><label>Change Master Passcode</label><input type="password" id="change-pass-input" placeholder="New Passcode"></div>
                 <button class="btn-outline-primary" onclick="updatePasscode()">Update Passcode</button>
             </div>
 
@@ -166,7 +166,7 @@
                 <button class="btn-outline-primary" onclick="document.getElementById('importFile').click()" style="flex: 1;">📥 Restore Hub</button>
                 <input type="file" id="importFile" class="hidden" accept=".json" onchange="importData(event)">
             </div>
-            <button class="btn-outline-danger" onclick="nuclearReset()" style="width:100%; margin-top:30px; padding: 15px;">☢️ NUCLEAR SYSTEM RESET</button>
+            <button class="btn-outline-danger" onclick="nuclearReset()" style="width:100%; margin-top:30px; padding: 15px; font-weight:800;">☢️ NUCLEAR SYSTEM RESET</button>
         </div>
     </section>
 
@@ -207,7 +207,7 @@
 
 <script>
     const kidMessages = ["BOOM! 🔥", "LEGEND! 🏆", "CLUTCH! ⚡", "BOOYAH! 🚀", "W! 👑", "WINNING! 🏁"];
-    const teenMessages = ["K.", "Nice.", "Yep.", "Whatever.", "Solid.", "Fine."];
+    const teenMessages = ["K.", "Nice.", "Yep.", "Done.", "Solid.", "Fine."];
 
     let state = JSON.parse(localStorage.getItem('familyHubData')) || { 
         members: [], chores: [], approvals: [], calendarUrl: "", adminPasscode: "1234",
@@ -329,7 +329,7 @@
                     if (c.goal > 0) {
                         const pct = Math.min(100, (c.timesCompleted / c.goal) * 100);
                         goalHtml = `<div class="progress-container"><div class="progress-fill" style="width:${pct}%"></div></div>
-                                    <div class="milestone-text">Streak: ${c.timesCompleted}/${c.goal} to ${c.prize}</div>`;
+                                    <div class="milestone-text">Goal: ${c.timesCompleted}/${c.goal} to ${c.prize}</div>`;
                     }
                     return `<div class="chore-item ${c.lastCompleted===today?'completed':(isW?'pending':'')}">
                         <input type="checkbox" ${c.lastCompleted===today||isW?'checked disabled':''} onchange="completeChore(${c.id}, ${m.id}, this)">
@@ -343,7 +343,7 @@
         
         document.getElementById('chore-list-body').innerHTML = state.chores.map(c => {
             const logicTxt = c.type === 'static' ? `S:${c.points}` : `D:${c.dynamic.min}-${c.dynamic.max}`;
-            return `<tr><td><strong>${c.name}</strong><br><small>${state.members.find(m=>m.id===c.assigneeId)?.name}</small></td><td>${c.goal}</td><td>${c.prize||'--'}</td><td>${logicTxt}</td><td style="text-align:right"><button class="btn-outline-primary btn-mini" onclick="openEditChore(${c.id})">Edit</button><button class="btn-outline-danger btn-mini" onclick="state.chores=state.chores.filter(u=>u.id!=${c.id});save()">X</button></td></tr>`;
+            return `<tr><td><strong>${c.name}</strong><br><small>${state.members.find(m=>m.id===c.assigneeId)?.name || 'None'}</small></td><td>${c.goal}</td><td>${c.prize||'--'}</td><td>${logicTxt}</td><td style="text-align:right"><button class="btn-outline-primary btn-mini" onclick="openEditChore(${c.id})">Edit</button><button class="btn-outline-danger btn-mini" onclick="state.chores=state.chores.filter(u=>u.id!=${c.id});save()">X</button></td></tr>`;
         }).join('');
         
         document.getElementById('approval-list-body').innerHTML = state.approvals.map(a => `<tr><td>${state.members.find(m=>m.id===a.memberId)?.name}</td><td>${a.choreName}${a.type==='prize'?' <span class="prize-badge">REWARD</span>':''}</td><td>${a.points||'--'}</td><td style="text-align:right"><button class="btn-outline-accent btn-mini" style="background:var(--success); color:white; border:none;" onclick="approveItem(${a.id})">Approve</button><button class="btn-outline-danger btn-mini" onclick="state.approvals=state.approvals.filter(x=>x.id!=${a.id});save()">Reject</button></td></tr>`).join('');
@@ -356,7 +356,7 @@
     function addChore() { const n=document.getElementById('c-name'); if(n.value){ state.chores.push({id:Date.now(), name:n.value, desc:document.getElementById('c-desc').value, assigneeId:parseInt(document.getElementById('c-assignee').value), lastCompleted:null, points:parseInt(document.getElementById('c-points').value), type:document.getElementById('c-type').value, dynamic:{max:parseInt(document.getElementById('c-max').value), min:parseInt(document.getElementById('c-min').value)}, goal:parseInt(document.getElementById('c-goal').value), prize:document.getElementById('c-prize').value, timesCompleted:0}); save(); n.value='';} }
     function togglePointForm(s, r1, r2) { const v = document.getElementById(s).value; document.getElementById(r1).classList.toggle('hidden', v !== 'static'); document.getElementById(r2).classList.toggle('hidden', v !== 'dynamic'); }
     function updateAssigneeDropdowns() { const h = state.members.map(m => `<option value="${m.id}">${m.name}</option>`).join(''); document.getElementById('c-assignee').innerHTML = h; document.getElementById('edit-c-assignee').innerHTML = h; }
-    function saveCalendarUrl() { state.calendarUrl = document.getElementById('cal-url-input').value; save(); alert("URL Saved!"); }
+    function saveCalendarUrl() { state.calendarUrl = document.getElementById('cal-url-input').value; save(); alert("Settings Saved!"); }
     function updatePasscode() { const p = document.getElementById('change-pass-input').value; if(p){ state.adminPasscode = p; save(); alert("Passcode Updated!"); document.getElementById('change-pass-input').value=''; } }
     function toggleSidebar() { document.getElementById('sidebar').classList.toggle('collapsed'); document.getElementById('main-content').classList.toggle('expanded'); }
     function resetSidebarTimer() { clearTimeout(sidebarTimer); sidebarTimer = setTimeout(() => { if (!isUnlocked) toggleSidebar(); }, 15000); }
@@ -365,7 +365,7 @@
     function nuclearReset() { if(confirm("Wipe Everything?")) { localStorage.clear(); location.reload(); } }
     function exportData() { const d = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(state)); const a = document.createElement('a'); a.href = d; a.download = `FamilyHub_Backup_${new Date().toISOString().split('T')[0]}.json`; a.click(); }
     function importData(e) { const r = new FileReader(); r.onload = (x) => { try { state = JSON.parse(x.target.result); save(); location.reload(); } catch(err) { alert("Invalid File Format"); } }; r.readAsText(e.target.files[0]); }
-    function clearAllPoints() { if(confirm("Reset all balances to 0?")) { state.members.forEach(m => m.points = 0); save(); } }
+    function clearAllPoints() { if(confirm("Reset all balances?")) { state.members.forEach(m => m.points = 0); save(); } }
     
     setInterval(() => { document.getElementById('clock').innerText = new Date().toLocaleTimeString(); }, 1000);
     if (state.calendarUrl) document.getElementById('cal-url-input').value = state.calendarUrl;
