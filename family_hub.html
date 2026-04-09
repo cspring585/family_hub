@@ -19,38 +19,41 @@
         nav button.active { background: rgba(78, 204, 163, 0.1); color: var(--accent); border-left: 3px solid var(--accent); }
 
         #nav-toggle { position: fixed; left: 15px; top: 15px; z-index: 101; background: white; border: none; padding: 10px; border-radius: 6px; cursor: pointer; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-        main { margin-left: 240px; padding: 20px 30px; width: 100%; box-sizing: border-box; transition: 0.3s; }
+        main { margin-left: 240px; padding: 15px 25px; width: 100%; box-sizing: border-box; transition: 0.3s; }
         main.expanded { margin-left: 0; padding-left: 80px; }
 
         .card { background: white; padding: 15px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.02); margin-bottom: 15px; position: relative; }
-        .section-header { display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
+        .section-header { display: flex; justify-content: space-between; align-items: center; cursor: pointer; border-bottom: 1px solid #f0f0f0; padding-bottom: 5px; }
         .user-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 12px; margin-top: 15px; }
         .user-card { background: #fff; border-radius: 10px; border: 1px solid #ddd; overflow: hidden; position: relative; }
-        .user-header { padding: 8px 15px; background: #f8f9fa; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #ddd; }
+        
+        .user-header { padding: 6px 15px; background: #f8f9fa; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #ddd; }
         .user-header h3 { margin: 0; font-size: 1.2rem; font-weight: 800; color: var(--primary); }
+        .currency-pill { font-size: 0.85rem; font-weight: 800; color: var(--success); background: #fff; border: 1.5px solid var(--success); padding: 2px 8px; border-radius: 12px; }
+
+        .chore-item { display: flex; align-items: flex-start; gap: 12px; padding: 10px 15px; border-bottom: 1px solid #eee; }
+        .chore-info strong { font-size: 1.1rem; color: #111; line-height: 1.2; display: block; }
+        .chore-info small { font-size: 13px; color: var(--text-muted); display: block; margin-top: 2px; }
         
-        .chore-item { display: flex; align-items: flex-start; gap: 12px; padding: 12px 15px; border-bottom: 1px solid #eee; }
-        .chore-info strong { font-size: 1.1rem; color: #111; display: block; }
-        .chore-info small { font-size: 13px; color: var(--text-muted); }
+        input[type="checkbox"] { width: 26px; height: 26px; cursor: pointer; accent-color: var(--accent); margin-top: 2px; }
         
-        input[type="checkbox"] { width: 26px; height: 26px; cursor: pointer; accent-color: var(--accent); }
         .btn-outline-primary { background: transparent; color: var(--primary); border: 1px solid var(--primary); padding: 8px 15px; border-radius: 6px; cursor: pointer; font-weight: 700; }
         .btn-outline-danger { background: transparent; color: var(--danger); border: 1px solid var(--danger); padding: 8px 15px; border-radius: 6px; cursor: pointer; font-weight: 700; }
-        .btn-mini { padding: 4px 8px; font-size: 11px; margin-right: 5px; }
+        .btn-mini { padding: 4px 10px; font-size: 11px; margin-right: 5px; }
 
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); backdrop-filter: blur(5px); display: none; justify-content: center; align-items: center; z-index: 9999; }
-        .modal-content { background: white; width: 90%; max-width: 500px; padding: 30px; border-radius: 15px; }
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); backdrop-filter: blur(5px); display: none; justify-content: center; align-items: center; z-index: 9999; }
+        .modal-content { background: white; width: 90%; max-width: 500px; padding: 30px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
         .hidden { display: none !important; }
         
-        .calendar-container { width: 100%; height: 700px; border: 0; margin-top: 15px; }
-        .card-celebration { position: absolute; top:0; left:0; width:100%; height:100%; background: rgba(26,26,46,0.98); z-index: 500; display:none; flex-direction:column; justify-content:center; align-items:center; text-align:center; color:white; pointer-events:all; }
+        .calendar-container { width: 100%; height: 700px; border: 0; margin-top: 15px; border-radius: 10px; overflow: hidden; }
+        .card-celebration { position: absolute; top:0; left:0; width:100%; height:100%; background: rgba(26,26,46,0.98); z-index: 500; display:none; flex-direction:column; justify-content:center; align-items:center; text-align:center; color:white; pointer-events:all; padding: 15px; box-sizing: border-box; }
     </style>
 </head>
 <body onmousemove="resetSidebarTimer()" ontouchstart="resetSidebarTimer()">
 
 <nav id="sidebar">
     <h2>Family Hub</h2>
-    <button onclick="showSection('dashboard')" class="active">🏠 Dashboard</button>
+    <button id="nav-dash" onclick="showSection('dashboard')" class="active">🏠 Dashboard</button>
     <div id="admin-menu" style="display:none;">
         <button onclick="showSection('admin-approvals')">✅ Approvals <span id="approval-badge"></span></button>
         <button onclick="showSection('admin-members')">👥 Members</button>
@@ -58,7 +61,7 @@
         <button onclick="showSection('admin-settings')">🛠️ Settings</button>
     </div>
     <div style="padding: 20px;">
-        <button id="unlock-btn" onclick="toggleAdminLock()" style="color:var(--warning);">🔒 Unlock Admin</button>
+        <button id="unlock-btn" onclick="toggleAdminLock()" style="color:var(--warning); background:none; border:none; cursor:pointer; font-weight:800;">🔒 Unlock Admin</button>
     </div>
 </nav>
 
@@ -66,9 +69,9 @@
 
 <main id="main-content">
     <section id="dashboard" class="content-section">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
-            <h1 style="padding-left:40px;">Dashboard</h1>
-            <div id="clock" style="text-align:right; font-weight:800; color:var(--primary);"></div>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+            <h1 style="padding-left:45px; margin: 10px 0;">Dashboard</h1>
+            <div id="clock" style="text-align:right; font-weight:800; color:var(--primary); font-size: 1.1rem;"></div>
         </div>
         
         <div class="card">
@@ -102,7 +105,10 @@
     <section id="admin-chores" class="content-section hidden">
         <div class="card">
             <h1>Chore Configuration</h1>
-            <button class="btn-outline-danger" onclick="resetAllChoreChecks()">🧪 RESET DAILY SWEEP</button>
+            <div style="display:flex; gap:10px; margin-bottom:15px;">
+                <button class="btn-outline-danger" onclick="resetAllChoreChecks()">🧪 RESET DAILY SWEEP</button>
+                <button class="btn-outline-danger" onclick="resetAllChoreGoals()">🎁 RESET GOAL PROGRESS</button>
+            </div>
             <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin:20px 0;">
                 <input type="text" id="c-name" placeholder="Chore Name">
                 <select id="c-assignee"></select>
@@ -121,36 +127,42 @@
     <section id="admin-settings" class="content-section hidden">
         <div class="card">
             <h1>Settings</h1>
-            <input type="text" id="cal-url-input" placeholder="Google Calendar Embed URL" style="width:100%; padding:10px; margin-bottom:10px;">
-            <button class="btn-outline-primary" onclick="saveCalendarUrl()">Save Calendar</button>
-            <hr>
-            <button class="btn-outline-primary" onclick="exportData()">📤 Backup Hub</button>
-            <button class="btn-outline-danger" onclick="nuclearReset()" style="width:100%; margin-top:50px;">☢️ NUCLEAR RESET</button>
+            <input type="text" id="cal-url-input" placeholder="Google Calendar Embed URL" style="width:100%; padding:10px; margin-bottom:10px; border-radius:8px; border:1px solid #ddd;">
+            <button class="btn-outline-primary" onclick="saveCalendarUrl()">Save Calendar URL</button>
+            <hr style="margin: 30px 0; border:0; border-top:1px solid #eee;">
+            <button class="btn-outline-primary" onclick="exportData()">📤 Backup Hub Data</button>
+            <button class="btn-outline-danger" onclick="nuclearReset()" style="width:100%; margin-top:50px; padding: 20px; font-size: 1.2rem;">☢️ NUCLEAR SYSTEM RESET</button>
         </div>
     </section>
 </main>
 
 <div id="edit-member-modal" class="modal-overlay">
     <div class="modal-content">
-        <h3>Edit Member</h3>
-        <input type="text" id="edit-m-name" style="width:100%; padding:10px; margin-bottom:10px;">
-        <select id="edit-m-role" style="width:100%; padding:10px; margin-bottom:20px;">
+        <h3>Edit Family Member</h3>
+        <label style="font-size:11px; font-weight:800; color:#666;">NAME</label>
+        <input type="text" id="edit-m-name" style="width:100%; padding:12px; margin-bottom:15px; border-radius:8px; border:1px solid #ddd;">
+        <label style="font-size:11px; font-weight:800; color:#666;">ROLE</label>
+        <select id="edit-m-role" style="width:100%; padding:12px; margin-bottom:25px; border-radius:8px; border:1px solid #ddd;">
             <option value="kid">Kid</option><option value="teen">Teen</option><option value="adult">Adult</option>
         </select>
-        <button class="btn-outline-primary" onclick="saveMemberEdit()">Save</button>
-        <button class="btn-outline-danger" onclick="closeEditModal()">Cancel</button>
+        <button class="btn-outline-primary" onclick="saveMemberEdit()">Save Changes</button>
+        <button class="btn-outline-danger" onclick="closeEditModal()" style="margin-left:10px;">Cancel</button>
     </div>
 </div>
 
 <div id="edit-chore-modal" class="modal-overlay">
     <div class="modal-content">
         <h3>Edit Chore</h3>
-        <input type="text" id="edit-c-name" style="width:100%; padding:10px; margin-bottom:10px;">
-        <select id="edit-c-assignee" style="width:100%; padding:10px; margin-bottom:10px;"></select>
-        <input type="number" id="edit-c-goal" style="width:100%; padding:10px; margin-bottom:10px;">
-        <input type="text" id="edit-c-prize" style="width:100%; padding:10px; margin-bottom:20px;">
-        <button class="btn-outline-primary" onclick="saveChoreEdit()">Save</button>
-        <button class="btn-outline-danger" onclick="closeEditModal()">Cancel</button>
+        <label style="font-size:11px; font-weight:800; color:#666;">NAME</label>
+        <input type="text" id="edit-c-name" style="width:100%; padding:12px; margin-bottom:10px; border-radius:8px; border:1px solid #ddd;">
+        <label style="font-size:11px; font-weight:800; color:#666;">ASSIGNEE</label>
+        <select id="edit-c-assignee" style="width:100%; padding:12px; margin-bottom:10px; border-radius:8px; border:1px solid #ddd;"></select>
+        <label style="font-size:11px; font-weight:800; color:#666;">GOAL STREAK</label>
+        <input type="number" id="edit-c-goal" style="width:100%; padding:12px; margin-bottom:10px; border-radius:8px; border:1px solid #ddd;">
+        <label style="font-size:11px; font-weight:800; color:#666;">PRIZE</label>
+        <input type="text" id="edit-c-prize" style="width:100%; padding:12px; margin-bottom:25px; border-radius:8px; border:1px solid #ddd;">
+        <button class="btn-outline-primary" onclick="saveChoreEdit()">Save Changes</button>
+        <button class="btn-outline-danger" onclick="closeEditModal()" style="margin-left:10px;">Cancel</button>
     </div>
 </div>
 
@@ -166,8 +178,8 @@
     function save() { localStorage.setItem('familyHubData', JSON.stringify(state)); renderAll(); }
 
     function toggleAdminLock() {
-        if(isUnlocked) { isUnlocked = false; document.getElementById('admin-menu').style.display = 'none'; }
-        else { let p = prompt("Enter Admin Code:"); if(p === state.adminPasscode) { isUnlocked = true; document.getElementById('admin-menu').style.display = 'block'; } }
+        if(isUnlocked) { isUnlocked = false; document.getElementById('admin-menu').style.display = 'none'; document.getElementById('unlock-btn').innerText = "🔒 Unlock Admin"; }
+        else { let p = prompt("Enter Admin Code:"); if(p === state.adminPasscode) { isUnlocked = true; document.getElementById('admin-menu').style.display = 'block'; document.getElementById('unlock-btn').innerText = "🔓 Unlocked"; } }
     }
 
     function completeChore(cid, mid, el) {
@@ -182,9 +194,9 @@
         if(isGoal) state.approvals.push({ id: Date.now()+1, choreId: cid, memberId: mid, name: `REWARD: ${c.prize}`, type: 'prize' });
 
         const ov = document.getElementById(`card-${mid}`).querySelector('.card-celebration');
-        ov.querySelector('div').innerHTML = isGoal ? `🎯 STREAK MET!<br>${c.prize}` : "EXCELLENT! ⭐";
+        ov.innerHTML = `<h2 style="font-size:2rem; margin:0;">${isGoal ? '🎯 STREAK MET!' : 'EXCELLENT! ⭐'}</h2><p>${isGoal ? c.prize : 'Task Logged'}</p>`;
         ov.style.display = 'flex';
-        setTimeout(() => { ov.style.display = 'none'; save(); }, 3000);
+        setTimeout(() => { ov.style.display = 'none'; save(); }, 3500);
     }
 
     function approve(id) {
@@ -197,21 +209,23 @@
         save();
     }
 
-    /* EDIT LOGIC - HARD LINKED */
-    function openEditMember(id) {
+    /* GLOBAL EDIT TRIGGER FUNCTIONS */
+    window.triggerEditMember = function(id) {
         currentEditId = id;
         const m = state.members.find(x => x.id === id);
         document.getElementById('edit-m-name').value = m.name;
         document.getElementById('edit-m-role').value = m.role;
         document.getElementById('edit-member-modal').style.display = 'flex';
-    }
-    function saveMemberEdit() {
+    };
+
+    window.saveMemberEdit = function() {
         const m = state.members.find(x => x.id === currentEditId);
         m.name = document.getElementById('edit-m-name').value;
         m.role = document.getElementById('edit-m-role').value;
         closeEditModal(); save();
-    }
-    function openEditChore(id) {
+    };
+
+    window.triggerEditChore = function(id) {
         currentEditId = id;
         const c = state.chores.find(x => x.id === id);
         const sel = document.getElementById('edit-c-assignee');
@@ -221,28 +235,30 @@
         document.getElementById('edit-c-goal').value = c.goal;
         document.getElementById('edit-c-prize').value = c.prize;
         document.getElementById('edit-chore-modal').style.display = 'flex';
-    }
-    function saveChoreEdit() {
+    };
+
+    window.saveChoreEdit = function() {
         const c = state.chores.find(x => x.id === currentEditId);
         c.name = document.getElementById('edit-c-name').value;
         c.assigneeId = parseInt(document.getElementById('edit-c-assignee').value);
         c.goal = parseInt(document.getElementById('edit-c-goal').value);
         c.prize = document.getElementById('edit-c-prize').value;
         closeEditModal(); save();
-    }
-    function closeEditModal() { document.querySelectorAll('.modal-overlay').forEach(m => m.style.display = 'none'); }
+    };
+
+    window.closeEditModal = function() { document.querySelectorAll('.modal-overlay').forEach(m => m.style.display = 'none'); };
 
     function renderAll() {
         const today = new Date().toDateString();
         document.getElementById('chores-icon').innerText = state.choresVisible ? '−' : '+';
-        document.getElementById('chores-body').classList.toggle('hidden', !state.choresVisible);
+        document.getElementById('chores-body').style.display = state.choresVisible ? 'grid' : 'none';
         document.getElementById('cal-icon').innerText = state.calVisible ? '−' : '+';
-        document.getElementById('cal-body').classList.toggle('hidden', !state.calVisible);
+        document.getElementById('cal-body').style.display = state.calVisible ? 'block' : 'none';
 
         document.getElementById('chores-body').innerHTML = state.members.map(m => {
             const chores = state.chores.filter(c => c.assigneeId === m.id);
             return `<div class="user-card" id="card-${m.id}">
-                <div class="card-celebration"><div></div></div>
+                <div class="card-celebration"></div>
                 <div class="user-header"><h3>${m.name}</h3><span class="currency-pill">${m.points}</span></div>
                 ${chores.map(c => `
                     <div class="chore-item">
@@ -255,13 +271,14 @@
 
         document.getElementById('member-list-body').innerHTML = state.members.map(m => `
             <tr><td><b>${m.name}</b></td><td>${m.role}</td><td align="right">
-                <button class="btn-outline-primary btn-mini" onclick="openEditMember(${m.id})">Edit</button>
+                <button class="btn-outline-danger btn-mini" onclick="const m=state.members.find(x=>x.id==${m.id});m.points=0;save()">Reset</button>
+                <button class="btn-outline-primary btn-mini" onclick="triggerEditMember(${m.id})">Edit</button>
                 <button class="btn-outline-danger btn-mini" onclick="state.members=state.members.filter(x=>x.id!=${m.id});save()">X</button>
             </td></tr>`).join('');
 
         document.getElementById('chore-list-body').innerHTML = state.chores.map(c => `
             <tr><td><b>${c.name}</b></td><td>${state.members.find(m=>m.id===c.assigneeId)?.name}</td><td align="right">
-                <button class="btn-outline-primary btn-mini" onclick="openEditChore(${c.id})">Edit</button>
+                <button class="btn-outline-primary btn-mini" onclick="triggerEditChore(${c.id})">Edit</button>
                 <button class="btn-outline-danger btn-mini" onclick="state.chores=state.chores.filter(x=>x.id!=${c.id});save()">X</button>
             </td></tr>`).join('');
 
@@ -278,8 +295,12 @@
     }
 
     function toggleAccordion(k) { state[k] = !state[k]; save(); }
-    function showSection(id) { document.querySelectorAll('.content-section').forEach(s => s.classList.add('hidden')); document.getElementById(id).classList.remove('hidden'); }
-    function toggleSidebar() { document.getElementById('sidebar').classList.toggle('collapsed'); }
+    function showSection(id) { 
+        document.querySelectorAll('.content-section').forEach(s => s.classList.add('hidden')); 
+        document.getElementById(id).classList.remove('hidden'); 
+        document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+    }
+    function toggleSidebar() { document.getElementById('sidebar').classList.toggle('collapsed'); document.getElementById('main-content').classList.toggle('expanded'); }
     function addMember() { state.members.push({id:Date.now(), name:document.getElementById('m-name').value, role:document.getElementById('m-role').value, points:0}); save(); }
     function addChore() { state.chores.push({id:Date.now(), name:document.getElementById('c-name').value, assigneeId:parseInt(document.getElementById('c-assignee').value), goal:parseInt(document.getElementById('c-goal').value), prize:document.getElementById('c-prize').value, timesCompleted:0}); save(); }
     function saveCalendarUrl() { state.calendarUrl = document.getElementById('cal-url-input').value; save(); }
@@ -289,6 +310,7 @@
     function nuclearReset() { if(confirm("Confirm reset?")) { localStorage.clear(); location.reload(); } }
     
     function resetSidebarTimer() { clearTimeout(sidebarTimer); sidebarTimer = setTimeout(() => { if(!isUnlocked) toggleSidebar(); }, 15000); }
+    function exportData() { const d = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(state)); const a = document.createElement('a'); a.href = d; a.download = `FamilyHub_${new Date().toISOString()}.json`; a.click(); }
     setInterval(() => { document.getElementById('clock').innerText = new Date().toLocaleTimeString(); }, 1000);
     renderAll();
 </script>
