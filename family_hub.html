@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
     <title>Family Hub</title>
     <style>
         :root { 
@@ -10,309 +11,377 @@
             --success: #27ae60; --danger: #e94560; --light: #f4f4f2; --warning: #f39c12;
             --text-main: #333; --text-muted: #555; --bg: #f0f2f5;
         }
-        body { font-family: 'Inter', sans-serif; margin: 0; display: flex; background: var(--bg); color: var(--text-main); overflow-x: hidden; }
+        body { font-family: 'Inter', 'Segoe UI', sans-serif; margin: 0; display: flex; background: var(--bg); color: var(--text-main); transition: 0.3s; overflow-x: hidden; -webkit-tap-highlight-color: transparent; }
         
-        nav { width: 240px; background: var(--primary); color: white; height: 100vh; position: fixed; z-index: 100; transition: 0.3s; overflow-x: hidden; border-right: 1px solid rgba(255,255,255,0.1); }
+        nav { width: 240px; background: var(--primary); color: white; height: 100vh; position: fixed; z-index: 100; transition: 0.3s ease-in-out; overflow-x: hidden; border-right: 1px solid rgba(255,255,255,0.05); visibility: visible; opacity: 1; }
         nav.collapsed { width: 0; visibility: hidden; opacity: 0; }
-        nav h2 { padding: 20px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.1); color: var(--accent); text-transform: uppercase; font-size: 1rem; }
-        nav button { width: 100%; padding: 15px 20px; background: none; border: none; color: #999; text-align: left; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
+        nav h2 { padding: 20px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.05); margin: 0; font-size: 1rem; color: var(--accent); text-transform: uppercase; }
+        nav button { width: 100%; padding: 15px 20px; background: none; border: none; color: #999; text-align: left; font-size: 14px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
         nav button.active { background: rgba(78, 204, 163, 0.1); color: var(--accent); border-left: 3px solid var(--accent); }
 
-        #nav-toggle { position: fixed; left: 15px; top: 15px; z-index: 101; background: white; border: none; padding: 10px; border-radius: 6px; cursor: pointer; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-        main { margin-left: 240px; padding: 15px 25px; width: 100%; box-sizing: border-box; transition: 0.3s; }
-        main.expanded { margin-left: 0; padding-left: 80px; }
+        #nav-toggle { position: fixed; left: 15px; top: 15px; z-index: 101; background: white; color: var(--primary); border: none; padding: 10px 12px; border-radius: 6px; cursor: pointer; transition: 0.3s; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        nav:not(.collapsed) + #nav-toggle { left: 255px; }
 
-        .card { background: white; padding: 15px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.02); margin-bottom: 15px; position: relative; }
-        .section-header { display: flex; justify-content: space-between; align-items: center; cursor: pointer; border-bottom: 1px solid #f0f0f0; padding-bottom: 5px; }
+        main { margin-left: 240px; padding: 20px 30px; width: 100%; box-sizing: border-box; transition: 0.3s; position: relative; z-index: 1; }
+        main.expanded { margin-left: 0; padding-left: 80px; }
+        @media (max-width: 768px) { main { margin-left: 0; padding: 15px; padding-top: 80px; } #nav-toggle { left: 15px !important; } }
+
+        .card { background: white; padding: 15px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.02); margin-bottom: 15px; border: 1px solid #eee; position: relative; }
+        .section-header { display: flex; justify-content: space-between; align-items: center; cursor: pointer; user-select: none; }
+        .toggle-icon { font-family: monospace; font-weight: bold; color: var(--accent); font-size: 1.2rem; }
+
         .user-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 12px; margin-top: 15px; }
         .user-card { background: #fff; border-radius: 10px; border: 1px solid #ddd; overflow: hidden; position: relative; }
+        .user-header { padding: 6px 12px; background: #f8f9fa; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #ddd; }
+        .user-header h3 { margin: 2px 0; font-size: 1.2rem; font-weight: 800; color: var(--primary); }
+        .currency-pill { font-size: 0.85rem; font-weight: 800; color: var(--success); background: #fff; border: 1.5px solid var(--success); padding: 2px 10px; border-radius: 12px; }
         
-        .user-header { padding: 6px 15px; background: #f8f9fa; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #ddd; }
-        .user-header h3 { margin: 0; font-size: 1.2rem; font-weight: 800; color: var(--primary); }
-        .currency-pill { font-size: 0.85rem; font-weight: 800; color: var(--success); background: #fff; border: 1.5px solid var(--success); padding: 2px 8px; border-radius: 12px; }
+        .chore-item { display: flex; align-items: flex-start; gap: 12px; padding: 12px 15px; border-bottom: 1px solid #eee; }
+        .chore-info strong { font-size: 1.1rem; color: #111; line-height: 1.3; }
+        .chore-info small { font-size: 13px; color: var(--text-muted); line-height: 1.4; }
+        .chore-val { font-weight: 900; color: var(--primary); font-size: 13px; background: #eee; padding: 2px 6px; border-radius: 5px; }
 
-        .chore-item { display: flex; align-items: flex-start; gap: 12px; padding: 10px 15px; border-bottom: 1px solid #eee; }
-        .chore-info strong { font-size: 1.1rem; color: #111; line-height: 1.2; display: block; }
-        .chore-info small { font-size: 13px; color: var(--text-muted); display: block; margin-top: 2px; }
-        
-        input[type="checkbox"] { width: 26px; height: 26px; cursor: pointer; accent-color: var(--accent); margin-top: 2px; }
-        
-        .btn-outline-primary { background: transparent; color: var(--primary); border: 1px solid var(--primary); padding: 8px 15px; border-radius: 6px; cursor: pointer; font-weight: 700; }
-        .btn-outline-danger { background: transparent; color: var(--danger); border: 1px solid var(--danger); padding: 8px 15px; border-radius: 6px; cursor: pointer; font-weight: 700; }
-        .btn-mini { padding: 4px 10px; font-size: 11px; margin-right: 5px; }
+        .progress-container { width: 100%; background: #ddd; border-radius: 10px; height: 8px; margin-top: 8px; overflow: hidden; }
+        .progress-fill { background: var(--accent); height: 100%; transition: 0.5s; }
+        .milestone-text { font-size: 10px; color: #555; font-weight: 800; margin-top: 4px; text-transform: uppercase; }
 
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); backdrop-filter: blur(5px); display: none; justify-content: center; align-items: center; z-index: 9999; }
-        .modal-content { background: white; width: 90%; max-width: 500px; padding: 30px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+        input[type="checkbox"] { width: 26px; height: 26px; cursor: pointer; accent-color: var(--accent); flex-shrink: 0; }
+        input[type="checkbox"]:disabled { cursor: not-allowed; opacity: 0.5; }
+
+        /* CELEBRATION SHIELD */
+        .card-celebration { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: none; flex-direction: column; justify-content: center; align-items: center; z-index: 500; text-align: center; background: rgba(26, 26, 46, 0.97); color: white; padding: 10px; border-radius: 10px; pointer-events: all; cursor: pointer; }
+        .card-celebration-msg { font-size: 1.5rem; font-weight: 900; animation: bounceIn 0.4s; color: var(--accent); line-height: 1.2; text-transform: uppercase; }
+        
+        /* ADMIN FORM BOX */
+        .admin-form-box { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 15px; background: #f9fafb; padding: 15px; border-radius: 10px; border: 1px solid #eee; margin-bottom: 15px; }
+        .form-group { display: flex; flex-direction: column; gap: 5px; }
+        label { font-size: 10px; font-weight: 800; color: #666; text-transform: uppercase; }
+        input, select, textarea { padding: 10px; border: 1px solid #ddd; border-radius: 8px; font-size: 13px; width: 100%; box-sizing: border-box; }
+        
+        table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+        th { text-align: left; font-size: 10px; font-weight: 700; color: #888; text-transform: uppercase; padding: 10px; border-bottom: 2px solid #eee; }
+        td { padding: 10px; border-bottom: 1px solid #f5f5f5; font-size: 13px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; vertical-align: middle; }
+        
+        .btn-outline-primary { background: transparent; color: var(--primary); border: 1px solid var(--primary); padding: 8px 15px; border-radius: 6px; cursor: pointer; font-weight: 700; transition: 0.2s; }
+        .btn-outline-primary:hover { background: var(--primary); color: white; }
+        .btn-outline-danger { background: transparent; color: var(--danger); border: 1px solid var(--danger); padding: 8px 15px; border-radius: 6px; cursor: pointer; font-weight: 700; transition: 0.2s; }
+        .btn-outline-danger:hover { background: var(--danger); color: white; }
+        .btn-mini { padding: 4px 8px; font-size: 11px; margin-right: 5px; border-radius: 4px; }
+
         .hidden { display: none !important; }
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(26, 26, 46, 0.9); backdrop-filter: blur(8px); display: none; justify-content: center; align-items: center; z-index: 2000; }
+        .modal-content { background: white; width: 90%; max-width: 500px; padding: 25px; border-radius: 20px; border: 1px solid #eee; position: relative; }
         
-        .calendar-container { width: 100%; height: 700px; border: 0; margin-top: 15px; border-radius: 10px; overflow: hidden; }
-        .card-celebration { position: absolute; top:0; left:0; width:100%; height:100%; background: rgba(26,26,46,0.98); z-index: 500; display:none; flex-direction:column; justify-content:center; align-items:center; text-align:center; color:white; pointer-events:all; padding: 15px; box-sizing: border-box; }
+        .calendar-container { width: 100%; min-height: 700px; border-radius: 8px; overflow: hidden; margin-top: 15px; border: 1px solid #eee; background: #f9f9f9; display: flex; }
+        .calendar-container iframe { width: 100%; height: 100%; border: 0; min-height: 700px; }
+        
+        @keyframes bounceIn { 0% { transform: scale(0.3); opacity: 0; } 50% { transform: scale(1.05); } 100% { transform: scale(1); opacity: 1; } }
+        .prize-badge { background: #f1c40f; color: #000; padding: 2px 5px; border-radius: 3px; font-weight: 900; font-size: 9px; margin-left: 4px; }
     </style>
 </head>
 <body onmousemove="resetSidebarTimer()" ontouchstart="resetSidebarTimer()">
 
+<div id="setup-wizard" class="modal-overlay hidden">
+    <div class="modal-content">
+        <h2>Set Admin Passcode</h2>
+        <input type="password" id="setup-passcode" placeholder="Enter New Code" style="text-align: center;">
+        <button class="btn-outline-primary" style="width: 100%; margin-top: 15px;" onclick="finalizeSetup()">Initialize Hub</button>
+    </div>
+</div>
+
 <nav id="sidebar">
     <h2>Family Hub</h2>
-    <button id="nav-dash" onclick="showSection('dashboard')" class="active">🏠 Dashboard</button>
+    <button id="nav-dashboard" class="active" onclick="showSection('dashboard')"><span>🏠 Dashboard</span></button>
     <div id="admin-menu" style="display:none;">
-        <button onclick="showSection('admin-approvals')">✅ Approvals <span id="approval-badge"></span></button>
-        <button onclick="showSection('admin-members')">👥 Members</button>
-        <button onclick="showSection('admin-chores')">⚙️ Chores</button>
-        <button onclick="showSection('admin-settings')">🛠️ Settings</button>
+        <button onclick="handleAdminNav('admin-approvals')">✅ Approvals <span id="approval-badge" class="badge hidden">0</span></button>
+        <button onclick="handleAdminNav('admin-members')">👥 Family Members</button>
+        <button onclick="handleAdminNav('admin-chores')">⚙️ Chore Config</button>
+        <button onclick="handleAdminNav('admin-settings')">🛠️ Hub Settings</button>
     </div>
-    <div style="padding: 20px;">
-        <button id="unlock-btn" onclick="toggleAdminLock()" style="color:var(--warning); background:none; border:none; cursor:pointer; font-weight:800;">🔒 Unlock Admin</button>
-    </div>
+    <div style="margin-top:20px; padding:0 20px;"><button id="unlock-btn" style="color:var(--warning); padding:0; background:none; border:none; cursor:pointer;" onclick="toggleAdminLock()"><span>🔒 Admin Unlock</span></button></div>
 </nav>
 
 <button id="nav-toggle" onclick="toggleSidebar()">☰</button>
 
 <main id="main-content">
     <section id="dashboard" class="content-section">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
-            <h1 style="padding-left:45px; margin: 10px 0;">Dashboard</h1>
-            <div id="clock" style="text-align:right; font-weight:800; color:var(--primary); font-size: 1.1rem;"></div>
+        <div class="header-row" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+            <h1 style="padding-left: 20px;">Dashboard</h1>
+            <div id="clock-box" style="text-align:right">
+                <div id="current-date" style="font-weight:700; color:var(--text-muted); font-size: 0.8rem;"></div>
+                <div id="current-time" style="font-weight:800; color:var(--primary); font-size: 1.2rem;"></div>
+            </div>
         </div>
-        
         <div class="card">
             <div class="section-header" onclick="toggleAccordion('choresVisible')">
-                <h3>🧹 Daily Chores</h3><span id="chores-icon">−</span>
+                <h3>🧹 Daily Chores</h3>
+                <span id="chores-icon" class="toggle-icon">−</span>
             </div>
             <div id="chores-body" class="user-grid"></div>
         </div>
-
         <div class="card">
             <div class="section-header" onclick="toggleAccordion('calVisible')">
-                <h3>📅 Family Schedule</h3><span id="cal-icon">−</span>
+                <h3>📅 Family Schedule</h3>
+                <span id="cal-icon" class="toggle-icon">−</span>
             </div>
-            <div id="cal-body"><div id="calendar-slot"></div></div>
+            <div id="cal-body" class="hidden"><div id="calendar-slot" class="calendar-container"></div></div>
         </div>
     </section>
 
     <section id="admin-members" class="content-section hidden">
         <div class="card">
             <h1>Family Members</h1>
-            <button class="btn-outline-danger" onclick="clearAllPoints()">💰 RESET ALL BALANCES</button>
-            <div style="display:grid; grid-template-columns: 1fr 1fr auto; gap:10px; margin:20px 0;">
-                <input type="text" id="m-name" placeholder="Name">
-                <select id="m-role"><option value="kid">Kid</option><option value="teen">Teen</option><option value="adult">Adult</option></select>
-                <button class="btn-outline-primary" onclick="addMember()">Add</button>
+            <button class="btn-outline-danger" style="margin-bottom:15px;" onclick="clearAllPoints()">💰 RESET ALL BALANCES</button>
+            <div class="admin-form-box">
+                <div class="form-group"><label>Name</label><input type="text" id="m-name"></div>
+                <div class="form-group"><label>Role</label><select id="m-role"><option value="kid">Kid</option><option value="teen">Teen</option><option value="adult">Adult</option></select></div>
+                <button class="btn-outline-primary" onclick="addMember()">Add Member</button>
             </div>
-            <table width="100%"><tbody id="member-list-body"></tbody></table>
+            <table><thead><tr><th>Name</th><th>Role</th><th>Points</th><th style="text-align:right">Action</th></tr></thead><tbody id="member-list-body"></tbody></table>
         </div>
     </section>
 
     <section id="admin-chores" class="content-section hidden">
         <div class="card">
             <h1>Chore Configuration</h1>
-            <div style="display:flex; gap:10px; margin-bottom:15px;">
+            <div style="margin-bottom: 15px; display: flex; gap: 10px;">
                 <button class="btn-outline-danger" onclick="resetAllChoreChecks()">🧪 RESET DAILY SWEEP</button>
                 <button class="btn-outline-danger" onclick="resetAllChoreGoals()">🎁 RESET GOAL PROGRESS</button>
             </div>
-            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin:20px 0;">
-                <input type="text" id="c-name" placeholder="Chore Name">
-                <select id="c-assignee"></select>
-                <input type="number" id="c-goal" placeholder="Goal Streak">
-                <input type="text" id="c-prize" placeholder="Prize Name">
+            <div class="admin-form-box">
+                <div class="form-group"><label>Chore Name</label><input type="text" id="c-name"></div>
+                <div class="form-group"><label>User</label><select id="c-assignee"></select></div>
+                <div class="form-group"><label>Goal Streak</label><input type="number" id="c-goal" value="0"></div>
+                <div class="form-group"><label>Prize</label><input type="text" id="c-prize"></div>
+                <div class="form-group"><label>Logic</label><select id="c-type" onchange="togglePointForm('c-type','c-static','c-dynamic')"><option value="static">Static</option><option value="dynamic">Dynamic</option></select></div>
+                <div id="c-static" class="form-group"><label>Points</label><input type="number" id="c-points" value="5"></div>
+                <div id="c-dynamic" class="hidden" style="display:flex; gap:10px;"><div class="form-group"><label>Max</label><input type="number" id="c-max" value="10"></div><div class="form-group"><label>Min</label><input type="number" id="c-min" value="2"></div></div>
+                <div class="form-group" style="grid-column: 1 / -1;"><label>Description</label><input type="text" id="c-desc"></div>
             </div>
             <button class="btn-outline-primary" style="width:100%" onclick="addChore()">Save Chore</button>
-            <table width="100%" style="margin-top:20px;"><tbody id="chore-list-body"></tbody></table>
+            <table style="margin-top:20px;"><thead><tr><th>Chore</th><th>Assigned</th><th>Goal</th><th style="text-align:right">Action</th></tr></thead><tbody id="chore-list-body"></tbody></table>
         </div>
-    </section>
-
-    <section id="admin-approvals" class="content-section hidden">
-        <div class="card"><h1>Approval Queue</h1><table width="100%"><tbody id="approval-list-body"></tbody></table></div>
     </section>
 
     <section id="admin-settings" class="content-section hidden">
         <div class="card">
-            <h1>Settings</h1>
-            <input type="text" id="cal-url-input" placeholder="Google Calendar Embed URL" style="width:100%; padding:10px; margin-bottom:10px; border-radius:8px; border:1px solid #ddd;">
-            <button class="btn-outline-primary" onclick="saveCalendarUrl()">Save Calendar URL</button>
-            <hr style="margin: 30px 0; border:0; border-top:1px solid #eee;">
-            <button class="btn-outline-primary" onclick="exportData()">📤 Backup Hub Data</button>
-            <button class="btn-outline-danger" onclick="nuclearReset()" style="width:100%; margin-top:50px; padding: 20px; font-size: 1.2rem;">☢️ NUCLEAR SYSTEM RESET</button>
+            <h1>Hub Settings</h1>
+            <div class="admin-form-box">
+                <div class="form-group" style="grid-column: 1 / -1;"><label>Calendar URL</label><input type="text" id="cal-url-input"><button class="btn-outline-primary" style="margin-top:10px;" onclick="saveCalendarUrl()">Save URL</button></div>
+                <div class="form-group" style="grid-column: 1 / -1;"><label>Master Passcode</label><input type="password" id="change-pass-input"><button class="btn-outline-primary" style="margin-top:10px" onclick="updatePasscode()">Update Code</button></div>
+            </div>
+            <div style="display:flex; gap:10px; margin-bottom:30px;">
+                <button class="btn-outline-primary" style="flex:1" onclick="exportData()">📤 Backup Hub</button>
+                <button class="btn-outline-primary" style="flex:1" onclick="document.getElementById('importFile').click()">📥 Restore Hub</button>
+                <input type="file" id="importFile" class="hidden" accept=".json" onchange="importData(event)">
+            </div>
+            <button onclick="nuclearReset()" class="btn-outline-danger" style="width:100%; font-weight:800; padding:15px; border-radius:12px;">☢️ NUCLEAR HUB RESET</button>
         </div>
+    </section>
+
+    <section id="admin-approvals" class="content-section hidden">
+        <div class="card"><h1>Approval Queue</h1><table><thead><tr><th>Name</th><th>Chore</th><th>Val</th><th style="text-align:right">Action</th></tr></thead><tbody id="approval-list-body"></tbody></table></div>
     </section>
 </main>
 
-<div id="edit-member-modal" class="modal-overlay">
+<div id="edit-member-modal" class="modal-overlay hidden">
     <div class="modal-content">
-        <h3>Edit Family Member</h3>
-        <label style="font-size:11px; font-weight:800; color:#666;">NAME</label>
-        <input type="text" id="edit-m-name" style="width:100%; padding:12px; margin-bottom:15px; border-radius:8px; border:1px solid #ddd;">
-        <label style="font-size:11px; font-weight:800; color:#666;">ROLE</label>
-        <select id="edit-m-role" style="width:100%; padding:12px; margin-bottom:25px; border-radius:8px; border:1px solid #ddd;">
-            <option value="kid">Kid</option><option value="teen">Teen</option><option value="adult">Adult</option>
-        </select>
-        <button class="btn-outline-primary" onclick="saveMemberEdit()">Save Changes</button>
-        <button class="btn-outline-danger" onclick="closeEditModal()" style="margin-left:10px;">Cancel</button>
+        <h3>Edit Member</h3>
+        <div class="admin-form-box">
+            <div class="form-group"><label>Name</label><input type="text" id="edit-m-name"></div>
+            <div class="form-group"><label>Role</label><select id="edit-m-role"><option value="kid">Kid</option><option value="teen">Teen</option><option value="adult">Adult</option></select></div>
+        </div>
+        <button class="btn-outline-primary" onclick="submitMemberEdit()">Save Changes</button>
+        <button class="btn-outline-danger btn-mini" style="margin-left:10px" onclick="closeModal('edit-member-modal')">Cancel</button>
     </div>
 </div>
 
-<div id="edit-chore-modal" class="modal-overlay">
+<div id="edit-chore-modal" class="modal-overlay hidden">
     <div class="modal-content">
         <h3>Edit Chore</h3>
-        <label style="font-size:11px; font-weight:800; color:#666;">NAME</label>
-        <input type="text" id="edit-c-name" style="width:100%; padding:12px; margin-bottom:10px; border-radius:8px; border:1px solid #ddd;">
-        <label style="font-size:11px; font-weight:800; color:#666;">ASSIGNEE</label>
-        <select id="edit-c-assignee" style="width:100%; padding:12px; margin-bottom:10px; border-radius:8px; border:1px solid #ddd;"></select>
-        <label style="font-size:11px; font-weight:800; color:#666;">GOAL STREAK</label>
-        <input type="number" id="edit-c-goal" style="width:100%; padding:12px; margin-bottom:10px; border-radius:8px; border:1px solid #ddd;">
-        <label style="font-size:11px; font-weight:800; color:#666;">PRIZE</label>
-        <input type="text" id="edit-c-prize" style="width:100%; padding:12px; margin-bottom:25px; border-radius:8px; border:1px solid #ddd;">
-        <button class="btn-outline-primary" onclick="saveChoreEdit()">Save Changes</button>
-        <button class="btn-outline-danger" onclick="closeEditModal()" style="margin-left:10px;">Cancel</button>
+        <div class="admin-form-box">
+            <div class="form-group"><label>Chore Name</label><input type="text" id="edit-c-name"></div>
+            <div class="form-group"><label>Assignee</label><select id="edit-c-assignee"></select></div>
+            <div class="form-group"><label>Goal Streak</label><input type="number" id="edit-c-goal"></div>
+            <div class="form-group"><label>Prize</label><input type="text" id="edit-c-prize"></div>
+            <div class="form-group" style="grid-column: 1 / -1;"><label>Description</label><input type="text" id="edit-c-desc"></div>
+        </div>
+        <button class="btn-outline-primary" onclick="submitChoreEdit()">Save Changes</button>
+        <button class="btn-outline-danger btn-mini" style="margin-left:10px" onclick="closeModal('edit-chore-modal')">Cancel</button>
     </div>
 </div>
 
 <script>
+    const kidMessages = ["BOOM! 🔥", "LEGEND! 🏆", "CLUTCH! ⚡", "BOOYAH! 🚀", "W! 👑", "POG! 😲", "SHEESH! 🔥", "ELITE! ⭐", "GOATED! 🐐", "ULTIMATE! 🔥", "WINNING! 🏁", "NO CAP! 🧢", "LEVEL UP! 🆙"];
+    const teenMessages = ["K.", "Cool.", "Nice.", "Yep.", "Fine.", "Sure.", "Bruh.", "Bet.", "Valid.", "Easy.", "Lit.", "Fire.", "Solid.", "Whatever."];
+
     let state = JSON.parse(localStorage.getItem('familyHubData')) || { 
-        members: [], chores: [], approvals: [], calendarUrl: "", adminPasscode: "1234",
-        choresVisible: true, calVisible: true
+        members: [], chores: [], approvals: [], lastResetDate: new Date().toDateString(), 
+        choresVisible: true, calVisible: true, calendarUrl: "", adminPasscode: "" 
     };
-    let isUnlocked = false;
-    let currentEditId = null;
-    let sidebarTimer;
+
+    let isUnlocked = false; let editTargetId = null; let sidebarTimer;
+    const currencyMap = { kid: "tokens", teen: "minutes", adult: "" };
 
     function save() { localStorage.setItem('familyHubData', JSON.stringify(state)); renderAll(); }
-
+    function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+    function finalizeSetup() { const p = document.getElementById('setup-passcode').value; if(p) { state.adminPasscode = p; save(); document.getElementById('setup-wizard').classList.add('hidden'); } }
+    
     function toggleAdminLock() {
-        if(isUnlocked) { isUnlocked = false; document.getElementById('admin-menu').style.display = 'none'; document.getElementById('unlock-btn').innerText = "🔒 Unlock Admin"; }
-        else { let p = prompt("Enter Admin Code:"); if(p === state.adminPasscode) { isUnlocked = true; document.getElementById('admin-menu').style.display = 'block'; document.getElementById('unlock-btn').innerText = "🔓 Unlocked"; } }
+        if (isUnlocked) { isUnlocked = false; document.getElementById('admin-menu').style.display = 'none'; document.getElementById('unlock-btn').innerHTML = "<span>🔒 Admin Unlock</span>"; showSection('dashboard'); }
+        else { const e = prompt("Passcode:"); if (e === state.adminPasscode) { isUnlocked = true; document.getElementById('admin-menu').style.display = 'block'; document.getElementById('unlock-btn').innerHTML = "<span>🔓 Unlocked</span>"; } }
     }
 
-    function completeChore(cid, mid, el) {
-        el.disabled = true;
+    function calculateVal(c) {
+        if(c.type === 'static') return c.points || 5;
+        const yesterday = new Date(Date.now() - 86400000).toDateString();
+        return (c.lastCompleted === yesterday) ? (c.dynamic?.min || 2) : (c.dynamic?.max || 10);
+    }
+
+    function completeChore(cid, mid, inputEl) {
+        inputEl.disabled = true;
         const c = state.chores.find(x => x.id === cid);
         const m = state.members.find(x => x.id === mid);
         const yesterday = new Date(Date.now() - 86400000).toDateString();
         if (c.lastCompleted && c.lastCompleted !== yesterday) c.timesCompleted = 0;
+        const currentProgress = (c.timesCompleted || 0) + 1;
+        const isExactMomentOfGoal = c.goal > 0 && currentProgress === c.goal;
+
+        state.approvals.push({ id: Date.now(), choreId: cid, memberId: mid, points: calculateVal(c), choreName: c.name, type: 'points' });
+        if (isExactMomentOfGoal) state.approvals.push({ id: Date.now() + 1, choreId: cid, memberId: mid, points: 0, choreName: `REWARD: ${c.prize}`, type: 'prize' });
         
-        const isGoal = c.goal > 0 && (c.timesCompleted + 1) === c.goal;
-        state.approvals.push({ id: Date.now(), choreId: cid, memberId: mid, name: c.name, type: 'points' });
-        if(isGoal) state.approvals.push({ id: Date.now()+1, choreId: cid, memberId: mid, name: `REWARD: ${c.prize}`, type: 'prize' });
-
-        const ov = document.getElementById(`card-${mid}`).querySelector('.card-celebration');
-        ov.innerHTML = `<h2 style="font-size:2rem; margin:0;">${isGoal ? '🎯 STREAK MET!' : 'EXCELLENT! ⭐'}</h2><p>${isGoal ? c.prize : 'Task Logged'}</p>`;
-        ov.style.display = 'flex';
-        setTimeout(() => { ov.style.display = 'none'; save(); }, 3500);
+        const card = document.getElementById(`card-${mid}`);
+        const ov = card.querySelector('.card-celebration');
+        if (ov && m.role !== 'adult') {
+            let msg = m.role === 'kid' ? kidMessages[Math.floor(Math.random()*kidMessages.length)] : teenMessages[Math.floor(Math.random()*teenMessages.length)];
+            if (isExactMomentOfGoal) msg = `🎯 STREAK MET!<br>CLAIM: ${c.prize}`;
+            ov.querySelector('.card-celebration-msg').innerHTML = msg; 
+            ov.style.display = 'flex';
+            setTimeout(() => { if(ov) ov.style.display = 'none'; save(); }, 3500);
+        } else { save(); }
     }
 
-    function approve(id) {
-        const a = state.approvals.find(x => x.id === id);
-        const c = state.chores.find(x => x.id === a.choreId);
-        const m = state.members.find(x => x.id === a.memberId);
-        if(a.type === 'points') { m.points += 5; c.lastCompleted = new Date().toDateString(); c.timesCompleted++; }
-        else { c.timesCompleted = Math.max(0, c.timesCompleted - c.goal); }
-        state.approvals = state.approvals.filter(x => x.id !== id);
-        save();
+    function approveItem(id) {
+        const a = state.approvals.find(x => x.id === id); const m = state.members.find(x => x.id === a.memberId); const c = state.chores.find(x => x.id === a.choreId);
+        if (a.type === 'points') {
+            if(m) m.points += a.points;
+            if(c) { c.lastCompleted = new Date().toDateString(); c.timesCompleted = (c.timesCompleted || 0) + 1; }
+        } else if (a.type === 'prize') {
+            if(c) c.timesCompleted = Math.max(0, c.timesCompleted - c.goal);
+        }
+        state.approvals = state.approvals.filter(x => x.id !== id); save();
     }
 
-    /* GLOBAL EDIT TRIGGER FUNCTIONS */
-    window.triggerEditMember = function(id) {
-        currentEditId = id;
+    // FIXED GLOBAL EDIT FUNCTIONS
+    function openEditMember(id) {
+        editTargetId = id;
         const m = state.members.find(x => x.id === id);
         document.getElementById('edit-m-name').value = m.name;
         document.getElementById('edit-m-role').value = m.role;
-        document.getElementById('edit-member-modal').style.display = 'flex';
-    };
+        document.getElementById('edit-member-modal').classList.remove('hidden');
+    }
 
-    window.saveMemberEdit = function() {
-        const m = state.members.find(x => x.id === currentEditId);
-        m.name = document.getElementById('edit-m-name').value;
-        m.role = document.getElementById('edit-m-role').value;
-        closeEditModal(); save();
-    };
+    function submitMemberEdit() {
+        const m = state.members.find(x => x.id === editTargetId);
+        if(m) {
+            m.name = document.getElementById('edit-m-name').value;
+            m.role = document.getElementById('edit-m-role').value;
+            save();
+            closeModal('edit-member-modal');
+        }
+    }
 
-    window.triggerEditChore = function(id) {
-        currentEditId = id;
+    function openEditChore(id) {
+        editTargetId = id;
         const c = state.chores.find(x => x.id === id);
-        const sel = document.getElementById('edit-c-assignee');
-        sel.innerHTML = state.members.map(m => `<option value="${m.id}">${m.name}</option>`).join('');
+        updateAssigneeDropdowns();
         document.getElementById('edit-c-name').value = c.name;
+        document.getElementById('edit-c-desc').value = c.desc || '';
         document.getElementById('edit-c-assignee').value = c.assigneeId;
         document.getElementById('edit-c-goal').value = c.goal;
         document.getElementById('edit-c-prize').value = c.prize;
-        document.getElementById('edit-chore-modal').style.display = 'flex';
-    };
+        document.getElementById('edit-chore-modal').classList.remove('hidden');
+    }
 
-    window.saveChoreEdit = function() {
-        const c = state.chores.find(x => x.id === currentEditId);
-        c.name = document.getElementById('edit-c-name').value;
-        c.assigneeId = parseInt(document.getElementById('edit-c-assignee').value);
-        c.goal = parseInt(document.getElementById('edit-c-goal').value);
-        c.prize = document.getElementById('edit-c-prize').value;
-        closeEditModal(); save();
-    };
-
-    window.closeEditModal = function() { document.querySelectorAll('.modal-overlay').forEach(m => m.style.display = 'none'); };
+    function submitChoreEdit() {
+        const c = state.chores.find(x => x.id === editTargetId);
+        if(c) {
+            c.name = document.getElementById('edit-c-name').value;
+            c.assigneeId = parseInt(document.getElementById('edit-c-assignee').value);
+            c.desc = document.getElementById('edit-c-desc').value;
+            c.goal = parseInt(document.getElementById('edit-c-goal').value);
+            c.prize = document.getElementById('edit-c-prize').value;
+            save();
+            closeModal('edit-chore-modal');
+        }
+    }
 
     function renderAll() {
         const today = new Date().toDateString();
+        document.getElementById('approval-badge').innerText = state.approvals.length;
+        document.getElementById('approval-badge').classList.toggle('hidden', state.approvals.length === 0);
+        
+        // Fix Accordion Icons
         document.getElementById('chores-icon').innerText = state.choresVisible ? '−' : '+';
-        document.getElementById('chores-body').style.display = state.choresVisible ? 'grid' : 'none';
         document.getElementById('cal-icon').innerText = state.calVisible ? '−' : '+';
-        document.getElementById('cal-body').style.display = state.calVisible ? 'block' : 'none';
+        document.getElementById('chores-body').classList.toggle('hidden', !state.choresVisible);
+        document.getElementById('cal-body').classList.toggle('hidden', !state.calVisible);
 
-        document.getElementById('chores-body').innerHTML = state.members.map(m => {
+        const dash = document.getElementById('chores-body');
+        dash.innerHTML = state.members.map(m => {
             const chores = state.chores.filter(c => c.assigneeId === m.id);
-            return `<div class="user-card" id="card-${m.id}">
-                <div class="card-celebration"></div>
-                <div class="user-header"><h3>${m.name}</h3><span class="currency-pill">${m.points}</span></div>
-                ${chores.map(c => `
-                    <div class="chore-item">
-                        <input type="checkbox" ${c.lastCompleted === today ? 'checked disabled' : ''} onchange="completeChore(${c.id},${m.id},this)">
-                        <div class="chore-info"><strong>${c.name}</strong><small>${c.timesCompleted}/${c.goal} Streak</small></div>
-                    </div>
-                `).join('')}
-            </div>`;
+            return `<div class="user-card" id="card-${m.id}"><div class="card-celebration" onclick="this.style.display='none';"><div class="card-celebration-msg"></div></div>
+                <div class="user-header"><h3>${m.name}</h3><span class="currency-pill">${m.points} ${currencyMap[m.role]}</span></div>
+                <div class="chore-list">${chores.map(c => {
+                    const isP = state.approvals.some(a => a.choreId === c.id && a.type === 'points'); const isD = c.lastCompleted === today;
+                    let prog = ""; if(c.goal > 0) { 
+                        const pct = Math.min(100, ((c.timesCompleted||0)/c.goal)*100); 
+                        prog = `<div class="progress-container"><div class="progress-fill" style="width:${pct}%"></div></div><div class="milestone-text">${c.timesCompleted||0}/${c.goal} Streak to ${c.prize}</div>`; 
+                    }
+                    return `<div class="chore-item ${isD?'completed':(isP?'pending':'')}">
+                        <input type="checkbox" ${isD||isP?'checked disabled':''} onchange="completeChore(${c.id}, ${m.id}, this)">
+                        <div class="chore-info"><strong>${c.name}</strong><small>${c.desc||''}</small>${prog}</div>
+                        <div class="chore-val">${m.role!=='adult'?calculateVal(c):''}</div>
+                    </div>`;
+                }).join('')}</div></div>`;
         }).join('');
 
-        document.getElementById('member-list-body').innerHTML = state.members.map(m => `
-            <tr><td><b>${m.name}</b></td><td>${m.role}</td><td align="right">
-                <button class="btn-outline-danger btn-mini" onclick="const m=state.members.find(x=>x.id==${m.id});m.points=0;save()">Reset</button>
-                <button class="btn-outline-primary btn-mini" onclick="triggerEditMember(${m.id})">Edit</button>
-                <button class="btn-outline-danger btn-mini" onclick="state.members=state.members.filter(x=>x.id!=${m.id});save()">X</button>
-            </td></tr>`).join('');
-
-        document.getElementById('chore-list-body').innerHTML = state.chores.map(c => `
-            <tr><td><b>${c.name}</b></td><td>${state.members.find(m=>m.id===c.assigneeId)?.name}</td><td align="right">
-                <button class="btn-outline-primary btn-mini" onclick="triggerEditChore(${c.id})">Edit</button>
-                <button class="btn-outline-danger btn-mini" onclick="state.chores=state.chores.filter(x=>x.id!=${c.id});save()">X</button>
-            </td></tr>`).join('');
-
-        document.getElementById('approval-list-body').innerHTML = state.approvals.map(a => `
-            <tr><td>${a.name}</td><td align="right">
-                <button class="btn-outline-primary btn-mini" onclick="approve(${a.id})">Approve</button>
-                <button class="btn-outline-danger btn-mini" onclick="state.approvals=state.approvals.filter(x=>x.id!=${a.id});save()">Reject</button>
-            </td></tr>`).join('');
-
-        if(state.calVisible && state.calendarUrl && !document.querySelector('iframe')) {
-            document.getElementById('calendar-slot').innerHTML = `<iframe src="${state.calendarUrl}" class="calendar-container"></iframe>`;
-        }
-        document.getElementById('c-assignee').innerHTML = state.members.map(m => `<option value="${m.id}">${m.name}</option>`).join('');
+        document.getElementById('member-list-body').innerHTML = state.members.map(m => `<tr><td><strong>${m.name}</strong></td><td>${m.role}</td><td>${m.points}</td><td style="text-align:right"><button class="btn-outline-danger btn-mini" onclick="resetOneMember(${m.id})">Reset</button><button class="btn-outline-primary btn-mini" onclick="openEditMember(${m.id})">Edit</button><button class="btn-outline-danger btn-mini" onclick="deleteMember(${m.id})">X</button></td></tr>`).join('');
+        document.getElementById('chore-list-body').innerHTML = state.chores.map(c => `<tr><td><strong>${c.name}</strong></td><td>${state.members.find(x=>x.id===c.assigneeId)?.name || 'None'}</td><td>${c.goal||'--'} Streak</td><td style="text-align:right"><button class="btn-outline-primary btn-mini" onclick="openEditChore(${c.id})">Edit</button><button class="btn-outline-danger btn-mini" onclick="deleteChore(${c.id})">X</button></td></tr>`).join('');
+        document.getElementById('approval-list-body').innerHTML = state.approvals.map(a => `<tr><td>${state.members.find(m=>m.id===a.memberId)?.name}</td><td>${a.choreName}${a.type === 'prize' ? '<span class="prize-badge">🎁 REWARD</span>' : ''}</td><td>${a.points || '--'}</td><td style="text-align:right"><button class="btn-outline-accent btn-mini" style="background:var(--success); color:white; border:none;" onclick="approveItem(${a.id})">Approve</button><button class="btn-outline-danger btn-mini" onclick="rejectChore(${a.id})">Reject</button></td></tr>`).join('');
+        
+        if (state.calVisible && state.calendarUrl && !document.querySelector('#calendar-slot iframe')) document.getElementById('calendar-slot').innerHTML = `<iframe src="${state.calendarUrl}"></iframe>`;
     }
 
     function toggleAccordion(k) { state[k] = !state[k]; save(); }
-    function showSection(id) { 
-        document.querySelectorAll('.content-section').forEach(s => s.classList.add('hidden')); 
-        document.getElementById(id).classList.remove('hidden'); 
-        document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+    function showSection(id) { document.querySelectorAll('.content-section').forEach(s => s.classList.add('hidden')); document.getElementById(id).classList.remove('hidden'); document.querySelectorAll('nav button').forEach(b => b.classList.remove('active')); }
+    function handleAdminNav(id) { showSection(id); }
+    function addMember() { const n = document.getElementById('m-name'); if(n.value) { state.members.push({id:Date.now(), name:n.value, role:document.getElementById('m-role').value, points:0}); save(); n.value=''; } }
+    function deleteMember(id) { if(confirm("Delete Member?")) { state.members = state.members.filter(x => x.id !== id); save(); } }
+    function resetOneMember(id) { const m = state.members.find(x => x.id === id); if(m) m.points = 0; save(); }
+    function addChore() { const n = document.getElementById('c-name'); if(n.value) { state.chores.push({id:Date.now(), name:n.value, desc:document.getElementById('c-desc').value, assigneeId:parseInt(document.getElementById('c-assignee').value), lastCompleted:null, points:parseInt(document.getElementById('c-points').value), type:document.getElementById('c-type').value, dynamic:{max:parseInt(document.getElementById('c-max').value), min:parseInt(document.getElementById('c-min').value)}, goal:parseInt(document.getElementById('c-goal').value), prize:document.getElementById('c-prize').value, timesCompleted:0}); save(); n.value=''; } }
+    function deleteChore(id) { if(confirm("Delete Chore?")) { state.chores = state.chores.filter(x => x.id !== id); save(); } }
+    function saveCalendarUrl() { state.calendarUrl = document.getElementById('cal-url-input').value; save(); }
+    function updatePasscode() { const p = document.getElementById('change-pass-input').value; if(p) { state.adminPasscode = p; save(); alert("Updated!"); } }
+    function exportData() { const now = new Date(); const fileName = `FamilyHub_Backup_${now.toISOString().split('T')[0]}.json`; const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(state)); const dl = document.createElement('a'); dl.setAttribute("href", dataStr); dl.setAttribute("download", fileName); document.body.appendChild(dl); dl.click(); dl.remove(); }
+    function importData(e) { const r = new FileReader(); r.onload = (x) => { state = JSON.parse(x.target.result); save(); location.reload(); }; r.readAsText(e.target.files[0]); }
+    function resetAllChoreChecks() { state.chores.forEach(c => c.lastCompleted = null); state.approvals = []; save(); }
+    function resetAllChoreGoals() { state.chores.forEach(c => c.timesCompleted = 0); save(); }
+    function nuclearReset() { if(confirm("Wipe Everything?")) { localStorage.removeItem('familyHubData'); location.reload(); } }
+    function togglePointForm(s, r1, r2) { const v = document.getElementById(s).value; document.getElementById(r1).classList.toggle('hidden', v !== 'static'); document.getElementById(r2).classList.toggle('hidden', v !== 'dynamic'); }
+    function updateAssigneeDropdowns() { 
+        const h = state.members.map(m => `<option value="${m.id}">${m.name}</option>`).join(''); 
+        const cAssignee = document.getElementById('c-assignee');
+        const eAssignee = document.getElementById('edit-c-assignee');
+        if(cAssignee) cAssignee.innerHTML = h; 
+        if(eAssignee) eAssignee.innerHTML = h; 
     }
     function toggleSidebar() { document.getElementById('sidebar').classList.toggle('collapsed'); document.getElementById('main-content').classList.toggle('expanded'); }
-    function addMember() { state.members.push({id:Date.now(), name:document.getElementById('m-name').value, role:document.getElementById('m-role').value, points:0}); save(); }
-    function addChore() { state.chores.push({id:Date.now(), name:document.getElementById('c-name').value, assigneeId:parseInt(document.getElementById('c-assignee').value), goal:parseInt(document.getElementById('c-goal').value), prize:document.getElementById('c-prize').value, timesCompleted:0}); save(); }
-    function saveCalendarUrl() { state.calendarUrl = document.getElementById('cal-url-input').value; save(); }
-    function resetAllChoreChecks() { state.chores.forEach(c => c.lastCompleted = null); state.approvals = []; save(); }
-    function clearAllPoints() { state.members.forEach(m => m.points = 0); save(); }
-    function resetAllChoreGoals() { state.chores.forEach(c => c.timesCompleted = 0); save(); }
-    function nuclearReset() { if(confirm("Confirm reset?")) { localStorage.clear(); location.reload(); } }
-    
-    function resetSidebarTimer() { clearTimeout(sidebarTimer); sidebarTimer = setTimeout(() => { if(!isUnlocked) toggleSidebar(); }, 15000); }
-    function exportData() { const d = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(state)); const a = document.createElement('a'); a.href = d; a.download = `FamilyHub_${new Date().toISOString()}.json`; a.click(); }
-    setInterval(() => { document.getElementById('clock').innerText = new Date().toLocaleTimeString(); }, 1000);
-    renderAll();
+    function resetSidebarTimer() { clearTimeout(sidebarTimer); sidebarTimer = setTimeout(() => { if (!isUnlocked && window.innerWidth > 768) toggleSidebar(); }, 10000); }
+    if (!state.adminPasscode) document.getElementById('setup-wizard').classList.remove('hidden');
+    if (state.calendarUrl) document.getElementById('cal-url-input').value = state.calendarUrl;
+    function updateClock() { const n = new Date(); document.getElementById('current-date').innerText = n.toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' }); document.getElementById('current-time').innerText = n.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' }); }
+    setInterval(updateClock, 1000); updateClock(); renderAll();
 </script>
 </body>
 </html>
