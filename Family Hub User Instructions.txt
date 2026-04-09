@@ -1,0 +1,50 @@
+📘 Family Hub User Instructions
+Welcome to your GA Release Hub! This system is designed to be tablet-friendly and "unbreakable" for daily family use.
+
+1. Initial Setup (Admin Only)
+Unlock Admin: Click the 🔒 Unlock Admin button at the bottom of the sidebar. The default passcode is 1234.
+
+Add Family Members: Go to 👥 Members. Add each person and assign a role:
+
+Kid: Earns "tokens."
+
+Teen: Earns "minutes."
+
+Adult: Does chores without currency (leads by example).
+
+Configure Chores: Go to ⚙️ Chores.
+
+Target Goal: Set the number of consecutive days needed to win a prize. Set to 0 for simple daily tasks.
+
+Logic Types: * Static: Same points every time.
+
+Dynamic: Habit-building mode. Earns the "Min" value if done yesterday (habit), but the "Max" value if it’s a new task or they missed a day.
+
+2. Daily Use (Kids & Teens)
+Checking Chores: Tap the checkbox next to a chore.
+
+Celebrations: A large message will appear. This "shield" prevents double-clicking and ensures the task is logged.
+
+Pending State: The chore will turn yellow and the checkbox will lock. This means it is waiting for an Admin to verify the work.
+
+3. Verification (Admin Only)
+Approvals: Go to the ✅ Approvals page.
+
+Verification: You will see two types of entries:
+
+Points: Standard chore completion. Approving this awards the currency to the member.
+
+REWARD: Streak milestone. Approving this notifies the member they can "collect" their prize (e.g., $10 Gift Card).
+
+Daily Sweep: Once approved, chores turn green and stay locked until the next calendar day.
+
+4. Maintenance & Safety
+Google Calendar: In 🛠️ Settings, paste the "Embed URL" from your Google Calendar settings (Integrate Calendar -> Secret Address in iCal format or Embed code src) to display it on the Dashboard.
+
+Backup Data: Weekly, use the 📤 Backup Hub button in Settings. This saves your members, chores, and point totals to a file on your device.
+
+Restore: If you accidentally wipe your browser data, use 📥 Restore Hub to upload your backup file.
+
+Sidebar Timer: The sidebar auto-collapses after 15 seconds of inactivity to keep the Dashboard clean for display.
+
+Enjoy your new Family Hub! 🏠✨
