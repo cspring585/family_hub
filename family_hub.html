@@ -1,5 +1,5 @@
+<!--Phase 16.9.39-->
 <!DOCTYPE html>
-<!--Phase 16.9.37-->
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -46,16 +46,29 @@
         .milestone-text { font-size: 10px; color: #555; font-weight: 800; margin-top: 4px; text-transform: uppercase; }
 
         input[type="checkbox"] { width: 26px; height: 26px; cursor: pointer; accent-color: var(--accent); flex-shrink: 0; margin-top: 3px; }
+        input[type="checkbox"]:disabled { cursor: not-allowed; opacity: 0.5; }
+
+        .card-celebration { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: none; flex-direction: column; justify-content: center; align-items: center; z-index: 500; text-align: center; background: rgba(26, 26, 46, 0.97); color: white; padding: 10px; border-radius: 10px; pointer-events: all; cursor: pointer; }
+        .card-celebration-msg { font-size: 1.5rem; font-weight: 900; color: var(--accent); line-height: 1.2; text-transform: uppercase; }
         
         .admin-form-box { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 15px; background: #f9fafb; padding: 15px; border-radius: 10px; border: 1px solid #eee; margin-bottom: 15px; }
         .form-group { display: flex; flex-direction: column; gap: 5px; }
         label { font-size: 10px; font-weight: 800; color: #666; text-transform: uppercase; }
         input, select, textarea { padding: 10px; border: 1px solid #ddd; border-radius: 8px; font-size: 13px; box-sizing: border-box; width: 100%; }
         
-        table { width: 100%; border-collapse: collapse; table-layout: fixed; }
-        th { text-align: left; font-size: 10px; font-weight: 700; color: #888; text-transform: uppercase; padding: 10px; border-bottom: 2px solid #eee; }
-        td { padding: 10px; border-bottom: 1px solid #f5f5f5; font-size: 13px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; vertical-align: middle; }
+        /* TABLE ALIGNMENT FIXES */
+        table { width: 100%; border-collapse: collapse; }
+        th { text-align: left; font-size: 10px; font-weight: 700; color: #888; text-transform: uppercase; padding: 12px 10px; border-bottom: 2px solid #eee; }
+        td { padding: 12px 10px; border-bottom: 1px solid #f5f5f5; font-size: 13px; vertical-align: middle; }
         
+        /* Column Widths for Config Table */
+        .col-chore { width: 30%; }
+        .col-user { width: 15%; }
+        .col-goal { width: 10%; }
+        .col-prize { width: 15%; }
+        .col-logic { width: 15%; }
+        .col-action { width: 15%; text-align: right; }
+
         .btn-outline-primary { background: transparent; color: var(--primary); border: 1px solid var(--primary); padding: 8px 15px; border-radius: 6px; cursor: pointer; font-weight: 700; transition: 0.2s; }
         .btn-outline-primary:hover { background: var(--primary); color: white; }
         .btn-outline-danger { background: transparent; color: var(--danger); border: 1px solid var(--danger); padding: 8px 15px; border-radius: 6px; cursor: pointer; font-weight: 700; transition: 0.2s; }
@@ -68,9 +81,6 @@
         
         .calendar-container { width: 100%; min-height: 700px; border-radius: 8px; overflow: hidden; margin-top: 15px; border: 1px solid #eee; background: #f9f9f9; display: flex; }
         .calendar-container iframe { width: 100%; height: 100%; border: 0; min-height: 700px; }
-        
-        .card-celebration { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: none; flex-direction: column; justify-content: center; align-items: center; z-index: 500; text-align: center; background: rgba(26, 26, 46, 0.97); color: white; padding: 10px; border-radius: 10px; pointer-events: all; cursor: pointer; }
-        .card-celebration-msg { font-size: 1.5rem; font-weight: 900; color: var(--accent); line-height: 1.2; text-transform: uppercase; }
         .prize-badge { background: #f1c40f; color: #000; padding: 2px 5px; border-radius: 3px; font-weight: 900; font-size: 9px; margin-left: 4px; }
     </style>
 </head>
@@ -141,7 +151,19 @@
                 <div class="form-group" style="grid-column: 1 / -1;"><label>Description</label><input type="text" id="c-desc"></div>
             </div>
             <button class="btn-outline-primary" style="width:100%" onclick="addChore()">Save Chore</button>
-            <table style="margin-top:20px;"><thead><tr><th>Chore</th><th>User</th><th>Target</th><th>Prize</th><th>Logic</th><th style="text-align:right">Action</th></tr></thead><tbody id="chore-list-body"></tbody></table>
+            <table style="margin-top:20px;">
+                <thead>
+                    <tr>
+                        <th class="col-chore">Chore</th>
+                        <th class="col-user">User</th>
+                        <th class="col-goal">Goal</th>
+                        <th class="col-prize">Prize</th>
+                        <th class="col-logic">Logic</th>
+                        <th class="col-action">Action</th>
+                    </tr>
+                </thead>
+                <tbody id="chore-list-body"></tbody>
+            </table>
         </div>
     </section>
 
@@ -152,7 +174,7 @@
     <section id="admin-settings" class="content-section hidden">
         <div class="card">
             <h1>Settings</h1>
-            <input type="text" id="cal-url-input" placeholder="Google Calendar URL">
+            <input type="text" id="cal-url-input" placeholder="Calendar Embed URL">
             <button class="btn-outline-primary" style="margin-top:10px" onclick="saveCalendarUrl()">Save URL</button>
             <hr style="margin:20px 0;">
             <button class="btn-outline-primary" onclick="exportData()">📤 Backup Hub</button>
@@ -167,7 +189,7 @@
         <div class="form-group"><label>Name</label><input type="text" id="edit-m-name"></div>
         <div class="form-group" style="margin-top:10px;"><label>Role</label><select id="edit-m-role"><option value="kid">Kid</option><option value="teen">Teen</option><option value="adult">Adult</option></select></div>
         <div style="margin-top:20px;">
-            <button class="btn-outline-primary" onclick="submitMemberEdit()">Save Changes</button>
+            <button class="btn-outline-primary" onclick="submitMemberEdit()">Save</button>
             <button class="btn-outline-danger btn-mini" onclick="closeModals()">Cancel</button>
         </div>
     </div>
@@ -192,8 +214,8 @@
 </div>
 
 <script>
-    const kidMessages = ["BOOM! 🔥", "LEGEND! 🏆", "CLUTCH! ⚡", "BOOYAH! 🚀", "W! 👑", "WINNING! 🏁"];
-    const teenMessages = ["K.", "Nice.", "Yep.", "Whatever.", "Solid.", "Fine."];
+    const kidMessages = ["BOOM! 🔥", "LEGEND! 🏆", "BOOYAH! 🚀", "W! 👑", "WINNING! 🏁", "PRIME! ⚡"];
+    const teenMessages = ["K.", "Nice.", "Yep.", "Whatever.", "Sure.", "Mood."];
 
     let state = JSON.parse(localStorage.getItem('familyHubData')) || { 
         members: [], chores: [], approvals: [], calendarUrl: "", adminPasscode: "1234",
@@ -327,12 +349,16 @@
 
         document.getElementById('member-list-body').innerHTML = state.members.map(m => `<tr><td><strong>${m.name}</strong></td><td>${m.role}</td><td>${m.points}</td><td style="text-align:right"><button class="btn-outline-danger btn-mini" onclick="const x=state.members.find(u=>u.id==${m.id});x.points=0;save()">Reset</button><button class="btn-outline-primary btn-mini" onclick="openEditMember(${m.id})">Edit</button><button class="btn-outline-danger btn-mini" onclick="state.members=state.members.filter(u=>u.id!=${m.id});save()">X</button></td></tr>`).join('');
         
-        document.getElementById('chore-list-body').innerHTML = state.chores.map(c => `<tr>
-            <td><strong>${c.name}</strong><br><small>${state.members.find(m=>m.id===c.assigneeId)?.name}</small></td>
-            <td>Target: ${c.goal}</td>
-            <td>${c.prize||'--'}</td>
-            <td>${c.type==='static'?c.points:c.dynamic.min+'-'+c.dynamic.max}</td>
-            <td style="text-align:right"><button class="btn-outline-primary btn-mini" onclick="openEditChore(${c.id})">Edit</button><button class="btn-outline-danger btn-mini" onclick="state.chores=state.chores.filter(u=>u.id!=${c.id});save()">X</button></td></tr>`).join('');
+        document.getElementById('chore-list-body').innerHTML = state.chores.map(c => {
+            const logicTxt = c.type === 'static' ? `S:${c.points}` : `D:${c.dynamic.min}-${c.dynamic.max}`;
+            return `<tr>
+                <td class="col-chore"><strong>${c.name}</strong><br><small>${c.desc||''}</small></td>
+                <td class="col-user">${state.members.find(m=>m.id===c.assigneeId)?.name || '--'}</td>
+                <td class="col-goal">${c.goal}</td>
+                <td class="col-prize">${c.prize||'--'}</td>
+                <td class="col-logic">${logicTxt}</td>
+                <td class="col-action"><button class="btn-outline-primary btn-mini" onclick="openEditChore(${c.id})">Edit</button><button class="btn-outline-danger btn-mini" onclick="state.chores=state.chores.filter(u=>u.id!=${c.id});save()">X</button></td></tr>`;
+        }).join('');
         
         document.getElementById('approval-list-body').innerHTML = state.approvals.map(a => `<tr><td>${state.members.find(m=>m.id===a.memberId)?.name}</td><td>${a.choreName}${a.type==='prize'?' <span class="prize-badge">REWARD</span>':''}</td><td>${a.points||'--'}</td><td style="text-align:right"><button class="btn-outline-accent btn-mini" style="background:var(--success); color:white; border:none;" onclick="approveItem(${a.id})">Approve</button><button class="btn-outline-danger btn-mini" onclick="state.approvals=state.approvals.filter(x=>x.id!=${a.id});save()">Reject</button></td></tr>`).join('');
         if (state.calVisible && state.calendarUrl && !document.querySelector('#calendar-slot iframe')) document.getElementById('calendar-slot').innerHTML = `<iframe src="${state.calendarUrl}"></iframe>`;
@@ -350,7 +376,7 @@
     function resetAllChoreChecks() { state.chores.forEach(c => c.lastCompleted = null); state.approvals = []; save(); }
     function resetAllChoreGoals() { state.chores.forEach(c => c.timesCompleted = 0); save(); }
     function nuclearReset() { if(confirm("Wipe Everything?")) { localStorage.clear(); location.reload(); } }
-    function exportData() { const d = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(state)); const a = document.createElement('a'); a.href = d; a.download = `FamilyHub_${new Date().toISOString().split('T')[0]}.json`; a.click(); }
+    function exportData() { const d = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(state)); const a = document.createElement('a'); a.href = d; a.download = `FamilyHub_Backup_${new Date().toISOString().split('T')[0]}.json`; a.click(); }
     
     setInterval(() => { document.getElementById('clock').innerText = new Date().toLocaleTimeString(); }, 1000);
     if (state.calendarUrl) document.getElementById('cal-url-input').value = state.calendarUrl;
