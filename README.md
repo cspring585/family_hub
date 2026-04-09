@@ -69,12 +69,3 @@ Manifest: Embedded JSON Data URI for PWA support.
 
 🤝 Contributing
 This project is currently in early development. If you have ideas for the Raspberry Pi/NAS implementation (Phase 2), feel free to open an issue or a pull request!
-
-Pro-Tip for GitHub:
-When you upload this to your repository, make sure to:
-
-Name the file README.md.
-
-Upload your index.html.
-
-(Optional) Take a screenshot of your dashboard and add it to the README using ![Dashboard](link-to-your-image.png) to make it look even better!
