@@ -212,12 +212,12 @@
             <h1>Chore Configuration</h1>
             <div style="display:flex; gap:10px; margin-bottom:15px;">
                 <button class="btn-outline-danger" onclick="resetAllChoreChecks()">🧪 RESET DAILY SWEEP</button>
-                <button class="btn-outline-danger" onclick="resetAllChoreGoals()">🎁 RESET GOAL PROGRESS</button>
+                <button class="btn-outline-danger" onclick="resetAllChoreGoals()">🎁 RESET STREAK PROGRESS</button>
             </div>
             <div class="admin-form-box">
                 <div class="form-group"><label>Chore Name</label><input type="text" id="c-name"></div>
                 <div class="form-group"><label>Users</label><div id="c-assignee-list" style="display:flex; gap:12px; flex-wrap:wrap; background:white; padding:8px 10px; border-radius:6px; border:1px solid #ddd; min-height:38px; align-items:center;"></div></div>
-                <div class="form-group"><label>Target Goal (Points Needed)</label><input type="number" id="c-goal" value="0"></div>
+                <div class="form-group"><label>Target Streak (Days in a Row)</label><input type="number" id="c-goal" value="0"></div>
                 <div class="form-group"><label>Prize Name</label><input type="text" id="c-prize"></div>
                 <div class="form-group"><label>Logic</label><select id="c-type" onchange="togglePointForm('c-type','c-static','c-dynamic')"><option value="static">Static</option><option value="dynamic">Dynamic</option></select></div>
                 <div id="c-static" class="form-group"><label>Points</label><input type="number" id="c-points" value="5"></div>
@@ -225,7 +225,7 @@
                 <div class="form-group" style="grid-column: 1 / -1;"><label>Description</label><input type="text" id="c-desc"></div>
             </div>
             <button class="btn-outline-primary" style="width:100%" onclick="addChore()">Save Chore</button>
-            <table style="margin-top:20px;"><thead><tr><th style="width:30%">Chore</th><th style="width:15%">Target</th><th style="width:15%">Prize</th><th style="width:20%">Logic</th><th style="text-align:right; width:20%">Action</th></tr></thead><tbody id="chore-list-body"></tbody></table>
+            <table style="margin-top:20px;"><thead><tr><th style="width:30%">Chore</th><th style="width:15%">Streak Goal</th><th style="width:15%">Prize</th><th style="width:20%">Logic</th><th style="text-align:right; width:20%">Action</th></tr></thead><tbody id="chore-list-body"></tbody></table>
         </div>
     </section>
 
@@ -277,7 +277,7 @@
         <h3>Edit Chore Configuration</h3>
         <div class="form-group" style="margin-bottom:10px;"><label>Chore Name</label><input type="text" id="edit-c-name"></div>
         <div class="form-group" style="margin-bottom:10px;"><label>User</label><select id="edit-c-assignee"></select></div>
-        <div class="form-group" style="margin-bottom:10px;"><label>Target Goal</label><input type="number" id="edit-c-goal"></div>
+        <div class="form-group" style="margin-bottom:10px;"><label>Target Streak (Days in a Row)</label><input type="number" id="edit-c-goal"></div>
         <div class="form-group" style="margin-bottom:10px;"><label>Prize Name</label><input type="text" id="edit-c-prize"></div>
         <div class="form-group" style="margin-bottom:10px;"><label>Logic</label><select id="edit-c-type" onchange="togglePointForm('edit-c-type','edit-c-static','edit-c-dynamic')"><option value="static">Static</option><option value="dynamic">Dynamic</option></select></div>
         <div id="edit-c-static" class="form-group" style="margin-bottom:10px;"><label>Points</label><input type="number" id="edit-c-points"></div>
@@ -427,9 +427,8 @@
         return d.toDateString();
     }
 
-    // Calculates today's dynamic reward: starts at Max on Day 1 (or after a missed day),
-    // and steps down toward Min for each consecutive day completed in a row.
-    function getDynamicRewardInfo(chore) {
+    // Evaluates consecutive days in a row (for both streak goals and dynamic decay)
+    function getStreakAndRewardInfo(chore) {
         const today = new Date().toDateString();
         const yesterday = getYesterdayString();
         const min = Number(chore.dynamic?.min) || 2;
@@ -441,13 +440,14 @@
         } else if (chore.lastCompleted === yesterday) {
             activeStreak = chore.streak || 1;
         } else {
-            activeStreak = 0; // Missed a day or never completed: resets to Max
+            activeStreak = 0; // Missed a day or never completed: streak resets to 0
         }
 
-        // If already done today, show the streak/points earned today; otherwise preview today's next step
         const effectiveStreak = chore.lastCompleted === today ? activeStreak : activeStreak + 1;
         const step = Math.max(1, Math.round((max - min) / 4));
-        const earned = Math.max(min, max - ((effectiveStreak - 1) * step));
+        const earned = chore.type === 'dynamic'
+            ? Math.max(min, max - ((effectiveStreak - 1) * step))
+            : (Number(chore.points) || 0);
 
         return { earned, effectiveStreak, activeStreak };
     }
@@ -527,8 +527,8 @@
                 points,
                 dynamic: { min, max },
                 desc,
-                timesCompleted: 0,
                 streak: 0,
+                goalStreak: 0,
                 lastCompleted: null,
                 prevLastCompleted: null
             });
@@ -592,8 +592,11 @@
     }
 
     function resetAllChoreGoals() {
-        if (!confirm("Reset all goal progress counters to 0?")) return;
-        state.chores.forEach(c => c.timesCompleted = 0);
+        if (!confirm("Reset all streak progress counters to 0?")) return;
+        state.chores.forEach(c => {
+            c.streak = 0;
+            c.goalStreak = 0;
+        });
         save();
     }
 
@@ -608,14 +611,10 @@
         const today = new Date().toDateString();
         if (chore.lastCompleted === today) return;
 
-        let earned = chore.points;
-        if (chore.type === 'dynamic') {
-            const info = getDynamicRewardInfo(chore);
-            earned = info.earned;
-            chore.prevStreak = chore.streak || 0;
-            chore.streak = info.effectiveStreak;
-        }
+        const info = getStreakAndRewardInfo(chore);
 
+        chore.prevStreak = chore.streak || 0;
+        chore.streak = info.effectiveStreak;
         chore.prevLastCompleted = chore.lastCompleted || null;
         chore.lastCompleted = today;
 
@@ -625,7 +624,8 @@
             memberName: member.name,
             choreId: chore.id,
             choreName: chore.name,
-            points: earned
+            points: info.earned,
+            wasConsecutive: info.activeStreak > 0
         });
 
         showToast(member.role);
@@ -642,16 +642,17 @@
         if (approved) {
             if (member) member.points += app.points;
             if (chore) {
-                chore.timesCompleted = (chore.timesCompleted || 0) + app.points;
-                if (chore.goal > 0 && chore.timesCompleted >= chore.goal) {
-                    alert(`🎉 ${member.name} reached their goal for "${chore.name}" and unlocked: ${chore.prize || 'Prize'}!`);
-                    chore.timesCompleted = 0;
+                // Increment consecutive streak progress toward Target Streak goal
+                chore.goalStreak = app.wasConsecutive ? ((chore.goalStreak || 0) + 1) : 1;
+                if (chore.goal > 0 && chore.goalStreak >= chore.goal) {
+                    alert(`🎉 ${member.name} completed "${chore.name}" ${chore.goal} days in a row and unlocked: ${chore.prize || 'Prize'}!`);
+                    chore.goalStreak = 0;
                 }
             }
         } else {
             if (chore) {
                 chore.lastCompleted = chore.prevLastCompleted || null;
-                if (chore.type === 'dynamic' && chore.prevStreak !== undefined) {
+                if (chore.prevStreak !== undefined) {
                     chore.streak = chore.prevStreak;
                 }
             }
@@ -760,14 +761,14 @@
             const unit = currencyMap[m.role] || '';
             const choresHtml = memberChores.length ? memberChores.map(c => {
                 const isDone = c.lastCompleted === today;
-                const pct = c.goal > 0 ? Math.min(100, Math.round(((c.timesCompleted || 0) / c.goal) * 100)) : 0;
+                const info = getStreakAndRewardInfo(c);
 
-                let rewardText = `${c.points} ${unit}`;
-                if (c.type === 'dynamic') {
-                    const info = getDynamicRewardInfo(c);
-                    const streakLabel = info.activeStreak > 0 ? ` • 🔥 ${info.activeStreak}d streak` : '';
-                    rewardText = `${info.earned} ${unit}${streakLabel}`;
-                }
+                // If a day was missed, activeStreak is 0 so streak goal progress resets visually too
+                const currentGoalStreak = info.activeStreak > 0 ? (c.goalStreak || 0) : 0;
+                const pct = c.goal > 0 ? Math.min(100, Math.round((currentGoalStreak / c.goal) * 100)) : 0;
+
+                const streakLabel = info.activeStreak > 0 ? ` • 🔥 ${info.activeStreak}d streak` : '';
+                const rewardText = `${info.earned} ${unit}${streakLabel}`;
 
                 return `
                     <div class="chore-item ${isDone ? 'completed' : ''}">
@@ -775,7 +776,7 @@
                             <h4>${c.name}</h4>
                             <p>${c.desc ? c.desc + ' • ' : ''}<strong>${rewardText}</strong></p>
                             ${c.goal > 0 ? `
-                                <p style="font-size:0.75rem; color:var(--primary); margin-top:4px;">🎁 ${c.prize || 'Goal'}: ${c.timesCompleted || 0}/${c.goal}</p>
+                                <p style="font-size:0.75rem; color:var(--primary); margin-top:4px;">🎁 ${c.prize || 'Streak Prize'}: ${currentGoalStreak}/${c.goal} days</p>
                                 <div class="goal-bar"><div class="goal-fill" style="width:${pct}%"></div></div>
                             ` : ''}
                         </div>
@@ -815,7 +816,7 @@
             return `
                 <tr>
                     <td><strong>${c.name}</strong> <span style="color:#7f8c8d; font-size:0.85rem;">${owner ? owner.name : 'Unassigned'}</span></td>
-                    <td>${c.goal || 0}</td>
+                    <td>${c.goal ? c.goal + 'd' : 0}</td>
                     <td>${c.prize || '--'}</td>
                     <td>${logicLabel}</td>
                     <td style="text-align:right;">
