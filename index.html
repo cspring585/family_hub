@@ -953,4 +953,313 @@
     /* -------------------------------------------------------------------------
        COMPLETION & APPROVAL WORKFLOW
        ------------------------------------------------------------------------- */
-    function complete
+    function completeChore(choreId) {
+        const chore = state.chores.find(c => c.id === choreId);
+        const member = state.members.find(m => m.id === chore.assigneeId);
+        if (!chore || !member) return;
+
+        const today = new Date().toDateString();
+        if (chore.lastCompleted === today) return;
+
+        const info = getStreakAndRewardInfo(chore);
+
+        chore.prevStreak = chore.streak || 0;
+        chore.streak = info.effectiveStreak;
+        chore.prevLastCompleted = chore.lastCompleted || null;
+        chore.lastCompleted = today;
+
+        state.approvals.push({
+            id: Date.now(),
+            memberId: member.id,
+            memberName: member.name,
+            choreId: chore.id,
+            choreName: chore.name,
+            points: info.earned,
+            wasConsecutive: info.activeStreak > 0
+        });
+
+        showToast(member.role);
+        save();
+    }
+
+    function handleApproval(appId, approved) {
+        const appIndex = state.approvals.findIndex(a => a.id === appId);
+        if (appIndex === -1) return;
+        const app = state.approvals[appIndex];
+        const chore = state.chores.find(c => c.id === app.choreId);
+        const member = state.members.find(m => m.id === app.memberId);
+
+        if (approved) {
+            if (member) member.points += app.points;
+            if (chore) {
+                chore.goalStreak = app.wasConsecutive ? ((chore.goalStreak || 0) + 1) : 1;
+                if (chore.goal > 0 && chore.goalStreak >= chore.goal) {
+                    alert(`🎉 ${member.name} completed "${chore.name}" ${chore.goal} days in a row and unlocked: ${chore.prize || 'Prize'}!`);
+                    chore.goalStreak = 0;
+                }
+            }
+        } else {
+            if (chore) {
+                chore.lastCompleted = chore.prevLastCompleted || null;
+                if (chore.prevStreak !== undefined) {
+                    chore.streak = chore.prevStreak;
+                }
+            }
+        }
+
+        state.approvals.splice(appIndex, 1);
+        save();
+    }
+
+    /* -------------------------------------------------------------------------
+       SETTINGS, BACKUP & RESTORE
+       ------------------------------------------------------------------------- */
+    function saveFamilyName() {
+        state.familyName = document.getElementById('family-name-input').value.trim();
+        save();
+        alert("Family name saved!");
+    }
+
+    function saveCalendarUrl() {
+        state.calendarUrl = document.getElementById('cal-url-input').value.trim();
+        save();
+        alert("Calendar URL saved!");
+    }
+
+    function updateAdminCredentials() {
+        const newUser = document.getElementById('change-admin-user-input').value.trim();
+        const newPass = document.getElementById('change-pass-input').value.trim();
+        if (!newUser && !newPass) return alert("Enter a new username or password.");
+        if (newUser) state.adminUsername = newUser;
+        if (newPass) state.adminPasscode = newPass;
+        document.getElementById('change-pass-input').value = '';
+        save();
+        alert("Admin login credentials updated!");
+    }
+
+    function updateSitePassword() {
+        const newSitePass = document.getElementById('change-site-pass-input').value.trim();
+        if (!newSitePass) return alert("Enter a new website password.");
+        state.sitePassword = newSitePass;
+        localStorage.setItem('familyHubRememberedPass', newSitePass);
+        sessionStorage.setItem('familyHubSessionPass', newSitePass);
+        document.getElementById('change-site-pass-input').value = '';
+        save();
+        alert("Website entry password updated!");
+    }
+
+    function exportData() {
+        const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `family-hub-backup-${new Date().toISOString().slice(0,10)}.json`;
+        a.click();
+    }
+
+    function importData(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            try {
+                const imported = JSON.parse(e.target.result);
+                state = { ...state, ...imported };
+                save();
+                alert("Hub data restored successfully!");
+            } catch (err) {
+                alert("Invalid backup file.");
+            }
+        };
+        reader.readAsText(file);
+    }
+
+    function nuclearReset() {
+        if (confirm("This will wipe all members, chores, and points. Continue?")) {
+            localStorage.clear();
+            sessionStorage.clear();
+            familyDocRef.delete().then(() => location.reload());
+        }
+    }
+
+    /* -------------------------------------------------------------------------
+       UI RENDERING ENGINE
+       ------------------------------------------------------------------------- */
+    function renderChoreRow(c) {
+        const logicLabel = c.type === 'dynamic' ? `D:${c.dynamic.min}-${c.dynamic.max}` : `S:${c.points}`;
+        return `
+            <tr>
+                <td><strong>${c.name}</strong>${c.desc ? `<div style="font-size:0.8rem; color:var(--text-muted);">${c.desc}</div>` : ''}</td>
+                <td>${c.goal ? c.goal + 'd' : 0}</td>
+                <td>${c.prize || '--'}</td>
+                <td>${logicLabel}</td>
+                <td style="text-align:right;">
+                    <button class="btn-outline-primary" style="padding:4px 8px; font-size:0.8rem;" onclick="openEditChore(${c.id})">Edit</button>
+                    <button class="btn-outline-danger" style="padding:4px 8px; font-size:0.8rem;" onclick="deleteChore(${c.id})">X</button>
+                </td>
+            </tr>
+        `;
+    }
+
+    function renderAll() {
+        const today = new Date().toDateString();
+
+        // Family Name Pill in Header
+        const fnPill = document.getElementById('header-family-name');
+        if (state.familyName) {
+            fnPill.innerText = state.familyName;
+            fnPill.classList.remove('hidden');
+        } else {
+            fnPill.classList.add('hidden');
+        }
+        document.getElementById('family-name-input').value = state.familyName || '';
+
+        // Accordion visibility
+        document.getElementById('chores-body').classList.toggle('hidden', !state.choresVisible);
+        document.getElementById('chores-icon').innerText = state.choresVisible ? '−' : '+';
+        document.getElementById('cal-body').classList.toggle('hidden', !state.calVisible);
+        document.getElementById('cal-icon').innerText = state.calVisible ? '−' : '+';
+
+        // Calendar
+        const calSlot = document.getElementById('calendar-slot');
+        if (state.calendarUrl) {
+            if (!calSlot.querySelector('iframe') || calSlot.querySelector('iframe').src !== state.calendarUrl) {
+                calSlot.innerHTML = `<iframe src="${state.calendarUrl}"></iframe>`;
+            }
+        } else {
+            calSlot.innerHTML = `<p style="color:var(--text-muted); text-align:center; padding:20px;">No calendar configured. Add a Google Calendar Embed URL in Settings.</p>`;
+        }
+        document.getElementById('cal-url-input').value = state.calendarUrl || '';
+        document.getElementById('change-admin-user-input').value = state.adminUsername || 'admin';
+
+        // Populate Chore Creation Multi-User Checkboxes & Edit Modal Dropdown
+        const assigneeList = document.getElementById('c-assignee-list');
+        if (assigneeList) {
+            const currentlyChecked = Array.from(document.querySelectorAll('.c-assignee-cb:checked')).map(cb => Number(cb.value));
+            assigneeList.innerHTML = state.members.length
+                ? state.members.map(m => `
+                    <label style="display:flex; align-items:center; gap:6px; cursor:pointer; font-size:0.9rem; font-weight:normal; text-transform:none; color:var(--text);">
+                        <input type="checkbox" class="c-assignee-cb" value="${m.id}" ${currentlyChecked.includes(m.id) ? 'checked' : ''}> ${m.name}
+                    </label>
+                `).join('')
+                : `<span style="color:var(--text-muted); font-size:0.85rem;">Add family members first</span>`;
+        }
+
+        const editAssigneeSelect = document.getElementById('edit-c-assignee');
+        if (editAssigneeSelect) {
+            editAssigneeSelect.innerHTML = state.members.map(m => `<option value="${m.id}">${m.name}</option>`).join('');
+        }
+
+        // Dashboard User Cards
+        const choresBody = document.getElementById('chores-body');
+        choresBody.innerHTML = state.members.map(m => {
+            const memberChores = state.chores.filter(c => c.assigneeId === m.id);
+            const unit = currencyMap[m.role] || '';
+            const choresHtml = memberChores.length ? memberChores.map(c => {
+                const isDone = c.lastCompleted === today;
+                const info = getStreakAndRewardInfo(c);
+
+                const currentGoalStreak = info.activeStreak > 0 ? (c.goalStreak || 0) : 0;
+                const pct = c.goal > 0 ? Math.min(100, Math.round((currentGoalStreak / c.goal) * 100)) : 0;
+
+                const streakLabel = info.activeStreak > 0 ? ` • 🔥 ${info.activeStreak}d streak` : '';
+                const rewardText = `${info.earned} ${unit}${streakLabel}`;
+
+                return `
+                    <div class="chore-item ${isDone ? 'completed' : ''}">
+                        <div class="chore-info" style="flex:1; padding-right:10px;">
+                            <h4>${c.name}</h4>
+                            <p>${c.desc ? c.desc + ' • ' : ''}<strong>${rewardText}</strong></p>
+                            ${c.goal > 0 ? `
+                                <p style="font-size:0.75rem; color:var(--primary); margin-top:4px;">🎁 ${c.prize || 'Streak Prize'}: ${currentGoalStreak}/${c.goal} days</p>
+                                <div class="goal-bar"><div class="goal-fill" style="width:${pct}%"></div></div>
+                            ` : ''}
+                        </div>
+                        <button class="btn-check" ${isDone ? 'disabled' : ''} onclick="completeChore(${c.id})">${isDone ? '✓ Done' : 'Complete'}</button>
+                    </div>
+                `;
+            }).join('') : `<p style="color:var(--text-muted); font-size:0.9rem;">No chores assigned.</p>`;
+
+            return `
+                <div class="user-card ${m.role}">
+                    <div class="user-header">
+                        <span class="user-name">${m.name}</span>
+                        ${m.role !== 'adult' ? `<span class="user-points">${m.points} ${unit}</span>` : ''}
+                    </div>
+                    ${choresHtml}
+                </div>
+            `;
+        }).join('');
+
+        // Members Table
+        document.getElementById('member-list-body').innerHTML = state.members.map(m => `
+            <tr>
+                <td><strong>${m.name}</strong></td>
+                <td style="text-transform:capitalize;">${m.role}</td>
+                <td>${m.points}</td>
+                <td style="text-align:right;">
+                    <button class="btn-outline-primary" style="padding:4px 8px; font-size:0.8rem;" onclick="openEditMember(${m.id})">Edit</button>
+                    <button class="btn-outline-danger" style="padding:4px 8px; font-size:0.8rem;" onclick="deleteMember(${m.id})">X</button>
+                </td>
+            </tr>
+        `).join('');
+
+        // Chores Table (Grouped by Family Member)
+        let groupedChoresHtml = '';
+        state.members.forEach(m => {
+            const memberChores = state.chores.filter(c => c.assigneeId === m.id);
+            groupedChoresHtml += `
+                <tr class="group-header ${m.role}">
+                    <td colspan="5">${m.name.trim()}<span class="group-badge">${memberChores.length} ${memberChores.length === 1 ? 'chore' : 'chores'}</span></td>
+                </tr>
+            `;
+            if (memberChores.length) {
+                groupedChoresHtml += memberChores.map(renderChoreRow).join('');
+            } else {
+                groupedChoresHtml += `<tr><td colspan="5" style="color:var(--text-muted); font-size:0.85rem; padding-left:20px;">No chores assigned.</td></tr>`;
+            }
+        });
+
+        const memberIds = new Set(state.members.map(m => m.id));
+        const unassignedChores = state.chores.filter(c => !memberIds.has(c.assigneeId));
+        if (unassignedChores.length) {
+            groupedChoresHtml += `
+                <tr class="group-header">
+                    <td colspan="5">Unassigned<span class="group-badge">${unassignedChores.length}</span></td>
+                </tr>
+            ` + unassignedChores.map(renderChoreRow).join('');
+        }
+
+        document.getElementById('chore-list-body').innerHTML = groupedChoresHtml || `<tr><td colspan="5" style="text-align:center; color:var(--text-muted);">No chores configured yet.</td></tr>`;
+
+        // Approvals Badges & Table
+        const waitingCount = state.approvals.length;
+        document.getElementById('badge-count').innerText = waitingCount;
+        document.getElementById('header-approval-count').innerText = waitingCount;
+        document.getElementById('header-approval-flag').classList.toggle('hidden', waitingCount === 0);
+
+        document.getElementById('approval-list-body').innerHTML = waitingCount ? state.approvals.map(a => `
+            <tr>
+                <td><strong>${a.memberName}</strong></td>
+                <td>${a.choreName}</td>
+                <td>+${a.points}</td>
+                <td style="text-align:right;">
+                    <button class="btn-check" style="padding:5px 10px; font-size:0.8rem;" onclick="handleApproval(${a.id}, true)">Approve</button>
+                    <button class="btn-outline-danger" style="padding:4px 8px; font-size:0.8rem;" onclick="handleApproval(${a.id}, false)">Reject</button>
+                </td>
+            </tr>
+        `).join('') : `<tr><td colspan="4" style="text-align:center; color:var(--text-muted);">No pending approvals.</td></tr>`;
+    }
+
+    function updateClock() {
+        const now = new Date();
+        document.getElementById('clock').innerText = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    }
+
+    checkSiteGate();
+    setInterval(updateClock, 1000);
+    updateClock();
+    renderAll();
+</script>
+</body>
+</html>
