@@ -82,8 +82,22 @@
             font-size: 1.2rem; box-shadow: 0 4px 10px rgba(79, 70, 229, 0.25);
         }
         .brand-title { font-size: 1.25rem; font-weight: 800; letter-spacing: -0.02em; color: var(--text); }
-        .topbar-right { display: flex; align-items: center; gap: 16px; }
-        #clock { font-weight: 700; color: var(--text-muted); font-size: 0.95rem; }
+        .topbar-right { display: flex; align-items: center; gap: 12px; }
+        #clock { font-weight: 700; color: var(--text-muted); font-size: 0.95rem; margin-right: 4px; }
+
+        /* WAITING APPROVALS HEADER FLAG */
+        .approval-flag {
+            background: #fef3c7; color: #b45309; border: 1.5px solid #f59e0b;
+            padding: 7px 13px; border-radius: 999px; font-size: 0.85rem; font-weight: 700;
+            display: inline-flex; align-items: center; gap: 6px; cursor: pointer;
+            animation: pulseFlag 2s infinite;
+        }
+        .approval-flag:hover { background: #fde68a; }
+        @keyframes pulseFlag {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.35); }
+            50% { box-shadow: 0 0 0 6px rgba(245, 158, 11, 0); }
+        }
+
         .btn-admin-header {
             background: var(--text); color: white; border: none;
             padding: 9px 16px; border-radius: 10px; font-size: 0.9rem; font-weight: 600;
@@ -267,6 +281,7 @@
         @media (max-width: 768px) {
             main.with-sidebar { margin-left: 0; }
             header.topbar { padding: 0 16px; }
+            #clock { display: none; }
         }
     </style>
 </head>
@@ -295,6 +310,9 @@
     </div>
     <div class="topbar-right">
         <div id="clock"></div>
+        <button id="header-approval-flag" class="approval-flag hidden" onclick="handleApprovalFlagClick()">
+            🔔 <span id="header-approval-count">0</span> Waiting
+        </button>
         <button id="admin-header-btn" class="btn-admin-header" onclick="handleAdminButtonClick()">🔒 Admin</button>
     </div>
 </header>
@@ -494,6 +512,7 @@
     };
 
     let isUnlocked = false;
+    let redirectAfterLogin = null;
     let editId = null;
     const currencyMap = { kid: "tokens", teen: "minutes", adult: "" };
 
@@ -521,6 +540,7 @@
 
     function closeModals() {
         document.querySelectorAll('.modal-overlay').forEach(m => m.style.display = 'none');
+        redirectAfterLogin = null;
     }
 
     /* -------------------------------------------------------------------------
@@ -560,14 +580,28 @@
     /* -------------------------------------------------------------------------
        ADMIN AUTHENTICATION & NAVIGATION
        ------------------------------------------------------------------------- */
+    function handleApprovalFlagClick() {
+        if (isUnlocked) {
+            document.getElementById('sidebar').classList.add('visible');
+            if (window.innerWidth > 768) document.getElementById('main-content').classList.add('with-sidebar');
+            showSection('admin-approvals', document.getElementById('nav-approvals'));
+        } else {
+            redirectAfterLogin = 'admin-approvals';
+            document.getElementById('admin-login-user').value = '';
+            document.getElementById('admin-login-pass').value = '';
+            document.getElementById('admin-login-modal').style.display = 'flex';
+            setTimeout(() => document.getElementById('admin-login-user').focus(), 50);
+        }
+    }
+
     function handleAdminButtonClick() {
         if (isUnlocked) {
-            // Toggle sidebar visibility if already authenticated
             const sidebar = document.getElementById('sidebar');
             const main = document.getElementById('main-content');
             sidebar.classList.toggle('visible');
             main.classList.toggle('with-sidebar', sidebar.classList.contains('visible'));
         } else {
+            redirectAfterLogin = null;
             document.getElementById('admin-login-user').value = '';
             document.getElementById('admin-login-pass').value = '';
             document.getElementById('admin-login-modal').style.display = 'flex';
@@ -582,13 +616,18 @@
         const expectedPass = state.adminPasscode || "1234";
 
         if (u.toLowerCase() === expectedUser.toLowerCase() && p === expectedPass) {
+            const targetSection = redirectAfterLogin;
             isUnlocked = true;
             closeModals();
             const btn = document.getElementById('admin-header-btn');
             btn.innerText = "🔓 Admin";
             btn.classList.add('unlocked');
             document.getElementById('sidebar').classList.add('visible');
-            document.getElementById('main-content').classList.add('with-sidebar');
+            if (window.innerWidth > 768) document.getElementById('main-content').classList.add('with-sidebar');
+
+            if (targetSection === 'admin-approvals') {
+                showSection('admin-approvals', document.getElementById('nav-approvals'));
+            }
         } else {
             alert("Invalid username or password.");
         }
@@ -1082,9 +1121,13 @@
 
         document.getElementById('chore-list-body').innerHTML = groupedChoresHtml || `<tr><td colspan="5" style="text-align:center; color:var(--text-muted);">No chores configured yet.</td></tr>`;
 
-        // Approvals Table
-        document.getElementById('badge-count').innerText = state.approvals.length;
-        document.getElementById('approval-list-body').innerHTML = state.approvals.length ? state.approvals.map(a => `
+        // Approvals Badges & Table
+        const waitingCount = state.approvals.length;
+        document.getElementById('badge-count').innerText = waitingCount;
+        document.getElementById('header-approval-count').innerText = waitingCount;
+        document.getElementById('header-approval-flag').classList.toggle('hidden', waitingCount === 0);
+
+        document.getElementById('approval-list-body').innerHTML = waitingCount ? state.approvals.map(a => `
             <tr>
                 <td><strong>${a.memberName}</strong></td>
                 <td>${a.choreName}</td>
