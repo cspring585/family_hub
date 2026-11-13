@@ -8,8 +8,6 @@
         :root {
             --primary: #0d9488;
             --primary-hover: #0f766e;
-            --primary-soft: #ccfbf1;
-            --primary-soft-text: #0f766e;
             --teen-accent: #0284c7;
             --secondary: #059669;
             --bg: #f4f4f5;
@@ -31,8 +29,6 @@
         html[data-theme="dark"] {
             --primary: #14b8a6;
             --primary-hover: #2dd4bf;
-            --primary-soft: rgba(20, 184, 166, 0.16);
-            --primary-soft-text: #5eead4;
             --teen-accent: #38bdf8;
             --secondary: #34d399;
             --bg: #0b1120;
@@ -106,18 +102,9 @@
             padding: 0 24px; z-index: 1200;
         }
         .brand-wrap {
-            display: flex; align-items: center; gap: 10px; cursor: pointer; flex-wrap: wrap;
+            display: flex; align-items: center; gap: 10px; cursor: pointer;
         }
         .brand-title { font-size: 1.3rem; font-weight: 800; letter-spacing: -0.02em; color: var(--text); }
-        .family-name-pill {
-            background: var(--primary-soft);
-            color: var(--primary-soft-text);
-            border: 1px solid rgba(13, 148, 136, 0.3);
-            padding: 4px 12px;
-            border-radius: 999px;
-            font-size: 0.85rem;
-            font-weight: 700;
-        }
         .topbar-right { display: flex; align-items: center; gap: 10px; }
         #clock { font-weight: 700; color: var(--text-muted); font-size: 0.92rem; margin-right: 4px; }
 
@@ -345,8 +332,7 @@
 <!-- TOP BAR -->
 <header class="topbar">
     <div class="brand-wrap" onclick="showSection('dashboard', document.getElementById('nav-dashboard'))">
-        <span class="brand-title">Family Hub</span>
-        <span id="header-family-name" class="family-name-pill hidden"></span>
+        <span id="header-brand-title" class="brand-title">Family Hub</span>
     </div>
     <div class="topbar-right">
         <div id="clock"></div>
@@ -439,8 +425,8 @@
         <div class="card">
             <h1>Hub Settings</h1>
             <div class="admin-form-box">
-                <div class="form-group" style="grid-column: 1 / -1;"><label>Family Name (Shown in Header)</label><input type="text" id="family-name-input" placeholder="e.g. Spring Family"></div>
-                <button class="btn-outline-primary" onclick="saveFamilyName()">Save Family Name</button>
+                <div class="form-group" style="grid-column: 1 / -1;"><label>Hub / Family Name (Replaces Family Hub in Header)</label><input type="text" id="family-name-input" placeholder="e.g. Spring Family"></div>
+                <button class="btn-outline-primary" onclick="saveFamilyName()">Save Hub Name</button>
             </div>
             <div class="admin-form-box">
                 <div class="form-group" style="grid-column: 1 / -1;"><label>Google Calendar Embed URL</label><input type="text" id="cal-url-input"></div>
@@ -1001,7 +987,7 @@
     function saveFamilyName() {
         state.familyName = document.getElementById('family-name-input').value.trim();
         save();
-        alert("Family name saved!");
+        alert("Hub name saved!");
     }
 
     function saveCalendarUrl() {
@@ -1088,14 +1074,10 @@
     function renderAll() {
         const today = new Date().toDateString();
 
-        // Family Name Pill in Header
-        const fnPill = document.getElementById('header-family-name');
-        if (state.familyName) {
-            fnPill.innerText = state.familyName;
-            fnPill.classList.remove('hidden');
-        } else {
-            fnPill.classList.add('hidden');
-        }
+        // Header Brand Title (Dynamic Hub Name or Family Hub)
+        const brandTitleEl = document.getElementById('header-brand-title');
+        const activeHubName = (state.familyName && state.familyName.trim() !== "") ? state.familyName.trim() : "Family Hub";
+        brandTitleEl.innerText = activeHubName;
         document.getElementById('family-name-input').value = state.familyName || '';
 
         // Accordion visibility
