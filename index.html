@@ -11,23 +11,19 @@
             --primary-soft: #ccfbf1;
             --primary-soft-text: #0f766e;
             --teen-accent: #0284c7;
-            --secondary: #10b981;
-            --bg: #f5f5f4;
+            --secondary: #059669;
+            --bg: #f4f4f5;
             --card-bg: #ffffff;
-            --topbar-bg: rgba(255, 255, 255, 0.92);
-            --text: #1c1917;
-            --text-muted: #57534e;
-            --border: #e7e5e4;
+            --topbar-bg: rgba(255, 255, 255, 0.95);
+            --text: #09090b;
+            --text-muted: #52525b;
+            --border: #d4d4d8;
             --input-bg: #ffffff;
-            --input-border: #d6d3d1;
+            --input-border: #a1a1aa;
             --danger: #e11d48;
             --success: #059669;
             --warning: #d97706;
-            --light: #fafaf9;
-            --group-kid-bg: #f0fdfa;
-            --group-kid-border: #99f6e4;
-            --group-teen-bg: #f0f9ff;
-            --group-teen-border: #bae6fd;
+            --light: #f9f9fb;
             --sidebar-width: 240px;
             --header-height: 68px;
         }
@@ -51,10 +47,6 @@
             --success: #10b981;
             --warning: #f59e0b;
             --light: #172033;
-            --group-kid-bg: rgba(20, 184, 166, 0.14);
-            --group-kid-border: rgba(45, 212, 191, 0.3);
-            --group-teen-bg: rgba(56, 189, 248, 0.14);
-            --group-teen-border: rgba(56, 189, 248, 0.3);
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
@@ -120,12 +112,11 @@
         .family-name-pill {
             background: var(--primary-soft);
             color: var(--primary-soft-text);
-            border: 1px solid rgba(13, 148, 136, 0.25);
+            border: 1px solid rgba(13, 148, 136, 0.3);
             padding: 4px 12px;
             border-radius: 999px;
             font-size: 0.85rem;
             font-weight: 700;
-            letter-spacing: -0.01em;
         }
         .topbar-right { display: flex; align-items: center; gap: 10px; }
         #clock { font-weight: 700; color: var(--text-muted); font-size: 0.92rem; margin-right: 4px; }
@@ -139,13 +130,13 @@
 
         /* WAITING APPROVALS HEADER FLAG */
         .approval-flag {
-            background: rgba(245, 158, 11, 0.15); color: #d97706; border: 1.5px solid #f59e0b;
+            background: rgba(245, 158, 11, 0.18); color: #b45309; border: 1.5px solid #f59e0b;
             padding: 7px 13px; border-radius: 999px; font-size: 0.85rem; font-weight: 700;
             display: inline-flex; align-items: center; gap: 6px; cursor: pointer;
             animation: pulseFlag 2s infinite;
         }
         html[data-theme="dark"] .approval-flag { color: #fbbf24; }
-        .approval-flag:hover { background: rgba(245, 158, 11, 0.25); }
+        .approval-flag:hover { background: rgba(245, 158, 11, 0.28); }
         @keyframes pulseFlag {
             0%, 100% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.35); }
             50% { box-shadow: 0 0 0 6px rgba(245, 158, 11, 0); }
@@ -160,7 +151,7 @@
         .btn-admin-header.unlocked { background: var(--success); }
         .btn-admin-header.unlocked:hover { background: #047857; }
 
-        /* ADMIN LEFT SIDEBAR (HIDDEN UNTIL AUTHENTICATED) */
+        /* ADMIN LEFT SIDEBAR */
         nav#sidebar {
             width: var(--sidebar-width);
             background: #0f172a;
@@ -212,7 +203,7 @@
         .hidden { display: none !important; }
         .card {
             background: var(--card-bg); border-radius: 16px; padding: 24px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
             border: 1px solid var(--border); margin-bottom: 24px;
         }
         h1 { font-size: 1.55rem; font-weight: 800; color: var(--text); letter-spacing: -0.02em; margin-bottom: 18px; }
@@ -234,17 +225,14 @@
         .user-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
         .user-card {
             background: var(--light); border-radius: 14px; padding: 18px;
-            border: 1px solid var(--border); border-top: 4px solid var(--primary);
+            border: 1px solid var(--border); border-top: 5px solid var(--primary);
         }
-        .user-card.teen { border-top-color: var(--teen-accent); }
-        .user-card.adult { border-top-color: #64748b; }
         .user-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
         .user-name { font-size: 1.15rem; font-weight: 800; color: var(--text); }
         .user-points {
             background: var(--primary); color: white; padding: 4px 12px;
             border-radius: 999px; font-size: 0.82rem; font-weight: 700;
         }
-        .user-card.teen .user-points { background: var(--teen-accent); }
 
         .chore-item {
             background: var(--card-bg); padding: 14px; border-radius: 12px; margin-bottom: 10px;
@@ -252,7 +240,7 @@
             border-left: 4px solid var(--warning); transition: transform 0.15s, box-shadow 0.15s;
         }
         .chore-item:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); }
-        .chore-item.completed { border-left-color: var(--success); opacity: 0.6; }
+        .chore-item.completed { border-left-color: var(--success); opacity: 0.65; }
         .chore-info h4 { font-size: 0.98rem; font-weight: 700; margin-bottom: 3px; color: var(--text); }
         .chore-info p { font-size: 0.82rem; color: var(--text-muted); }
         .goal-bar { height: 6px; background: var(--border); border-radius: 999px; margin-top: 6px; overflow: hidden; }
@@ -287,18 +275,9 @@
         th, td { text-align: left; padding: 12px; border-bottom: 1px solid var(--border); }
         th { background: var(--light); font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.04em; color: var(--text-muted); }
         tr.group-header td {
-            background: var(--group-kid-bg);
-            color: var(--text);
             font-weight: 800;
             font-size: 0.92rem;
             padding: 10px 12px;
-            border-top: 2px solid var(--group-kid-border);
-            border-bottom: 1px solid var(--group-kid-border);
-        }
-        tr.group-header.teen td {
-            background: var(--group-teen-bg);
-            border-top-color: var(--group-teen-border);
-            border-bottom-color: var(--group-teen-border);
         }
         .group-badge {
             display: inline-block;
@@ -448,6 +427,7 @@
             <div class="admin-form-box">
                 <div class="form-group"><label>Name</label><input type="text" id="m-name"></div>
                 <div class="form-group"><label>Role</label><select id="m-role"><option value="kid">Kid</option><option value="teen">Teen</option><option value="adult">Adult</option></select></div>
+                <div class="form-group"><label>Card Color</label><input type="color" id="m-color" value="#0d9488" style="height:40px; width:100%; padding:2px; cursor:pointer;"></div>
                 <button class="btn-outline-primary" onclick="addMember()">Add Member</button>
             </div>
             <table><thead><tr><th>Name</th><th>Role</th><th>Points</th><th style="text-align:right">Action</th></tr></thead><tbody id="member-list-body"></tbody></table>
@@ -512,6 +492,7 @@
         <div class="form-group" style="margin-bottom:10px;"><label>Name</label><input type="text" id="edit-m-name"></div>
         <div class="form-group" style="margin-bottom:10px;"><label>Role</label><select id="edit-m-role"><option value="kid">Kid</option><option value="teen">Teen</option><option value="adult">Adult</option></select></div>
         <div class="form-group" style="margin-bottom:10px;"><label>Points Balance</label><input type="number" id="edit-m-points"></div>
+        <div class="form-group" style="margin-bottom:10px;"><label>Card Color</label><input type="color" id="edit-m-color" style="height:40px; width:100%; padding:2px; cursor:pointer;"></div>
         <div class="modal-actions">
             <button class="btn-outline-danger" onclick="closeModals()">Cancel</button>
             <button class="btn-outline-primary" onclick="submitMemberEdit()">Save Changes</button>
@@ -808,8 +789,9 @@
     function addMember() {
         const name = document.getElementById('m-name').value.trim();
         const role = document.getElementById('m-role').value;
+        const color = document.getElementById('m-color').value;
         if (!name) return alert("Enter a member name.");
-        state.members.push({ id: Date.now(), name, role, points: 0 });
+        state.members.push({ id: Date.now(), name, role, points: 0, color: color || '#0d9488' });
         document.getElementById('m-name').value = '';
         save();
     }
@@ -828,6 +810,7 @@
         document.getElementById('edit-m-name').value = m.name;
         document.getElementById('edit-m-role').value = m.role;
         document.getElementById('edit-m-points').value = m.points;
+        document.getElementById('edit-m-color').value = m.color || '#0d9488';
         document.getElementById('edit-member-modal').style.display = 'flex';
     }
 
@@ -837,6 +820,7 @@
             m.name = document.getElementById('edit-m-name').value.trim();
             m.role = document.getElementById('edit-m-role').value;
             m.points = Number(document.getElementById('edit-m-points').value) || 0;
+            m.color = document.getElementById('edit-m-color').value;
         }
         closeModals();
         save();
@@ -1155,6 +1139,7 @@
         choresBody.innerHTML = state.members.map(m => {
             const memberChores = state.chores.filter(c => c.assigneeId === m.id);
             const unit = currencyMap[m.role] || '';
+            const cardColor = m.color || '#0d9488';
             const choresHtml = memberChores.length ? memberChores.map(c => {
                 const isDone = c.lastCompleted === today;
                 const info = getStreakAndRewardInfo(c);
@@ -1171,8 +1156,8 @@
                             <h4>${c.name}</h4>
                             <p>${c.desc ? c.desc + ' • ' : ''}<strong>${rewardText}</strong></p>
                             ${c.goal > 0 ? `
-                                <p style="font-size:0.75rem; color:var(--primary); margin-top:4px;">🎁 ${c.prize || 'Streak Prize'}: ${currentGoalStreak}/${c.goal} days</p>
-                                <div class="goal-bar"><div class="goal-fill" style="width:${pct}%"></div></div>
+                                <p style="font-size:0.75rem; color:${cardColor}; margin-top:4px;">🎁 ${c.prize || 'Streak Prize'}: ${currentGoalStreak}/${c.goal} days</p>
+                                <div class="goal-bar"><div class="goal-fill" style="width:${pct}%; background:${cardColor};"></div></div>
                             ` : ''}
                         </div>
                         <button class="btn-check" ${isDone ? 'disabled' : ''} onclick="completeChore(${c.id})">${isDone ? '✓ Done' : 'Complete'}</button>
@@ -1181,10 +1166,10 @@
             }).join('') : `<p style="color:var(--text-muted); font-size:0.9rem;">No chores assigned.</p>`;
 
             return `
-                <div class="user-card ${m.role}">
+                <div class="user-card" style="border-top-color: ${cardColor};">
                     <div class="user-header">
                         <span class="user-name">${m.name}</span>
-                        ${m.role !== 'adult' ? `<span class="user-points">${m.points} ${unit}</span>` : ''}
+                        ${m.role !== 'adult' ? `<span class="user-points" style="background:${cardColor};">${m.points} ${unit}</span>` : ''}
                     </div>
                     ${choresHtml}
                 </div>
@@ -1194,7 +1179,7 @@
         // Members Table
         document.getElementById('member-list-body').innerHTML = state.members.map(m => `
             <tr>
-                <td><strong>${m.name}</strong></td>
+                <td><strong>${m.name}</strong> <span style="display:inline-block; width:12px; height:12px; border-radius:50%; background:${m.color || '#0d9488'}; margin-left:6px; vertical-align:middle;"></span></td>
                 <td style="text-transform:capitalize;">${m.role}</td>
                 <td>${m.points}</td>
                 <td style="text-align:right;">
@@ -1208,9 +1193,10 @@
         let groupedChoresHtml = '';
         state.members.forEach(m => {
             const memberChores = state.chores.filter(c => c.assigneeId === m.id);
+            const mColor = m.color || '#0d9488';
             groupedChoresHtml += `
-                <tr class="group-header ${m.role}">
-                    <td colspan="5">${m.name.trim()}<span class="group-badge">${memberChores.length} ${memberChores.length === 1 ? 'chore' : 'chores'}</span></td>
+                <tr class="group-header" style="background: ${mColor}18; border-top: 2px solid ${mColor}40; border-bottom: 1px solid ${mColor}40;">
+                    <td colspan="5" style="color:var(--text);">${m.name.trim()}<span class="group-badge">${memberChores.length} ${memberChores.length === 1 ? 'chore' : 'chores'}</span></td>
                 </tr>
             `;
             if (memberChores.length) {
@@ -1224,7 +1210,7 @@
         const unassignedChores = state.chores.filter(c => !memberIds.has(c.assigneeId));
         if (unassignedChores.length) {
             groupedChoresHtml += `
-                <tr class="group-header">
+                <tr class="group-header" style="background: rgba(100,100,100,0.1);">
                     <td colspan="5">Unassigned<span class="group-badge">${unassignedChores.length}</span></td>
                 </tr>
             ` + unassignedChores.map(renderChoreRow).join('');
