@@ -6,197 +6,317 @@
     <title>Family Hub</title>
     <style>
         :root {
-            --primary: #4a90e2;
-            --secondary: #50e3c2;
-            --bg: #f4f7f6;
+            --primary: #4f46e5;
+            --primary-hover: #4338ca;
+            --secondary: #10b981;
+            --bg: #f1f5f9;
             --card-bg: #ffffff;
-            --text: #333333;
-            --danger: #e74c3c;
-            --success: #2ecc71;
-            --warning: #f39c12;
-            --light: #f8f9fa;
-            --sidebar-width: 220px;
+            --text: #0f172a;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --danger: #ef4444;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --light: #f8fafc;
+            --sidebar-width: 240px;
+            --header-height: 68px;
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        body { background-color: var(--bg); color: var(--text); display: flex; min-height: 100vh; overflow-x: hidden; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+        body { background-color: var(--bg); color: var(--text); min-height: 100vh; overflow-x: hidden; }
 
-        /* SIDEBAR NAVIGATION */
-        nav {
+        /* SITE ACCESS GATE OVERLAY */
+        #site-gate {
+            position: fixed; inset: 0;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            display: flex; justify-content: center; align-items: center;
+            z-index: 5000; padding: 20px;
+        }
+        .gate-card {
+            background: white; padding: 36px 32px; border-radius: 16px;
+            width: 100%; max-width: 400px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.45);
+            text-align: center;
+        }
+        .gate-icon {
+            width: 56px; height: 56px; border-radius: 14px;
+            background: #eef2ff; color: var(--primary);
+            display: inline-flex; align-items: center; justify-content: center;
+            font-size: 1.75rem; margin-bottom: 16px;
+        }
+        .gate-card h2 { font-size: 1.5rem; font-weight: 800; color: var(--text); margin-bottom: 6px; }
+        .gate-card p { font-size: 0.9rem; color: var(--text-muted); margin-bottom: 22px; }
+        .gate-input {
+            width: 100%; padding: 12px 14px; border: 1.5px solid var(--border);
+            border-radius: 10px; font-size: 1rem; margin-bottom: 14px; outline: none;
+            transition: border-color 0.2s;
+        }
+        .gate-input:focus { border-color: var(--primary); }
+        .remember-row {
+            display: flex; align-items: center; gap: 8px;
+            font-size: 0.88rem; color: var(--text-muted); margin-bottom: 20px; cursor: pointer;
+            justify-content: flex-start;
+        }
+        .btn-primary-full {
+            width: 100%; padding: 12px; background: var(--primary); color: white;
+            border: none; border-radius: 10px; font-size: 1rem; font-weight: 700;
+            cursor: pointer; transition: background 0.2s;
+        }
+        .btn-primary-full:hover { background: var(--primary-hover); }
+
+        /* TOP HEADER BAR */
+        header.topbar {
+            position: fixed; top: 0; left: 0; right: 0; height: var(--header-height);
+            background: rgba(255, 255, 255, 0.92); backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border);
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 0 24px; z-index: 1200;
+        }
+        .brand-wrap {
+            display: flex; align-items: center; gap: 12px; cursor: pointer;
+        }
+        .brand-icon {
+            width: 38px; height: 38px; border-radius: 10px;
+            background: linear-gradient(135deg, var(--primary), #6366f1);
+            color: white; display: flex; align-items: center; justify-content: center;
+            font-size: 1.2rem; box-shadow: 0 4px 10px rgba(79, 70, 229, 0.25);
+        }
+        .brand-title { font-size: 1.25rem; font-weight: 800; letter-spacing: -0.02em; color: var(--text); }
+        .topbar-right { display: flex; align-items: center; gap: 16px; }
+        #clock { font-weight: 700; color: var(--text-muted); font-size: 0.95rem; }
+        .btn-admin-header {
+            background: var(--text); color: white; border: none;
+            padding: 9px 16px; border-radius: 10px; font-size: 0.9rem; font-weight: 600;
+            display: flex; align-items: center; gap: 7px; transition: 0.2s;
+        }
+        .btn-admin-header:hover { background: #334155; }
+        .btn-admin-header.unlocked { background: var(--success); }
+        .btn-admin-header.unlocked:hover { background: #059669; }
+
+        /* ADMIN LEFT SIDEBAR (HIDDEN UNTIL AUTHENTICATED) */
+        nav#sidebar {
             width: var(--sidebar-width);
-            background: #2c3e50;
+            background: #0f172a;
             color: white;
-            padding: 20px;
+            padding: 20px 16px;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
             position: fixed;
-            height: 100vh;
+            top: var(--header-height);
+            bottom: 0;
             left: 0;
-            top: 0;
-            transition: transform 0.3s ease;
-            z-index: 1000;
+            transform: translateX(-100%);
+            transition: transform 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 1100;
+            box-shadow: 4px 0 24px rgba(15, 23, 42, 0.15);
         }
-        nav.collapsed { transform: translateX(calc(var(--sidebar-width) * -1)); }
-        nav h2 { font-size: 1.4rem; margin-bottom: 30px; text-align: center; color: var(--secondary); letter-spacing: 1px; }
-        .nav-links { display: flex; flex-direction: column; gap: 10px; }
+        nav#sidebar.visible { transform: translateX(0); }
+        .sidebar-label {
+            font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.08em;
+            color: #64748b; font-weight: 700; padding: 0 12px 10px;
+        }
+        .nav-links { display: flex; flex-direction: column; gap: 6px; }
         .nav-btn {
-            background: none; border: none; color: #ecf0f1; padding: 12px 15px;
-            text-align: left; font-size: 1rem; border-radius: 8px; cursor: pointer;
-            transition: 0.2s; display: flex; align-items: center; gap: 10px;
+            background: none; border: none; color: #cbd5e1; padding: 11px 14px;
+            text-align: left; font-size: 0.95rem; border-radius: 10px; cursor: pointer;
+            transition: 0.18s; display: flex; align-items: center; gap: 10px; font-weight: 500;
         }
-        .nav-btn:hover, .nav-btn.active { background: #34495e; color: var(--secondary); font-weight: bold; }
-        .nav-btn.locked { opacity: 0.4; cursor: not-allowed; }
-        
-        .admin-status {
-            padding: 12px; background: #1a252f; border-radius: 8px; text-align: center;
-            cursor: pointer; font-weight: bold; font-size: 0.9rem; border: 1px solid #34495e;
-        }
-        .admin-status.unlocked { background: var(--success); color: white; border-color: var(--success); }
+        .nav-btn:hover { background: #1e293b; color: white; }
+        .nav-btn.active { background: var(--primary); color: white; font-weight: 600; }
 
-        #sidebar-toggle {
-            position: fixed; top: 15px; left: 15px; z-index: 1100;
-            background: #2c3e50; color: white; border: none; padding: 10px 14px;
-            border-radius: 8px; cursor: pointer; font-size: 1.2rem; box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        .btn-lock-sidebar {
+            width: 100%; padding: 11px; background: #1e293b; color: #f87171;
+            border: 1px solid #334155; border-radius: 10px; font-size: 0.9rem; font-weight: 600;
         }
+        .btn-lock-sidebar:hover { background: #334155; }
 
         /* MAIN CONTENT AREA */
         main {
-            flex: 1;
-            margin-left: var(--sidebar-width);
-            padding: 30px;
-            transition: margin-left 0.3s ease;
-            max-width: 1200px;
+            margin-top: var(--header-height);
+            margin-left: 0;
+            padding: 28px 24px;
+            transition: margin-left 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+            max-width: 1360px;
         }
-        main.expanded { margin-left: 0; }
+        main.with-sidebar { margin-left: var(--sidebar-width); }
 
         .hidden { display: none !important; }
-        .card { background: var(--card-bg); border-radius: 12px; padding: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); margin-bottom: 20px; }
-        h1 { font-size: 1.8rem; color: #2c3e50; margin-bottom: 20px; }
+        .card {
+            background: var(--card-bg); border-radius: 16px; padding: 24px;
+            box-shadow: 0 1px 3px rgba(15, 23, 42, 0.06), 0 1px 2px rgba(15, 23, 42, 0.04);
+            border: 1px solid var(--border); margin-bottom: 24px;
+        }
+        h1 { font-size: 1.55rem; font-weight: 800; color: var(--text); letter-spacing: -0.02em; margin-bottom: 18px; }
         
         /* ACCORDION SECTIONS */
         .section-header {
             display: flex; justify-content: space-between; align-items: center;
-            cursor: pointer; padding-bottom: 10px; border-bottom: 2px solid var(--bg); margin-bottom: 15px;
+            cursor: pointer; padding-bottom: 14px; border-bottom: 1px solid var(--border); margin-bottom: 18px;
         }
-        .section-header h3 { font-size: 1.3rem; color: var(--primary); }
+        .section-header h3 { font-size: 1.15rem; font-weight: 700; color: var(--text); }
+        .section-header span {
+            width: 28px; height: 28px; border-radius: 8px; background: var(--light);
+            display: inline-flex; align-items: center; justify-content: center;
+            font-weight: 700; color: var(--text-muted);
+        }
 
         /* DASHBOARD CHORE CARDS */
         .user-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
-        .user-card { background: var(--light); border-radius: 10px; padding: 15px; border-top: 5px solid var(--primary); position: relative; }
-        .user-card.teen { border-top-color: #9b59b6; }
-        .user-card.adult { border-top-color: #34495e; }
-        .user-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
-        .user-name { font-size: 1.2rem; font-weight: 800; }
-        .user-points { background: var(--primary); color: white; padding: 4px 10px; border-radius: 20px; font-size: 0.85rem; font-weight: bold; }
-        .user-card.teen .user-points { background: #9b59b6; }
+        .user-card {
+            background: var(--light); border-radius: 14px; padding: 18px;
+            border: 1px solid var(--border); border-top: 4px solid var(--primary);
+        }
+        .user-card.teen { border-top-color: #8b5cf6; }
+        .user-card.adult { border-top-color: #334155; }
+        .user-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+        .user-name { font-size: 1.15rem; font-weight: 800; color: var(--text); }
+        .user-points {
+            background: var(--primary); color: white; padding: 4px 12px;
+            border-radius: 999px; font-size: 0.82rem; font-weight: 700;
+        }
+        .user-card.teen .user-points { background: #8b5cf6; }
 
         .chore-item {
-            background: white; padding: 12px; border-radius: 8px; margin-bottom: 10px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.04); display: flex; justify-content: space-between; align-items: center;
-            border-left: 4px solid var(--warning);
+            background: white; padding: 14px; border-radius: 12px; margin-bottom: 10px;
+            border: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center;
+            border-left: 4px solid var(--warning); transition: transform 0.15s, box-shadow 0.15s;
         }
+        .chore-item:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(15, 23, 42, 0.05); }
         .chore-item.completed { border-left-color: var(--success); opacity: 0.65; }
-        .chore-info h4 { font-size: 1rem; margin-bottom: 3px; }
-        .chore-info p { font-size: 0.8rem; color: #7f8c8d; }
-        .goal-bar { height: 6px; background: #eee; border-radius: 3px; margin-top: 6px; overflow: hidden; }
+        .chore-info h4 { font-size: 0.98rem; font-weight: 700; margin-bottom: 3px; color: var(--text); }
+        .chore-info p { font-size: 0.82rem; color: var(--text-muted); }
+        .goal-bar { height: 6px; background: #e2e8f0; border-radius: 999px; margin-top: 6px; overflow: hidden; }
         .goal-fill { height: 100%; background: var(--secondary); transition: width 0.3s; }
 
         /* BUTTONS & FORMS */
-        button { cursor: pointer; font-weight: 600; border-radius: 6px; transition: 0.2s; }
-        .btn-check { background: var(--success); color: white; border: none; padding: 8px 14px; font-size: 0.9rem; }
-        .btn-check:hover { background: #27ae60; }
-        .btn-check:disabled { background: #bdc3c7; cursor: default; }
+        button { cursor: pointer; font-weight: 600; border-radius: 8px; transition: 0.18s; }
+        .btn-check { background: var(--success); color: white; border: none; padding: 8px 14px; font-size: 0.85rem; }
+        .btn-check:hover { background: #059669; }
+        .btn-check:disabled { background: #cbd5e1; color: #64748b; cursor: default; }
 
-        .admin-form-box { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; margin-bottom: 15px; background: var(--light); padding: 15px; border-radius: 8px; }
-        .form-group { display: flex; flex-direction: column; gap: 5px; }
-        .form-group label { font-size: 0.8rem; font-weight: bold; color: #555; text-transform: uppercase; }
-        .form-group input, .form-group select { padding: 8px 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 0.95rem; }
+        .admin-form-box {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 15px; margin-bottom: 16px; background: var(--light);
+            padding: 18px; border-radius: 12px; border: 1px solid var(--border);
+        }
+        .form-group { display: flex; flex-direction: column; gap: 6px; }
+        .form-group label { font-size: 0.75rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.04em; }
+        .form-group input, .form-group select {
+            padding: 9px 12px; border: 1px solid #cbd5e1; border-radius: 8px;
+            font-size: 0.92rem; background: white; color: var(--text);
+        }
+        .form-group input:focus, .form-group select:focus { outline: none; border-color: var(--primary); }
 
-        .btn-outline-primary { background: transparent; border: 2px solid var(--primary); color: var(--primary); padding: 8px 15px; }
+        .btn-outline-primary { background: white; border: 1.5px solid var(--primary); color: var(--primary); padding: 9px 16px; }
         .btn-outline-primary:hover { background: var(--primary); color: white; }
-        .btn-outline-danger { background: transparent; border: 2px solid var(--danger); color: var(--danger); padding: 6px 12px; font-size: 0.85rem; }
+        .btn-outline-danger { background: white; border: 1.5px solid var(--danger); color: var(--danger); padding: 7px 13px; font-size: 0.85rem; }
         .btn-outline-danger:hover { background: var(--danger); color: white; }
 
         /* TABLES */
         table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-        th, td { text-align: left; padding: 12px; border-bottom: 1px solid #eee; }
-        th { background: var(--light); font-size: 0.85rem; text-transform: uppercase; color: #7f8c8d; }
+        th, td { text-align: left; padding: 12px; border-bottom: 1px solid var(--border); }
+        th { background: var(--light); font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.04em; color: var(--text-muted); }
         tr.group-header td {
-            background: #eef3f8;
-            color: #2c3e50;
+            background: #eef2ff;
+            color: var(--text);
             font-weight: 800;
-            font-size: 0.95rem;
+            font-size: 0.92rem;
             padding: 10px 12px;
-            border-top: 2px solid #d6e2ee;
-            border-bottom: 1px solid #d6e2ee;
+            border-top: 2px solid #c7d2fe;
+            border-bottom: 1px solid #c7d2fe;
         }
-        tr.group-header.teen td { background: #f4eef8; border-top-color: #e2d4ec; border-bottom-color: #e2d4ec; }
+        tr.group-header.teen td { background: #f3e8ff; border-top-color: #ddd6fe; border-bottom-color: #ddd6fe; }
         .group-badge {
             display: inline-block;
-            background: rgba(44, 62, 80, 0.12);
-            color: #2c3e50;
-            font-size: 0.75rem;
+            background: rgba(15, 23, 42, 0.08);
+            color: var(--text);
+            font-size: 0.74rem;
             font-weight: 700;
             padding: 2px 8px;
-            border-radius: 12px;
+            border-radius: 999px;
             margin-left: 8px;
         }
 
         /* CALENDAR */
-        .calendar-container iframe { width: 100%; height: 600px; border: none; border-radius: 8px; }
+        .calendar-container iframe { width: 100%; height: 620px; border: none; border-radius: 12px; }
 
         /* MODALS */
         .modal-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.5); display: none; justify-content: center; align-items: center; z-index: 2000;
+            position: fixed; inset: 0;
+            background: rgba(15, 23, 42, 0.55); backdrop-filter: blur(4px);
+            display: none; justify-content: center; align-items: center; z-index: 3000; padding: 16px;
         }
-        .modal-box { background: white; padding: 25px; border-radius: 12px; width: 90%; max-width: 450px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); }
-        .modal-box h3 { margin-bottom: 15px; color: #2c3e50; }
+        .modal-box {
+            background: white; padding: 26px; border-radius: 16px; width: 100%; max-width: 420px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.15); border: 1px solid var(--border);
+        }
+        .modal-box h3 { margin-bottom: 16px; font-size: 1.2rem; font-weight: 800; color: var(--text); }
         .modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; }
 
         /* CELEBRATION TOAST */
         #toast {
-            position: fixed; bottom: 30px; right: 30px; background: #2c3e50; color: var(--secondary);
-            padding: 15px 25px; border-radius: 50px; font-size: 1.2rem; font-weight: 800;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3); transform: translateY(150px); transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            z-index: 3000;
+            position: fixed; bottom: 28px; right: 28px; background: #0f172a; color: #34d399;
+            padding: 14px 24px; border-radius: 999px; font-size: 1.1rem; font-weight: 800;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.25); transform: translateY(150px);
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 4000;
         }
         #toast.show { transform: translateY(0); }
 
         @media (max-width: 768px) {
-            nav { transform: translateX(calc(var(--sidebar-width) * -1)); }
-            nav.open { transform: translateX(0); }
-            main { margin-left: 0; padding: 20px 15px; }
+            main.with-sidebar { margin-left: 0; }
+            header.topbar { padding: 0 16px; }
         }
     </style>
 </head>
 <body>
 
-<button id="sidebar-toggle" onclick="toggleSidebar()">☰</button>
+<!-- SITE ACCESS PASSWORD GATE -->
+<div id="site-gate">
+    <div class="gate-card">
+        <div class="gate-icon">🏠</div>
+        <h2>Family Hub</h2>
+        <p>Enter the household password to continue</p>
+        <input type="password" id="site-pass-input" class="gate-input" placeholder="Site Password" onkeydown="if(event.key==='Enter') verifySitePassword()">
+        <label class="remember-row">
+            <input type="checkbox" id="remember-device-cb" checked>
+            Remember this device
+        </label>
+        <button class="btn-primary-full" onclick="verifySitePassword()">Enter Family Hub</button>
+    </div>
+</div>
 
+<!-- TOP BAR -->
+<header class="topbar">
+    <div class="brand-wrap" onclick="showSection('dashboard', document.getElementById('nav-dashboard'))">
+        <div class="brand-icon">🏠</div>
+        <span class="brand-title">Family Hub</span>
+    </div>
+    <div class="topbar-right">
+        <div id="clock"></div>
+        <button id="admin-header-btn" class="btn-admin-header" onclick="handleAdminButtonClick()">🔒 Admin</button>
+    </div>
+</header>
+
+<!-- SLIDE-OUT ADMIN PANEL (ALPHABETICAL ORDER) -->
 <nav id="sidebar">
     <div>
-        <h2>FAMILY HUB</h2>
+        <div class="sidebar-label">Navigation</div>
         <div class="nav-links">
-            <button class="nav-btn active" onclick="showSection('dashboard', this)">🏠 Dashboard</button>
-            <button class="nav-btn admin-only locked" onclick="showSection('admin-approvals', this)">✅ Approvals <span id="badge-count" style="background:var(--danger); color:white; padding:2px 6px; border-radius:10px; font-size:0.75rem; margin-left:auto;">0</span></button>
-            <button class="nav-btn admin-only locked" onclick="showSection('admin-members', this)">👥 Members</button>
-            <button class="nav-btn admin-only locked" onclick="showSection('admin-chores', this)">⚙️ Chores</button>
-            <button class="nav-btn admin-only locked" onclick="showSection('admin-settings', this)">🛠️ Settings</button>
+            <button id="nav-dashboard" class="nav-btn active" onclick="showSection('dashboard', this)">🏠 Dashboard</button>
+            <button id="nav-approvals" class="nav-btn" onclick="showSection('admin-approvals', this)">✅ Approvals <span id="badge-count" style="background:var(--danger); color:white; padding:2px 7px; border-radius:999px; font-size:0.74rem; margin-left:auto;">0</span></button>
+            <button id="nav-chores" class="nav-btn" onclick="showSection('admin-chores', this)">⚙️ Chores</button>
+            <button id="nav-members" class="nav-btn" onclick="showSection('admin-members', this)">👥 Members</button>
+            <button id="nav-settings" class="nav-btn" onclick="showSection('admin-settings', this)">🛠️ Settings</button>
         </div>
     </div>
-    <div id="admin-lock-btn" class="admin-status" onclick="toggleAdminLock()">🔒 Locked</div>
+    <button class="btn-lock-sidebar" onclick="lockAdmin()">🔒 Lock Admin</button>
 </nav>
 
 <main id="main-content">
     <!-- DASHBOARD SECTION -->
     <section id="dashboard" class="content-section">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
-            <h1 style="padding-left:45px;">Dashboard</h1>
-            <div id="clock" style="text-align:right; font-weight:800; color:var(--primary); font-size:1.1rem;"></div>
-        </div>
-        
         <div class="card">
             <div class="section-header" onclick="toggleAccordion('choresVisible')">
                 <h3>🧹 Daily Chores</h3><span id="chores-icon">−</span>
@@ -209,6 +329,34 @@
                 <h3>📅 Family Schedule</h3><span id="cal-icon">−</span>
             </div>
             <div id="cal-body"><div id="calendar-slot" class="calendar-container"></div></div>
+        </div>
+    </section>
+
+    <!-- APPROVAL QUEUE SECTION -->
+    <section id="admin-approvals" class="content-section hidden">
+        <div class="card"><h1>Approval Queue</h1><table><thead><tr><th>Name</th><th>Chore</th><th>Val</th><th style="text-align:right">Action</th></tr></thead><tbody id="approval-list-body"></tbody></table></div>
+    </section>
+
+    <!-- CHORE CONFIGURATION SECTION -->
+    <section id="admin-chores" class="content-section hidden">
+        <div class="card">
+            <h1>Chore Configuration</h1>
+            <div style="display:flex; gap:10px; margin-bottom:15px; flex-wrap:wrap;">
+                <button class="btn-outline-danger" onclick="resetAllChoreChecks()">🧪 RESET DAILY SWEEP</button>
+                <button class="btn-outline-danger" onclick="resetAllChoreGoals()">🎁 RESET STREAK PROGRESS</button>
+            </div>
+            <div class="admin-form-box">
+                <div class="form-group"><label>Chore Name</label><input type="text" id="c-name"></div>
+                <div class="form-group"><label>Users</label><div id="c-assignee-list" style="display:flex; gap:12px; flex-wrap:wrap; background:white; padding:8px 10px; border-radius:8px; border:1px solid #cbd5e1; min-height:38px; align-items:center;"></div></div>
+                <div class="form-group"><label>Target Streak (Days in a Row)</label><input type="number" id="c-goal" value="0"></div>
+                <div class="form-group"><label>Prize Name</label><input type="text" id="c-prize"></div>
+                <div class="form-group"><label>Logic</label><select id="c-type" onchange="togglePointForm('c-type','c-static','c-dynamic')"><option value="static">Static</option><option value="dynamic">Dynamic</option></select></div>
+                <div id="c-static" class="form-group"><label>Points</label><input type="number" id="c-points" value="5"></div>
+                <div id="c-dynamic" class="hidden" style="display:flex; gap:10px;"><div class="form-group"><label>Max</label><input type="number" id="c-max" value="10"></div><div class="form-group"><label>Min</label><input type="number" id="c-min" value="2"></div></div>
+                <div class="form-group" style="grid-column: 1 / -1;"><label>Description</label><input type="text" id="c-desc"></div>
+            </div>
+            <button class="btn-outline-primary" style="width:100%" onclick="addChore()">Save Chore</button>
+            <table style="margin-top:20px;"><thead><tr><th style="width:30%">Chore</th><th style="width:15%">Streak Goal</th><th style="width:15%">Prize</th><th style="width:20%">Logic</th><th style="text-align:right; width:20%">Action</th></tr></thead><tbody id="chore-list-body"></tbody></table>
         </div>
     </section>
 
@@ -226,29 +374,6 @@
         </div>
     </section>
 
-    <!-- CHORE CONFIGURATION SECTION -->
-    <section id="admin-chores" class="content-section hidden">
-        <div class="card">
-            <h1>Chore Configuration</h1>
-            <div style="display:flex; gap:10px; margin-bottom:15px;">
-                <button class="btn-outline-danger" onclick="resetAllChoreChecks()">🧪 RESET DAILY SWEEP</button>
-                <button class="btn-outline-danger" onclick="resetAllChoreGoals()">🎁 RESET STREAK PROGRESS</button>
-            </div>
-            <div class="admin-form-box">
-                <div class="form-group"><label>Chore Name</label><input type="text" id="c-name"></div>
-                <div class="form-group"><label>Users</label><div id="c-assignee-list" style="display:flex; gap:12px; flex-wrap:wrap; background:white; padding:8px 10px; border-radius:6px; border:1px solid #ddd; min-height:38px; align-items:center;"></div></div>
-                <div class="form-group"><label>Target Streak (Days in a Row)</label><input type="number" id="c-goal" value="0"></div>
-                <div class="form-group"><label>Prize Name</label><input type="text" id="c-prize"></div>
-                <div class="form-group"><label>Logic</label><select id="c-type" onchange="togglePointForm('c-type','c-static','c-dynamic')"><option value="static">Static</option><option value="dynamic">Dynamic</option></select></div>
-                <div id="c-static" class="form-group"><label>Points</label><input type="number" id="c-points" value="5"></div>
-                <div id="c-dynamic" class="hidden" style="display:flex; gap:10px;"><div class="form-group"><label>Max</label><input type="number" id="c-max" value="10"></div><div class="form-group"><label>Min</label><input type="number" id="c-min" value="2"></div></div>
-                <div class="form-group" style="grid-column: 1 / -1;"><label>Description</label><input type="text" id="c-desc"></div>
-            </div>
-            <button class="btn-outline-primary" style="width:100%" onclick="addChore()">Save Chore</button>
-            <table style="margin-top:20px;"><thead><tr><th style="width:30%">Chore</th><th style="width:15%">Streak Goal</th><th style="width:15%">Prize</th><th style="width:20%">Logic</th><th style="text-align:right; width:20%">Action</th></tr></thead><tbody id="chore-list-body"></tbody></table>
-        </div>
-    </section>
-
     <!-- SETTINGS SECTION -->
     <section id="admin-settings" class="content-section hidden">
         <div class="card">
@@ -258,24 +383,43 @@
                 <button class="btn-outline-primary" onclick="saveCalendarUrl()">Save URL</button>
             </div>
             <div class="admin-form-box">
-                <div class="form-group" style="grid-column: 1 / -1;"><label>Change Master Passcode</label><input type="password" id="change-pass-input" placeholder="New Passcode"></div>
-                <button class="btn-outline-primary" onclick="updatePasscode()">Update Passcode</button>
+                <div class="form-group"><label>Admin Username</label><input type="text" id="change-admin-user-input" placeholder="admin"></div>
+                <div class="form-group"><label>Admin Password</label><input type="password" id="change-pass-input" placeholder="New Admin Password"></div>
+                <button class="btn-outline-primary" onclick="updateAdminCredentials()">Update Admin Login</button>
             </div>
-            <hr style="margin:20px 0; border:0; border-top:1px solid #eee;">
+            <div class="admin-form-box">
+                <div class="form-group" style="grid-column: 1 / -1;"><label>Website Entry Password</label><input type="password" id="change-site-pass-input" placeholder="New Site Password"></div>
+                <button class="btn-outline-primary" onclick="updateSitePassword()">Update Site Password</button>
+            </div>
+            <hr style="margin:20px 0; border:0; border-top:1px solid var(--border);">
             <div style="display:flex; gap:10px; margin-bottom:20px;">
                 <button class="btn-outline-primary" onclick="exportData()" style="flex:1;">📤 Backup Hub</button>
                 <button class="btn-outline-primary" onclick="document.getElementById('importFile').click()" style="flex:1;">📥 Restore Hub</button>
                 <input type="file" id="importFile" class="hidden" accept=".json" onchange="importData(event)">
             </div>
-            <button class="btn-outline-danger" onclick="nuclearReset()" style="width:100%; margin-top:30px; padding:15px; font-weight:800;">☢️ NUCLEAR SYSTEM RESET</button>
+            <button class="btn-outline-danger" onclick="nuclearReset()" style="width:100%; margin-top:20px; padding:14px; font-weight:800;">☢️ NUCLEAR SYSTEM RESET</button>
         </div>
     </section>
-
-    <!-- APPROVAL QUEUE SECTION -->
-    <section id="admin-approvals" class="content-section hidden">
-        <div class="card"><h1>Approval Queue</h1><table><thead><tr><th>Name</th><th>Chore</th><th>Val</th><th style="text-align:right">Action</th></tr></thead><tbody id="approval-list-body"></tbody></table></div>
-    </section>
 </main>
+
+<!-- ADMIN LOGIN MODAL -->
+<div id="admin-login-modal" class="modal-overlay">
+    <div class="modal-box">
+        <h3>Admin Authentication</h3>
+        <div class="form-group" style="margin-bottom:12px;">
+            <label>Username</label>
+            <input type="text" id="admin-login-user" placeholder="Username" onkeydown="if(event.key==='Enter') submitAdminLogin()">
+        </div>
+        <div class="form-group" style="margin-bottom:12px;">
+            <label>Password</label>
+            <input type="password" id="admin-login-pass" placeholder="Password" onkeydown="if(event.key==='Enter') submitAdminLogin()">
+        </div>
+        <div class="modal-actions">
+            <button class="btn-outline-danger" onclick="closeModals()">Cancel</button>
+            <button class="btn-outline-primary" onclick="submitAdminLogin()">Sign In</button>
+        </div>
+    </div>
+</div>
 
 <!-- EDIT MEMBER MODAL -->
 <div id="edit-member-modal" class="modal-overlay">
@@ -342,14 +486,15 @@
         chores: [],
         approvals: [],
         calendarUrl: "",
+        adminUsername: "admin",
         adminPasscode: "1234",
+        sitePassword: "family2026",
         choresVisible: true,
         calVisible: true
     };
 
     let isUnlocked = false;
     let editId = null;
-    let sidebarTimer;
     const currencyMap = { kid: "tokens", teen: "minutes", adult: "" };
 
     function save() {
@@ -362,6 +507,7 @@
         if (doc.exists) {
             state = { ...state, ...doc.data() };
             localStorage.setItem('familyHubData', JSON.stringify(state));
+            checkSiteGate();
             renderAll();
         } else {
             const localBackup = JSON.parse(localStorage.getItem('familyHubData'));
@@ -369,6 +515,7 @@
                 state = { ...state, ...localBackup };
             }
             familyDocRef.set(state);
+            checkSiteGate();
         }
     });
 
@@ -377,45 +524,95 @@
     }
 
     /* -------------------------------------------------------------------------
-       ADMIN SECURITY & NAVIGATION
+       SITE ENTRY PASSWORD GATE ("REMEMBER THIS DEVICE")
        ------------------------------------------------------------------------- */
-    function toggleAdminLock() {
-        if (isUnlocked) {
-            isUnlocked = false;
-            document.getElementById('admin-lock-btn').innerText = "🔒 Locked";
-            document.getElementById('admin-lock-btn').classList.remove('unlocked');
-            document.querySelectorAll('.admin-only').forEach(b => b.classList.add('locked'));
-            showSection('dashboard', document.querySelector('.nav-btn'));
+    function checkSiteGate() {
+        const expectedPass = state.sitePassword || "family2026";
+        const rememberedPass = localStorage.getItem('familyHubRememberedPass');
+        const sessionPass = sessionStorage.getItem('familyHubSessionPass');
+
+        if (rememberedPass === expectedPass || sessionPass === expectedPass) {
+            document.getElementById('site-gate').classList.add('hidden');
         } else {
-            const code = prompt("Enter Master Passcode:");
-            if (code === state.adminPasscode) {
-                isUnlocked = true;
-                document.getElementById('admin-lock-btn').innerText = "🔓 Unlocked";
-                document.getElementById('admin-lock-btn').classList.add('unlocked');
-                document.querySelectorAll('.admin-only').forEach(b => b.classList.remove('locked'));
-            } else if (code !== null) {
-                alert("Incorrect Passcode.");
-            }
+            document.getElementById('site-gate').classList.remove('hidden');
         }
     }
 
+    function verifySitePassword() {
+        const entered = document.getElementById('site-pass-input').value;
+        const expectedPass = state.sitePassword || "family2026";
+        const remember = document.getElementById('remember-device-cb').checked;
+
+        if (entered === expectedPass) {
+            sessionStorage.setItem('familyHubSessionPass', expectedPass);
+            if (remember) {
+                localStorage.setItem('familyHubRememberedPass', expectedPass);
+            } else {
+                localStorage.removeItem('familyHubRememberedPass');
+            }
+            document.getElementById('site-pass-input').value = '';
+            document.getElementById('site-gate').classList.add('hidden');
+        } else {
+            alert("Incorrect website password.");
+        }
+    }
+
+    /* -------------------------------------------------------------------------
+       ADMIN AUTHENTICATION & NAVIGATION
+       ------------------------------------------------------------------------- */
+    function handleAdminButtonClick() {
+        if (isUnlocked) {
+            // Toggle sidebar visibility if already authenticated
+            const sidebar = document.getElementById('sidebar');
+            const main = document.getElementById('main-content');
+            sidebar.classList.toggle('visible');
+            main.classList.toggle('with-sidebar', sidebar.classList.contains('visible'));
+        } else {
+            document.getElementById('admin-login-user').value = '';
+            document.getElementById('admin-login-pass').value = '';
+            document.getElementById('admin-login-modal').style.display = 'flex';
+            setTimeout(() => document.getElementById('admin-login-user').focus(), 50);
+        }
+    }
+
+    function submitAdminLogin() {
+        const u = document.getElementById('admin-login-user').value.trim();
+        const p = document.getElementById('admin-login-pass').value;
+        const expectedUser = state.adminUsername || "admin";
+        const expectedPass = state.adminPasscode || "1234";
+
+        if (u.toLowerCase() === expectedUser.toLowerCase() && p === expectedPass) {
+            isUnlocked = true;
+            closeModals();
+            const btn = document.getElementById('admin-header-btn');
+            btn.innerText = "🔓 Admin";
+            btn.classList.add('unlocked');
+            document.getElementById('sidebar').classList.add('visible');
+            document.getElementById('main-content').classList.add('with-sidebar');
+        } else {
+            alert("Invalid username or password.");
+        }
+    }
+
+    function lockAdmin() {
+        isUnlocked = false;
+        const btn = document.getElementById('admin-header-btn');
+        btn.innerText = "🔒 Admin";
+        btn.classList.remove('unlocked');
+        document.getElementById('sidebar').classList.remove('visible');
+        document.getElementById('main-content').classList.remove('with-sidebar');
+        showSection('dashboard', document.getElementById('nav-dashboard'));
+    }
+
     function showSection(id, btn) {
-        if (btn && btn.classList.contains('locked')) return;
+        if (id !== 'dashboard' && !isUnlocked) return;
         document.querySelectorAll('.content-section').forEach(s => s.classList.add('hidden'));
         document.getElementById(id).classList.remove('hidden');
         document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
         if (btn) btn.classList.add('active');
-        if (window.innerWidth <= 768) document.getElementById('sidebar').classList.remove('open');
-    }
-
-    function toggleSidebar() {
-        const nav = document.getElementById('sidebar');
-        const main = document.getElementById('main-content');
         if (window.innerWidth <= 768) {
-            nav.classList.toggle('open');
-        } else {
-            nav.classList.toggle('collapsed');
-            main.classList.toggle('expanded');
+            document.getElementById('sidebar').classList.remove('visible');
+            document.getElementById('main-content').classList.remove('with-sidebar');
         }
     }
 
@@ -447,7 +644,6 @@
         return d.toDateString();
     }
 
-    // Evaluates consecutive days in a row (for both streak goals and dynamic decay)
     function getStreakAndRewardInfo(chore) {
         const today = new Date().toDateString();
         const yesterday = getYesterdayString();
@@ -460,7 +656,7 @@
         } else if (chore.lastCompleted === yesterday) {
             activeStreak = chore.streak || 1;
         } else {
-            activeStreak = 0; // Missed a day or never completed: streak resets to 0
+            activeStreak = 0;
         }
 
         const effectiveStreak = chore.lastCompleted === today ? activeStreak : activeStreak + 1;
@@ -690,13 +886,26 @@
         alert("Calendar URL saved!");
     }
 
-    function updatePasscode() {
+    function updateAdminCredentials() {
+        const newUser = document.getElementById('change-admin-user-input').value.trim();
         const newPass = document.getElementById('change-pass-input').value.trim();
-        if (!newPass) return alert("Enter a new passcode.");
-        state.adminPasscode = newPass;
+        if (!newUser && !newPass) return alert("Enter a new username or password.");
+        if (newUser) state.adminUsername = newUser;
+        if (newPass) state.adminPasscode = newPass;
         document.getElementById('change-pass-input').value = '';
         save();
-        alert("Passcode updated!");
+        alert("Admin login credentials updated!");
+    }
+
+    function updateSitePassword() {
+        const newSitePass = document.getElementById('change-site-pass-input').value.trim();
+        if (!newSitePass) return alert("Enter a new website password.");
+        state.sitePassword = newSitePass;
+        localStorage.setItem('familyHubRememberedPass', newSitePass);
+        sessionStorage.setItem('familyHubSessionPass', newSitePass);
+        document.getElementById('change-site-pass-input').value = '';
+        save();
+        alert("Website entry password updated!");
     }
 
     function exportData() {
@@ -728,6 +937,7 @@
     function nuclearReset() {
         if (confirm("This will wipe all members, chores, and points. Continue?")) {
             localStorage.clear();
+            sessionStorage.clear();
             familyDocRef.delete().then(() => location.reload());
         }
     }
@@ -739,7 +949,7 @@
         const logicLabel = c.type === 'dynamic' ? `D:${c.dynamic.min}-${c.dynamic.max}` : `S:${c.points}`;
         return `
             <tr>
-                <td><strong>${c.name}</strong>${c.desc ? `<div style="font-size:0.8rem; color:#7f8c8d;">${c.desc}</div>` : ''}</td>
+                <td><strong>${c.name}</strong>${c.desc ? `<div style="font-size:0.8rem; color:var(--text-muted);">${c.desc}</div>` : ''}</td>
                 <td>${c.goal ? c.goal + 'd' : 0}</td>
                 <td>${c.prize || '--'}</td>
                 <td>${logicLabel}</td>
@@ -767,9 +977,10 @@
                 calSlot.innerHTML = `<iframe src="${state.calendarUrl}"></iframe>`;
             }
         } else {
-            calSlot.innerHTML = `<p style="color:#7f8c8d; text-align:center; padding:20px;">No calendar configured. Add a Google Calendar Embed URL in Settings.</p>`;
+            calSlot.innerHTML = `<p style="color:var(--text-muted); text-align:center; padding:20px;">No calendar configured. Add a Google Calendar Embed URL in Settings.</p>`;
         }
         document.getElementById('cal-url-input').value = state.calendarUrl || '';
+        document.getElementById('change-admin-user-input').value = state.adminUsername || 'admin';
 
         // Populate Chore Creation Multi-User Checkboxes & Edit Modal Dropdown
         const assigneeList = document.getElementById('c-assignee-list');
@@ -781,7 +992,7 @@
                         <input type="checkbox" class="c-assignee-cb" value="${m.id}" ${currentlyChecked.includes(m.id) ? 'checked' : ''}> ${m.name}
                     </label>
                 `).join('')
-                : `<span style="color:#7f8c8d; font-size:0.85rem;">Add family members first</span>`;
+                : `<span style="color:var(--text-muted); font-size:0.85rem;">Add family members first</span>`;
         }
 
         const editAssigneeSelect = document.getElementById('edit-c-assignee');
@@ -817,7 +1028,7 @@
                         <button class="btn-check" ${isDone ? 'disabled' : ''} onclick="completeChore(${c.id})">${isDone ? '✓ Done' : 'Complete'}</button>
                     </div>
                 `;
-            }).join('') : `<p style="color:#95a5a6; font-size:0.9rem;">No chores assigned.</p>`;
+            }).join('') : `<p style="color:var(--text-muted); font-size:0.9rem;">No chores assigned.</p>`;
 
             return `
                 <div class="user-card ${m.role}">
@@ -855,11 +1066,10 @@
             if (memberChores.length) {
                 groupedChoresHtml += memberChores.map(renderChoreRow).join('');
             } else {
-                groupedChoresHtml += `<tr><td colspan="5" style="color:#95a5a6; font-size:0.85rem; padding-left:20px;">No chores assigned.</td></tr>`;
+                groupedChoresHtml += `<tr><td colspan="5" style="color:var(--text-muted); font-size:0.85rem; padding-left:20px;">No chores assigned.</td></tr>`;
             }
         });
 
-        // Include any unassigned chores at the bottom if a member was ever removed manually in Firestore
         const memberIds = new Set(state.members.map(m => m.id));
         const unassignedChores = state.chores.filter(c => !memberIds.has(c.assigneeId));
         if (unassignedChores.length) {
@@ -870,7 +1080,7 @@
             ` + unassignedChores.map(renderChoreRow).join('');
         }
 
-        document.getElementById('chore-list-body').innerHTML = groupedChoresHtml || `<tr><td colspan="5" style="text-align:center; color:#7f8c8d;">No chores configured yet.</td></tr>`;
+        document.getElementById('chore-list-body').innerHTML = groupedChoresHtml || `<tr><td colspan="5" style="text-align:center; color:var(--text-muted);">No chores configured yet.</td></tr>`;
 
         // Approvals Table
         document.getElementById('badge-count').innerText = state.approvals.length;
@@ -884,7 +1094,7 @@
                     <button class="btn-outline-danger" style="padding:4px 8px; font-size:0.8rem;" onclick="handleApproval(${a.id}, false)">Reject</button>
                 </td>
             </tr>
-        `).join('') : `<tr><td colspan="4" style="text-align:center; color:#7f8c8d;">No pending approvals.</td></tr>`;
+        `).join('') : `<tr><td colspan="4" style="text-align:center; color:var(--text-muted);">No pending approvals.</td></tr>`;
     }
 
     function updateClock() {
@@ -892,6 +1102,7 @@
         document.getElementById('clock').innerText = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
     }
 
+    checkSiteGate();
     setInterval(updateClock, 1000);
     updateClock();
     renderAll();
