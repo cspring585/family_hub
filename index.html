@@ -485,7 +485,7 @@
     function resetSidebarTimer() { clearTimeout(sidebarTimer); sidebarTimer = setTimeout(() => { if (!isUnlocked) toggleSidebar(); }, 15000); }
     function resetAllChoreChecks() { state.chores.forEach(c => c.lastCompleted = null); state.approvals = []; save(); }
     function resetAllChoreGoals() { state.chores.forEach(c => c.timesCompleted = 0); save(); }
-    function nuclearReset() { if(confirm("This will wipe all members, chores, and points. Continue?")) { localStorage.clear(); location.reload(); } }
+    function nuclearReset() { if (confirm("This will wipe all members, chores, and points. Continue?")) {localStorage.clear(); familyDocRef.delete().then(() => location.reload());}}
     function clearAllPoints() { if(confirm("Reset all balances to 0?")) { state.members.forEach(m => m.points = 0); save(); } }
     
     // EXPORT: Downloads state as a .json file
