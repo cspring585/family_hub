@@ -1,114 +1,180 @@
-<!--Phase 16.9.42-GA-->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Family Hub</title>
     <style>
-        /* CORE THEMING: High-contrast dark primary with mint accent */
-        :root { 
-            --primary: #1a1a2e; --secondary: #16213e; --accent: #4ecca3; 
-            --success: #27ae60; --danger: #e94560; --light: #f4f4f2; --warning: #f39c12;
-            --text-main: #333; --text-muted: #555; --bg: #f0f2f5;
+        :root {
+            --primary: #4a90e2;
+            --secondary: #50e3c2;
+            --bg: #f4f7f6;
+            --card-bg: #ffffff;
+            --text: #333333;
+            --danger: #e74c3c;
+            --success: #2ecc71;
+            --warning: #f39c12;
+            --light: #f8f9fa;
+            --sidebar-width: 220px;
         }
 
-        body { font-family: 'Inter', sans-serif; margin: 0; display: flex; background: var(--bg); color: var(--text-main); overflow-x: hidden; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background-color: var(--bg); color: var(--text); display: flex; min-height: 100vh; overflow-x: hidden; }
+
+        /* SIDEBAR NAVIGATION */
+        nav {
+            width: var(--sidebar-width);
+            background: #2c3e50;
+            color: white;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: fixed;
+            height: 100vh;
+            left: 0;
+            top: 0;
+            transition: transform 0.3s ease;
+            z-index: 1000;
+        }
+        nav.collapsed { transform: translateX(calc(var(--sidebar-width) * -1)); }
+        nav h2 { font-size: 1.4rem; margin-bottom: 30px; text-align: center; color: var(--secondary); letter-spacing: 1px; }
+        .nav-links { display: flex; flex-direction: column; gap: 10px; }
+        .nav-btn {
+            background: none; border: none; color: #ecf0f1; padding: 12px 15px;
+            text-align: left; font-size: 1rem; border-radius: 8px; cursor: pointer;
+            transition: 0.2s; display: flex; align-items: center; gap: 10px;
+        }
+        .nav-btn:hover, .nav-btn.active { background: #34495e; color: var(--secondary); font-weight: bold; }
+        .nav-btn.locked { opacity: 0.4; cursor: not-allowed; }
         
-        /* NAVIGATION: Fixed sidebar with smooth transition for collapse/expand */
-        nav { width: 240px; background: var(--primary); color: white; height: 100vh; position: fixed; z-index: 100; transition: 0.3s ease-in-out; overflow-x: hidden; border-right: 1px solid rgba(255,255,255,0.05); }
-        nav.collapsed { width: 0; visibility: hidden; opacity: 0; }
-        nav h2 { padding: 20px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.05); color: var(--accent); text-transform: uppercase; font-size: 1rem; margin: 0; }
-        nav button { width: 100%; padding: 15px 20px; background: none; border: none; color: #999; text-align: left; cursor: pointer; display: flex; justify-content: space-between; align-items: center; white-space: nowrap; }
-        nav button.active { background: rgba(78, 204, 163, 0.1); color: var(--accent); border-left: 3px solid var(--accent); }
+        .admin-status {
+            padding: 12px; background: #1a252f; border-radius: 8px; text-align: center;
+            cursor: pointer; font-weight: bold; font-size: 0.9rem; border: 1px solid #34495e;
+        }
+        .admin-status.unlocked { background: var(--success); color: white; border-color: var(--success); }
 
-        #nav-toggle { position: fixed; left: 15px; top: 15px; z-index: 101; background: white; border: none; padding: 10px; border-radius: 6px; cursor: pointer; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-        main { margin-left: 240px; padding: 20px 30px; width: 100%; box-sizing: border-box; transition: 0.3s; }
-        main.expanded { margin-left: 0; padding-left: 80px; }
+        #sidebar-toggle {
+            position: fixed; top: 15px; left: 15px; z-index: 1100;
+            background: #2c3e50; color: white; border: none; padding: 10px 14px;
+            border-radius: 8px; cursor: pointer; font-size: 1.2rem; box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
 
-        /* CARDS: Main UI container for Dashboard sections */
-        .card { background: white; padding: 15px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.02); margin-bottom: 15px; border: 1px solid #eee; position: relative; }
-        .section-header { display: flex; justify-content: space-between; align-items: center; cursor: pointer; user-select: none; }
-        .toggle-icon { font-family: monospace; font-weight: bold; color: var(--accent); font-size: 1.2rem; }
+        /* MAIN CONTENT AREA */
+        main {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            padding: 30px;
+            transition: margin-left 0.3s ease;
+            max-width: 1200px;
+        }
+        main.expanded { margin-left: 0; }
 
-        /* USER GRIDS: Responsive grid that stacks on mobile */
-        .user-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 12px; margin-top: 15px; }
-        .user-card { background: #fff; border-radius: 10px; border: 1px solid #ddd; overflow: hidden; position: relative; }
-        .user-header { padding: 4px 15px; background: #f8f9fa; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #ddd; }
-        .user-header h3 { margin: 4px 0; font-size: 1.2rem; font-weight: 800; color: var(--primary); }
-        .currency-pill { font-size: 0.85rem; font-weight: 800; color: var(--success); background: #fff; border: 1.5px solid var(--success); padding: 2px 10px; border-radius: 12px; }
-        
-        /* CHORE ITEMS: Layout for individual tasks with color-coded states */
-        .chore-item { display: flex; align-items: flex-start; gap: 12px; padding: 12px 15px; border-bottom: 1px solid #eee; }
-        .chore-item.pending { background: #fffef0; border-left: 4px solid var(--warning); } /* Waiting for Approval */
-        .chore-item.completed { background: #f4fff9; opacity: 0.8; } /* Done for the day */
-        .chore-info { flex: 1; }
-        .chore-info strong { font-size: 1.1rem; color: #111; line-height: 1.3; display: block; }
-        .chore-info small { font-size: 13px; color: var(--text-muted); line-height: 1.4; display: block; margin-top: 2px; }
-        .chore-val { font-weight: 900; color: var(--primary); font-size: 13px; background: #eee; padding: 2px 6px; border-radius: 5px; margin-top: 2px; }
-
-        /* PROGRESS BARS: Visually represents streak status */
-        .progress-container { width: 100%; background: #ddd; border-radius: 10px; height: 8px; margin-top: 8px; overflow: hidden; }
-        .progress-fill { background: var(--accent); height: 100%; transition: 0.5s; }
-        .milestone-text { font-size: 10px; color: #555; font-weight: 800; margin-top: 4px; text-transform: uppercase; }
-
-        input[type="checkbox"] { width: 26px; height: 26px; cursor: pointer; accent-color: var(--accent); flex-shrink: 0; margin-top: 3px; }
-        
-        /* ADMIN FORMS: Grid layout for Chore and Member creation */
-        .admin-form-box { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 15px; background: #f9fafb; padding: 15px; border-radius: 10px; border: 1px solid #eee; margin-bottom: 15px; }
-        .form-group { display: flex; flex-direction: column; gap: 5px; }
-        label { font-size: 10px; font-weight: 800; color: #666; text-transform: uppercase; }
-        input, select, textarea { padding: 10px; border: 1px solid #ddd; border-radius: 8px; font-size: 13px; box-sizing: border-box; width: 100%; }
-        
-        /* DATA TABLES: Specific styling for alignment in Admin views */
-        table { width: 100%; border-collapse: collapse; table-layout: fixed; }
-        th { text-align: left; font-size: 10px; font-weight: 700; color: #888; text-transform: uppercase; padding: 10px; border-bottom: 2px solid #eee; }
-        td { padding: 10px; border-bottom: 1px solid #f5f5f5; font-size: 13px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; vertical-align: middle; }
-        
-        .btn-outline-primary { background: transparent; color: var(--primary); border: 1px solid var(--primary); padding: 8px 15px; border-radius: 6px; cursor: pointer; font-weight: 700; transition: 0.2s; }
-        .btn-outline-primary:hover { background: var(--primary); color: white; }
-        .btn-outline-danger { background: transparent; color: var(--danger); border: 1px solid var(--danger); padding: 8px 15px; border-radius: 6px; cursor: pointer; font-weight: 700; transition: 0.2s; }
-        .btn-outline-danger:hover { background: var(--danger); color: white; }
-        .btn-mini { padding: 4px 8px; font-size: 11px; margin-right: 5px; border-radius: 4px; }
-
-        /* MODALS: Overlays that take priority over all other UI (Z-index 2000) */
         .hidden { display: none !important; }
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); backdrop-filter: blur(8px); display: none; justify-content: center; align-items: center; z-index: 2000; }
-        .modal-content { background: white; width: 95%; max-width: 600px; padding: 25px; border-radius: 15px; border: 1px solid #eee; overflow-y: auto; max-height: 90vh; }
+        .card { background: var(--card-bg); border-radius: 12px; padding: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); margin-bottom: 20px; }
+        h1 { font-size: 1.8rem; color: #2c3e50; margin-bottom: 20px; }
         
-        /* CALENDAR: Styled container for the iframe */
-        .calendar-container { width: 100%; min-height: 700px; border-radius: 8px; overflow: hidden; margin-top: 15px; border: 1px solid #eee; background: #f9f9f9; display: flex; }
-        .calendar-container iframe { width: 100%; height: 100%; border: 0; min-height: 700px; }
-        
-        /* CELEBRATION SHIELD: Prevents accidental double-clicks during win animations */
-        .card-celebration { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: none; flex-direction: column; justify-content: center; align-items: center; z-index: 500; text-align: center; background: rgba(26, 26, 46, 0.97); color: white; padding: 10px; border-radius: 10px; pointer-events: all; cursor: pointer; }
-        .card-celebration-msg { font-size: 1.5rem; font-weight: 900; color: var(--accent); line-height: 1.2; text-transform: uppercase; }
-        .prize-badge { background: #f1c40f; color: #000; padding: 2px 5px; border-radius: 3px; font-weight: 900; font-size: 9px; margin-left: 4px; }
+        /* ACCORDION SECTIONS */
+        .section-header {
+            display: flex; justify-content: space-between; align-items: center;
+            cursor: pointer; padding-bottom: 10px; border-bottom: 2px solid var(--bg); margin-bottom: 15px;
+        }
+        .section-header h3 { font-size: 1.3rem; color: var(--primary); }
+
+        /* DASHBOARD CHORE CARDS */
+        .user-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
+        .user-card { background: var(--light); border-radius: 10px; padding: 15px; border-top: 5px solid var(--primary); position: relative; }
+        .user-card.teen { border-top-color: #9b59b6; }
+        .user-card.adult { border-top-color: #34495e; }
+        .user-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .user-name { font-size: 1.2rem; font-weight: 800; }
+        .user-points { background: var(--primary); color: white; padding: 4px 10px; border-radius: 20px; font-size: 0.85rem; font-weight: bold; }
+        .user-card.teen .user-points { background: #9b59b6; }
+
+        .chore-item {
+            background: white; padding: 12px; border-radius: 8px; margin-bottom: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.04); display: flex; justify-content: space-between; align-items: center;
+            border-left: 4px solid var(--warning);
+        }
+        .chore-item.completed { border-left-color: var(--success); opacity: 0.65; }
+        .chore-info h4 { font-size: 1rem; margin-bottom: 3px; }
+        .chore-info p { font-size: 0.8rem; color: #7f8c8d; }
+        .goal-bar { height: 6px; background: #eee; border-radius: 3px; margin-top: 6px; overflow: hidden; }
+        .goal-fill { height: 100%; background: var(--secondary); transition: width 0.3s; }
+
+        /* BUTTONS & FORMS */
+        button { cursor: pointer; font-weight: 600; border-radius: 6px; transition: 0.2s; }
+        .btn-check { background: var(--success); color: white; border: none; padding: 8px 14px; font-size: 0.9rem; }
+        .btn-check:hover { background: #27ae60; }
+        .btn-check:disabled { background: #bdc3c7; cursor: default; }
+
+        .admin-form-box { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; margin-bottom: 15px; background: var(--light); padding: 15px; border-radius: 8px; }
+        .form-group { display: flex; flex-direction: column; gap: 5px; }
+        .form-group label { font-size: 0.8rem; font-weight: bold; color: #555; text-transform: uppercase; }
+        .form-group input, .form-group select { padding: 8px 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 0.95rem; }
+
+        .btn-outline-primary { background: transparent; border: 2px solid var(--primary); color: var(--primary); padding: 8px 15px; }
+        .btn-outline-primary:hover { background: var(--primary); color: white; }
+        .btn-outline-danger { background: transparent; border: 2px solid var(--danger); color: var(--danger); padding: 6px 12px; font-size: 0.85rem; }
+        .btn-outline-danger:hover { background: var(--danger); color: white; }
+
+        /* TABLES */
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th, td { text-align: left; padding: 12px; border-bottom: 1px solid #eee; }
+        th { background: var(--light); font-size: 0.85rem; text-transform: uppercase; color: #7f8c8d; }
+
+        /* CALENDAR */
+        .calendar-container iframe { width: 100%; height: 600px; border: none; border-radius: 8px; }
+
+        /* MODALS */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5); display: none; justify-content: center; align-items: center; z-index: 2000;
+        }
+        .modal-box { background: white; padding: 25px; border-radius: 12px; width: 90%; max-width: 450px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); }
+        .modal-box h3 { margin-bottom: 15px; color: #2c3e50; }
+        .modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; }
+
+        /* CELEBRATION TOAST */
+        #toast {
+            position: fixed; bottom: 30px; right: 30px; background: #2c3e50; color: var(--secondary);
+            padding: 15px 25px; border-radius: 50px; font-size: 1.2rem; font-weight: 800;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3); transform: translateY(150px); transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 3000;
+        }
+        #toast.show { transform: translateY(0); }
+
+        @media (max-width: 768px) {
+            nav { transform: translateX(calc(var(--sidebar-width) * -1)); }
+            nav.open { transform: translateX(0); }
+            main { margin-left: 0; padding: 20px 15px; }
+        }
     </style>
 </head>
-<body onmousemove="resetSidebarTimer()" ontouchstart="resetSidebarTimer()">
+<body>
+
+<button id="sidebar-toggle" onclick="toggleSidebar()">☰</button>
 
 <nav id="sidebar">
-    <h2>Family Hub</h2>
-    <button id="nav-dashboard" class="active" onclick="showSection('dashboard')">🏠 Dashboard</button>
-    <div id="admin-menu" style="display:none;">
-        <button onclick="showSection('admin-approvals')">✅ Approvals <span id="approval-badge" class="badge hidden">0</span></button>
-        <button onclick="showSection('admin-members')">👥 Members</button>
-        <button onclick="showSection('admin-chores')">⚙️ Chores</button>
-        <button onclick="showSection('admin-settings')">🛠️ Settings</button>
+    <div>
+        <h2>FAMILY HUB</h2>
+        <div class="nav-links">
+            <button class="nav-btn active" onclick="showSection('dashboard', this)">🏠 Dashboard</button>
+            <button class="nav-btn admin-only locked" onclick="showSection('admin-approvals', this)">✅ Approvals <span id="badge-count" style="background:var(--danger); color:white; padding:2px 6px; border-radius:10px; font-size:0.75rem; margin-left:auto;">0</span></button>
+            <button class="nav-btn admin-only locked" onclick="showSection('admin-members', this)">👥 Members</button>
+            <button class="nav-btn admin-only locked" onclick="showSection('admin-chores', this)">⚙️ Chores</button>
+            <button class="nav-btn admin-only locked" onclick="showSection('admin-settings', this)">🛠️ Settings</button>
+        </div>
     </div>
-    <div style="margin-top:20px; padding:0 20px;">
-        <button id="unlock-btn" onclick="toggleAdminLock()" style="color:var(--warning); background:none; border:none; cursor:pointer; font-weight:800;">🔒 Unlock Admin</button>
-    </div>
+    <div id="admin-lock-btn" class="admin-status" onclick="toggleAdminLock()">🔒 Locked</div>
 </nav>
 
-<button id="nav-toggle" onclick="toggleSidebar()">☰</button>
-
 <main id="main-content">
+    <!-- DASHBOARD SECTION -->
     <section id="dashboard" class="content-section">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
-            <h1 style="padding-left: 45px;">Dashboard</h1>
-            <div id="clock" style="text-align:right; font-weight:800; color:var(--primary); font-size: 1.1rem;"></div>
+            <h1 style="padding-left:45px;">Dashboard</h1>
+            <div id="clock" style="text-align:right; font-weight:800; color:var(--primary); font-size:1.1rem;"></div>
         </div>
         
         <div class="card">
@@ -126,6 +192,7 @@
         </div>
     </section>
 
+    <!-- MEMBERS SECTION -->
     <section id="admin-members" class="content-section hidden">
         <div class="card">
             <h1>Family Members</h1>
@@ -139,6 +206,7 @@
         </div>
     </section>
 
+    <!-- CHORE CONFIGURATION SECTION -->
     <section id="admin-chores" class="content-section hidden">
         <div class="card">
             <h1>Chore Configuration</h1>
@@ -148,7 +216,7 @@
             </div>
             <div class="admin-form-box">
                 <div class="form-group"><label>Chore Name</label><input type="text" id="c-name"></div>
-                <div class="form-group"><label>User</label><select id="c-assignee"></select></div>
+                <div class="form-group"><label>Users</label><div id="c-assignee-list" style="display:flex; gap:12px; flex-wrap:wrap; background:white; padding:8px 10px; border-radius:6px; border:1px solid #ddd; min-height:38px; align-items:center;"></div></div>
                 <div class="form-group"><label>Target Goal (Points Needed)</label><input type="number" id="c-goal" value="0"></div>
                 <div class="form-group"><label>Prize Name</label><input type="text" id="c-prize"></div>
                 <div class="form-group"><label>Logic</label><select id="c-type" onchange="togglePointForm('c-type','c-static','c-dynamic')"><option value="static">Static</option><option value="dynamic">Dynamic</option></select></div>
@@ -161,6 +229,7 @@
         </div>
     </section>
 
+    <!-- SETTINGS SECTION -->
     <section id="admin-settings" class="content-section hidden">
         <div class="card">
             <h1>Hub Settings</h1>
@@ -173,329 +242,561 @@
                 <button class="btn-outline-primary" onclick="updatePasscode()">Update Passcode</button>
             </div>
             <hr style="margin:20px 0; border:0; border-top:1px solid #eee;">
-            <div style="display: flex; gap: 10px; margin-bottom: 20px;">
-                <button class="btn-outline-primary" onclick="exportData()" style="flex: 1;">📤 Backup Hub</button>
-                <button class="btn-outline-primary" onclick="document.getElementById('importFile').click()" style="flex: 1;">📥 Restore Hub</button>
+            <div style="display:flex; gap:10px; margin-bottom:20px;">
+                <button class="btn-outline-primary" onclick="exportData()" style="flex:1;">📤 Backup Hub</button>
+                <button class="btn-outline-primary" onclick="document.getElementById('importFile').click()" style="flex:1;">📥 Restore Hub</button>
                 <input type="file" id="importFile" class="hidden" accept=".json" onchange="importData(event)">
             </div>
-            <button class="btn-outline-danger" onclick="nuclearReset()" style="width:100%; margin-top:30px; padding: 15px; font-weight:800;">☢️ NUCLEAR SYSTEM RESET</button>
+            <button class="btn-outline-danger" onclick="nuclearReset()" style="width:100%; margin-top:30px; padding:15px; font-weight:800;">☢️ NUCLEAR SYSTEM RESET</button>
         </div>
     </section>
 
+    <!-- APPROVAL QUEUE SECTION -->
     <section id="admin-approvals" class="content-section hidden">
         <div class="card"><h1>Approval Queue</h1><table><thead><tr><th>Name</th><th>Chore</th><th>Val</th><th style="text-align:right">Action</th></tr></thead><tbody id="approval-list-body"></tbody></table></div>
     </section>
 </main>
 
+<!-- EDIT MEMBER MODAL -->
 <div id="edit-member-modal" class="modal-overlay">
-    <div class="modal-content">
+    <div class="modal-box">
         <h3>Edit Member</h3>
-        <div class="form-group"><label>Name</label><input type="text" id="edit-m-name"></div>
-        <div class="form-group" style="margin-top:10px;"><label>Role</label><select id="edit-m-role"><option value="kid">Kid</option><option value="teen">Teen</option><option value="adult">Adult</option></select></div>
-        <div style="margin-top:20px;">
+        <div class="form-group" style="margin-bottom:10px;"><label>Name</label><input type="text" id="edit-m-name"></div>
+        <div class="form-group" style="margin-bottom:10px;"><label>Role</label><select id="edit-m-role"><option value="kid">Kid</option><option value="teen">Teen</option><option value="adult">Adult</option></select></div>
+        <div class="form-group" style="margin-bottom:10px;"><label>Points Balance</label><input type="number" id="edit-m-points"></div>
+        <div class="modal-actions">
+            <button class="btn-outline-danger" onclick="closeModals()">Cancel</button>
             <button class="btn-outline-primary" onclick="submitMemberEdit()">Save Changes</button>
-            <button class="btn-outline-danger btn-mini" onclick="closeModals()">Cancel</button>
         </div>
     </div>
 </div>
 
+<!-- EDIT CHORE MODAL -->
 <div id="edit-chore-modal" class="modal-overlay">
-    <div class="modal-content">
+    <div class="modal-box">
         <h3>Edit Chore Configuration</h3>
-        <div class="admin-form-box">
-            <div class="form-group"><label>Chore Name</label><input type="text" id="edit-c-name"></div>
-            <div class="form-group"><label>Assignee</label><select id="edit-c-assignee"></select></div>
-            <div class="form-group"><label>Target Goal</label><input type="number" id="edit-c-goal"></div>
-            <div class="form-group"><label>Prize Name</label><input type="text" id="edit-c-prize"></div>
-            <div class="form-group" style="grid-column: 1 / -1;"><label>Description</label><input type="text" id="edit-c-desc"></div>
-            <div class="form-group"><label>Point Logic</label><select id="edit-c-type" onchange="togglePointForm('edit-c-type','edit-c-static','edit-c-dynamic')"><option value="static">Static</option><option value="dynamic">Dynamic</option></select></div>
-            <div id="edit-c-static" class="form-group"><label>Points</label><input type="number" id="edit-c-points"></div>
-            <div id="edit-c-dynamic" class="hidden" style="display:flex; gap:10px;"><div class="form-group"><label>Max</label><input type="number" id="edit-c-max"></div><div class="form-group"><label>Min</label><input type="number" id="edit-c-min"></div></div>
+        <div class="form-group" style="margin-bottom:10px;"><label>Chore Name</label><input type="text" id="edit-c-name"></div>
+        <div class="form-group" style="margin-bottom:10px;"><label>User</label><select id="edit-c-assignee"></select></div>
+        <div class="form-group" style="margin-bottom:10px;"><label>Target Goal</label><input type="number" id="edit-c-goal"></div>
+        <div class="form-group" style="margin-bottom:10px;"><label>Prize Name</label><input type="text" id="edit-c-prize"></div>
+        <div class="form-group" style="margin-bottom:10px;"><label>Logic</label><select id="edit-c-type" onchange="togglePointForm('edit-c-type','edit-c-static','edit-c-dynamic')"><option value="static">Static</option><option value="dynamic">Dynamic</option></select></div>
+        <div id="edit-c-static" class="form-group" style="margin-bottom:10px;"><label>Points</label><input type="number" id="edit-c-points"></div>
+        <div id="edit-c-dynamic" class="hidden" style="display:flex; gap:10px; margin-bottom:10px;"><div class="form-group"><label>Max</label><input type="number" id="edit-c-max"></div><div class="form-group"><label>Min</label><input type="number" id="edit-c-min"></div></div>
+        <div class="form-group"><label>Description</label><input type="text" id="edit-c-desc"></div>
+        <div class="modal-actions">
+            <button class="btn-outline-danger" onclick="closeModals()">Cancel</button>
+            <button class="btn-outline-primary" onclick="submitChoreEdit()">Save Changes</button>
         </div>
-        <button class="btn-outline-primary" style="width:100%; margin-top:10px;" onclick="submitChoreEdit()">Save Changes</button>
-        <button class="btn-outline-danger" style="width:100%; margin-top:10px;" onclick="closeModals()">Cancel</button>
     </div>
 </div>
 
-<!-- Firebase Compat SDKs (works with regular <script> and inline onclick handlers) -->
-    <script src="https://www.gstatic.com/firebasejs/11.0.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore-compat.js"></script>
+<div id="toast">BOOM! 🔥</div>
 
-    <script>
-        /* -------------------------------------------------------------------------
-           FIREBASE & DATA STATE INITIALIZATION
-           ------------------------------------------------------------------------- */
-        const firebaseConfig = {
-            apiKey: "AIzaSyB2v8EYgBpbQHTSqr_k4fDEjdcJpemqwbE",
-            authDomain: "family-calendar-34850.firebaseapp.com",
-            projectId: "family-calendar-34850",
-            storageBucket: "family-calendar-34850.firebasestorage.app",
-            messagingSenderId: "636042418970",
-            appId: "1:636042418970:web:657c82059c624b1ae32aa3",
-            measurementId: "G-SYYJEJHRG8"
-        };
+<!-- Firebase Compat SDKs -->
+<script src="https://www.gstatic.com/firebasejs/11.0.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore-compat.js"></script>
 
-        firebase.initializeApp(firebaseConfig);
-        const db = firebase.firestore();
-        const familyDocRef = db.collection("households").doc("spring_family");
+<script>
+    /* -------------------------------------------------------------------------
+       FIREBASE & DATA STATE INITIALIZATION
+       ------------------------------------------------------------------------- */
+    const firebaseConfig = {
+        apiKey: "AIzaSyB2v8EYgBpbQHTSqr_k4fDEjdcJpemqwbE",
+        authDomain: "family-calendar-34850.firebaseapp.com",
+        projectId: "family-calendar-34850",
+        storageBucket: "family-calendar-34850.firebasestorage.app",
+        messagingSenderId: "636042418970",
+        appId: "1:636042418970:web:657c82059c624b1ae32aa3",
+        measurementId: "G-SYYJEJHRG8"
+    };
 
-        const kidMessages = ["BOOM! 🔥", "LEGEND! 🏆", "CLUTCH! ⚡", "BOOYAH! 🚀", "W! 👑", "WINNING! 🏁"];
-        const teenMessages = ["K.", "Nice.", "Yep.", "Done.", "Solid.", "Fine."];
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+    const familyDocRef = db.collection("households").doc("spring_family");
 
-        // Default initial state before Firestore loads
-        let state = {
-            members: [],
-            chores: [],
-            approvals: [],
-            calendarUrl: "",
-            adminPasscode: "1234",
-            choresVisible: true,
-            calVisible: true
-        };
+    const kidMessages = ["BOOM! 🔥", "LEGEND! 🏆", "CLUTCH! ⚡", "BOOYAH! 🚀", "W! 👑", "WINNING! 🏁"];
+    const teenMessages = ["K.", "Nice.", "Yep.", "Done.", "Solid.", "Fine."];
 
-        let isUnlocked = false; // Admin status
-        let editId = null;      // Currently editing object ID
-        let sidebarTimer;       // Timer for auto-hiding sidebar
-        const currencyMap = { kid: "tokens", teen: "minutes", adult: "" };
+    let state = {
+        members: [],
+        chores: [],
+        approvals: [],
+        calendarUrl: "",
+        adminPasscode: "1234",
+        choresVisible: true,
+        calVisible: true
+    };
 
-        // Core Save Function: Saves to Firestore (and caches in localStorage) and re-draws UI
-        function save() {
+    let isUnlocked = false;
+    let editId = null;
+    let sidebarTimer;
+    const currencyMap = { kid: "tokens", teen: "minutes", adult: "" };
+
+    function save() {
+        localStorage.setItem('familyHubData', JSON.stringify(state));
+        familyDocRef.set(state).catch(err => console.error("Firebase save error:", err));
+        renderAll();
+    }
+
+    familyDocRef.onSnapshot((doc) => {
+        if (doc.exists) {
+            state = { ...state, ...doc.data() };
             localStorage.setItem('familyHubData', JSON.stringify(state));
-            familyDocRef.set(state).catch(err => console.error("Firebase save error:", err));
             renderAll();
-        }
-
-        // Real-Time Listener: Syncs changes across all open devices automatically
-        familyDocRef.onSnapshot((doc) => {
-            if (doc.exists) {
-                state = { ...state, ...doc.data() };
-                localStorage.setItem('familyHubData', JSON.stringify(state));
-                renderAll();
-            } else {
-                // First-time setup: push any existing localStorage data up to Firestore
-                const localBackup = JSON.parse(localStorage.getItem('familyHubData'));
-                if (localBackup) {
-                    state = { ...state, ...localBackup };
-                }
-                familyDocRef.set(state);
+        } else {
+            const localBackup = JSON.parse(localStorage.getItem('familyHubData'));
+            if (localBackup) {
+                state = { ...state, ...localBackup };
             }
-        });
-
-        function closeModals() {
-            document.querySelectorAll('.modal-overlay').forEach(m => m.style.display = 'none');
+            familyDocRef.set(state);
         }
+    });
+
+    function closeModals() {
+        document.querySelectorAll('.modal-overlay').forEach(m => m.style.display = 'none');
+    }
+
     /* -------------------------------------------------------------------------
-       ADMIN SECURITY
-    ------------------------------------------------------------------------- */
+       ADMIN SECURITY & NAVIGATION
+       ------------------------------------------------------------------------- */
     function toggleAdminLock() {
-        if(isUnlocked) { 
-            isUnlocked = false; 
-            document.getElementById('admin-menu').style.display = 'none'; 
-            document.getElementById('unlock-btn').innerText = "🔒 Unlock Admin"; 
-            showSection('dashboard');
-        } else { 
-            let p = prompt("Enter Master Passcode:"); 
-            if(p === state.adminPasscode) { 
-                isUnlocked = true; 
-                document.getElementById('admin-menu').style.display = 'block'; 
-                document.getElementById('unlock-btn').innerText = "🔓 Unlocked"; 
-            } 
-        }
-    }
-
-    /* -------------------------------------------------------------------------
-       CHORE COMPLETION & STREAK LOGIC
-    ------------------------------------------------------------------------- */
-    function calculateVal(c) {
-        // Static: returns the fixed point value
-        if(c.type === 'static') return c.points || 5;
-        // Dynamic: returns 'min' if done yesterday (habit), 'max' if they missed a day
-        const yesterday = new Date(Date.now() - 86400000).toDateString();
-        return (c.lastCompleted === yesterday) ? (c.dynamic?.min || 2) : (c.dynamic?.max || 10);
-    }
-
-    function completeChore(cid, mid, el) {
-        el.disabled = true; // Prevent double trigger
-        const c = state.chores.find(x => x.id === cid);
-        const m = state.members.find(x => x.id === mid);
-        const yesterday = new Date(Date.now() - 86400000).toDateString();
-        
-        // Break streak if more than 1 day passed
-        if (c.lastCompleted && c.lastCompleted !== yesterday) c.timesCompleted = 0;
-        
-        const currentProgress = (c.timesCompleted || 0) + 1;
-        const isGoalMoment = c.goal > 0 && currentProgress === c.goal;
-
-        // Push standard points to queue
-        state.approvals.push({ id: Date.now(), choreId: cid, memberId: mid, points: calculateVal(c), choreName: c.name, type: 'points' });
-        // Push Reward alert if streak target is hit
-        if(isGoalMoment) state.approvals.push({ id: Date.now() + 1, choreId: cid, memberId: mid, points: 0, choreName: `REWARD: ${c.prize}`, type: 'prize' });
-        
-        // Trigger celebration overlay
-        const card = document.getElementById(`card-${mid}`);
-        const ov = card.querySelector('.card-celebration');
-        if (ov && m.role !== 'adult') {
-            let msg = m.role === 'kid' ? kidMessages[Math.floor(Math.random()*kidMessages.length)] : teenMessages[Math.floor(Math.random()*teenMessages.length)];
-            if (isGoalMoment) msg = `🎯 STREAK MET!<br>CLAIM: ${c.prize}`;
-            ov.querySelector('.card-celebration-msg').innerHTML = msg; 
-            ov.style.display = 'flex';
-            setTimeout(() => { if(ov) ov.style.display = 'none'; save(); }, 3500);
-        } else { save(); }
-    }
-
-    /* -------------------------------------------------------------------------
-       APPROVAL QUEUE LOGIC
-    ------------------------------------------------------------------------- */
-    function approveItem(id) {
-        const a = state.approvals.find(x => x.id === id);
-        const m = state.members.find(x => x.id === a.memberId);
-        const c = state.chores.find(x => x.id === a.choreId);
-        if (a.type === 'points') {
-            if(m) m.points += a.points;
-            if(c) { 
-                c.lastCompleted = new Date().toDateString(); 
-                c.timesCompleted = (c.timesCompleted || 0) + 1; 
+        if (isUnlocked) {
+            isUnlocked = false;
+            document.getElementById('admin-lock-btn').innerText = "🔒 Locked";
+            document.getElementById('admin-lock-btn').classList.remove('unlocked');
+            document.querySelectorAll('.admin-only').forEach(b => b.classList.add('locked'));
+            showSection('dashboard', document.querySelector('.nav-btn'));
+        } else {
+            const code = prompt("Enter Master Passcode:");
+            if (code === state.adminPasscode) {
+                isUnlocked = true;
+                document.getElementById('admin-lock-btn').innerText = "🔓 Unlocked";
+                document.getElementById('admin-lock-btn').classList.add('unlocked');
+                document.querySelectorAll('.admin-only').forEach(b => b.classList.remove('locked'));
+            } else if (code !== null) {
+                alert("Incorrect Passcode.");
             }
-        } else if (a.type === 'prize') {
-            // Subtract goal from streak after claiming prize, allow carry-over if they over-achieved
-            if(c) c.timesCompleted = Math.max(0, c.timesCompleted - c.goal);
         }
-        state.approvals = state.approvals.filter(x => x.id !== id); 
-        save(); 
+    }
+
+    function showSection(id, btn) {
+        if (btn && btn.classList.contains('locked')) return;
+        document.querySelectorAll('.content-section').forEach(s => s.classList.add('hidden'));
+        document.getElementById(id).classList.remove('hidden');
+        document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+        if (btn) btn.classList.add('active');
+        if (window.innerWidth <= 768) document.getElementById('sidebar').classList.remove('open');
+    }
+
+    function toggleSidebar() {
+        const nav = document.getElementById('sidebar');
+        const main = document.getElementById('main-content');
+        if (window.innerWidth <= 768) {
+            nav.classList.toggle('open');
+        } else {
+            nav.classList.toggle('collapsed');
+            main.classList.toggle('expanded');
+        }
+    }
+
+    function toggleAccordion(key) {
+        state[key] = !state[key];
+        save();
+    }
+
+    function togglePointForm(selectId, staticId, dynamicId) {
+        const val = document.getElementById(selectId).value;
+        document.getElementById(staticId).classList.toggle('hidden', val !== 'static');
+        document.getElementById(dynamicId).classList.toggle('hidden', val !== 'dynamic');
+    }
+
+    function showToast(role) {
+        const toast = document.getElementById('toast');
+        const list = role === 'teen' ? teenMessages : kidMessages;
+        toast.innerText = list[Math.floor(Math.random() * list.length)];
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 2500);
     }
 
     /* -------------------------------------------------------------------------
-       GLOBAL EDIT HANDLERS (Hard-bound to window for UI consistency)
-    ------------------------------------------------------------------------- */
-    window.openEditMember = function(id) {
-        editId = id; const m = state.members.find(x => x.id === id);
+       MEMBER MANAGEMENT
+       ------------------------------------------------------------------------- */
+    function addMember() {
+        const name = document.getElementById('m-name').value.trim();
+        const role = document.getElementById('m-role').value;
+        if (!name) return alert("Enter a member name.");
+        state.members.push({ id: Date.now(), name, role, points: 0 });
+        document.getElementById('m-name').value = '';
+        save();
+    }
+
+    function deleteMember(id) {
+        if (!confirm("Delete this member and their chores?")) return;
+        state.members = state.members.filter(m => m.id !== id);
+        state.chores = state.chores.filter(c => c.assigneeId !== id);
+        save();
+    }
+
+    function openEditMember(id) {
+        const m = state.members.find(x => x.id === id);
+        if (!m) return;
+        editId = id;
         document.getElementById('edit-m-name').value = m.name;
         document.getElementById('edit-m-role').value = m.role;
+        document.getElementById('edit-m-points').value = m.points;
         document.getElementById('edit-member-modal').style.display = 'flex';
-    };
-    window.submitMemberEdit = function() {
-        const m = state.members.find(x => x.id === editId);
-        m.name = document.getElementById('edit-m-name').value;
-        m.role = document.getElementById('edit-m-role').value;
-        save(); closeModals();
-    };
+    }
 
-    window.openEditChore = function(id) {
-        editId = id; const c = state.chores.find(x => x.id === id);
-        updateAssigneeDropdowns();
+    function submitMemberEdit() {
+        const m = state.members.find(x => x.id === editId);
+        if (m) {
+            m.name = document.getElementById('edit-m-name').value.trim();
+            m.role = document.getElementById('edit-m-role').value;
+            m.points = Number(document.getElementById('edit-m-points').value) || 0;
+        }
+        closeModals();
+        save();
+    }
+
+    function clearAllPoints() {
+        if (!confirm("Reset all member point balances to 0?")) return;
+        state.members.forEach(m => m.points = 0);
+        save();
+    }
+
+    /* -------------------------------------------------------------------------
+       CHORE MANAGEMENT (MULTI-USER CREATION)
+       ------------------------------------------------------------------------- */
+    function addChore() {
+        const name = document.getElementById('c-name').value.trim();
+        const selectedUserIds = Array.from(document.querySelectorAll('.c-assignee-cb:checked'))
+            .map(cb => Number(cb.value));
+        const goal = Number(document.getElementById('c-goal').value) || 0;
+        const prize = document.getElementById('c-prize').value.trim();
+        const type = document.getElementById('c-type').value;
+        const points = Number(document.getElementById('c-points').value) || 0;
+        const max = Number(document.getElementById('c-max').value) || 10;
+        const min = Number(document.getElementById('c-min').value) || 2;
+        const desc = document.getElementById('c-desc').value.trim();
+
+        if (!name) return alert("Please enter a chore name.");
+        if (selectedUserIds.length === 0) return alert("Please select at least one user.");
+
+        selectedUserIds.forEach((userId, index) => {
+            state.chores.push({
+                id: Date.now() + index,
+                name,
+                assigneeId: userId,
+                goal,
+                prize,
+                type,
+                points,
+                dynamic: { min, max },
+                desc,
+                timesCompleted: 0,
+                lastCompleted: null
+            });
+        });
+
+        document.getElementById('c-name').value = '';
+        document.getElementById('c-goal').value = '0';
+        document.getElementById('c-prize').value = '';
+        document.getElementById('c-desc').value = '';
+        document.querySelectorAll('.c-assignee-cb').forEach(cb => cb.checked = false);
+
+        save();
+    }
+
+    function deleteChore(id) {
+        if (!confirm("Delete this chore?")) return;
+        state.chores = state.chores.filter(c => c.id !== id);
+        save();
+    }
+
+    function openEditChore(id) {
+        const c = state.chores.find(x => x.id === id);
+        if (!c) return;
+        editId = id;
         document.getElementById('edit-c-name').value = c.name;
         document.getElementById('edit-c-assignee').value = c.assigneeId;
-        document.getElementById('edit-c-goal').value = c.goal;
-        document.getElementById('edit-c-prize').value = c.prize;
-        document.getElementById('edit-c-desc').value = c.desc || '';
-        document.getElementById('edit-c-type').value = c.type;
-        document.getElementById('edit-c-points').value = c.points || 5;
+        document.getElementById('edit-c-goal').value = c.goal || 0;
+        document.getElementById('edit-c-prize').value = c.prize || '';
+        document.getElementById('edit-c-type').value = c.type || 'static';
+        document.getElementById('edit-c-points').value = c.points || 0;
         document.getElementById('edit-c-max').value = c.dynamic?.max || 10;
         document.getElementById('edit-c-min').value = c.dynamic?.min || 2;
-        togglePointForm('edit-c-type','edit-c-static','edit-c-dynamic');
+        document.getElementById('edit-c-desc').value = c.desc || '';
+        togglePointForm('edit-c-type', 'edit-c-static', 'edit-c-dynamic');
         document.getElementById('edit-chore-modal').style.display = 'flex';
-    };
+    }
 
-    window.submitChoreEdit = function() {
+    function submitChoreEdit() {
         const c = state.chores.find(x => x.id === editId);
-        c.name = document.getElementById('edit-c-name').value;
-        c.assigneeId = parseInt(document.getElementById('edit-c-assignee').value);
-        c.goal = parseInt(document.getElementById('edit-c-goal').value);
-        c.prize = document.getElementById('edit-c-prize').value;
-        c.desc = document.getElementById('edit-c-desc').value;
-        c.type = document.getElementById('edit-c-type').value;
-        c.points = parseInt(document.getElementById('edit-c-points').value);
-        c.dynamic = { max: parseInt(document.getElementById('edit-c-max').value), min: parseInt(document.getElementById('edit-c-min').value) };
-        save(); closeModals();
-    };
+        if (c) {
+            c.name = document.getElementById('edit-c-name').value.trim();
+            c.assigneeId = Number(document.getElementById('edit-c-assignee').value);
+            c.goal = Number(document.getElementById('edit-c-goal').value) || 0;
+            c.prize = document.getElementById('edit-c-prize').value.trim();
+            c.type = document.getElementById('edit-c-type').value;
+            c.points = Number(document.getElementById('edit-c-points').value) || 0;
+            c.dynamic = {
+                max: Number(document.getElementById('edit-c-max').value) || 10,
+                min: Number(document.getElementById('edit-c-min').value) || 2
+            };
+            c.desc = document.getElementById('edit-c-desc').value.trim();
+        }
+        closeModals();
+        save();
+    }
+
+    function resetAllChoreChecks() {
+        if (!confirm("Reset today's completion checkmarks for all chores?")) return;
+        state.chores.forEach(c => c.lastCompleted = null);
+        save();
+    }
+
+    function resetAllChoreGoals() {
+        if (!confirm("Reset all goal progress counters to 0?")) return;
+        state.chores.forEach(c => c.timesCompleted = 0);
+        save();
+    }
+
+    /* -------------------------------------------------------------------------
+       COMPLETION & APPROVAL WORKFLOW
+       ------------------------------------------------------------------------- */
+    function completeChore(choreId) {
+        const chore = state.chores.find(c => c.id === choreId);
+        const member = state.members.find(m => m.id === chore.assigneeId);
+        if (!chore || !member) return;
+
+        const today = new Date().toDateString();
+        if (chore.lastCompleted === today) return;
+
+        let earned = chore.points;
+        if (chore.type === 'dynamic') {
+            const min = chore.dynamic?.min || 2;
+            const max = chore.dynamic?.max || 10;
+            earned = Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+
+        chore.lastCompleted = today;
+        state.approvals.push({
+            id: Date.now(),
+            memberId: member.id,
+            memberName: member.name,
+            choreId: chore.id,
+            choreName: chore.name,
+            points: earned
+        });
+
+        showToast(member.role);
+        save();
+    }
+
+    function handleApproval(appId, approved) {
+        const appIndex = state.approvals.findIndex(a => a.id === appId);
+        if (appIndex === -1) return;
+        const app = state.approvals[appIndex];
+        const chore = state.chores.find(c => c.id === app.choreId);
+        const member = state.members.find(m => m.id === app.memberId);
+
+        if (approved) {
+            if (member) member.points += app.points;
+            if (chore) {
+                chore.timesCompleted = (chore.timesCompleted || 0) + app.points;
+                if (chore.goal > 0 && chore.timesCompleted >= chore.goal) {
+                    alert(`🎉 ${member.name} reached their goal for "${chore.name}" and unlocked: ${chore.prize || 'Prize'}!`);
+                    chore.timesCompleted = 0;
+                }
+            }
+        } else {
+            if (chore) chore.lastCompleted = null;
+        }
+
+        state.approvals.splice(appIndex, 1);
+        save();
+    }
+
+    /* -------------------------------------------------------------------------
+       SETTINGS, BACKUP & RESTORE
+       ------------------------------------------------------------------------- */
+    function saveCalendarUrl() {
+        state.calendarUrl = document.getElementById('cal-url-input').value.trim();
+        save();
+        alert("Calendar URL saved!");
+    }
+
+    function updatePasscode() {
+        const newPass = document.getElementById('change-pass-input').value.trim();
+        if (!newPass) return alert("Enter a new passcode.");
+        state.adminPasscode = newPass;
+        document.getElementById('change-pass-input').value = '';
+        save();
+        alert("Passcode updated!");
+    }
+
+    function exportData() {
+        const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `family-hub-backup-${new Date().toISOString().slice(0,10)}.json`;
+        a.click();
+    }
+
+    function importData(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            try {
+                const imported = JSON.parse(e.target.result);
+                state = { ...state, ...imported };
+                save();
+                alert("Hub data restored successfully!");
+            } catch (err) {
+                alert("Invalid backup file.");
+            }
+        };
+        reader.readAsText(file);
+    }
+
+    function nuclearReset() {
+        if (confirm("This will wipe all members, chores, and points. Continue?")) {
+            localStorage.clear();
+            familyDocRef.delete().then(() => location.reload());
+        }
+    }
 
     /* -------------------------------------------------------------------------
        UI RENDERING ENGINE
-    ------------------------------------------------------------------------- */
+       ------------------------------------------------------------------------- */
     function renderAll() {
         const today = new Date().toDateString();
-        // Update Approval Badge
-        document.getElementById('approval-badge').innerText = state.approvals.length;
-        document.getElementById('approval-badge').classList.toggle('hidden', state.approvals.length === 0);
-        
-        // Sync Accordion Visiblity
-        document.getElementById('chores-icon').innerText = state.choresVisible ? '−' : '+';
+
+        // Accordion visibility
         document.getElementById('chores-body').classList.toggle('hidden', !state.choresVisible);
-        document.getElementById('cal-icon').innerText = state.calVisible ? '−' : '+';
+        document.getElementById('chores-icon').innerText = state.choresVisible ? '−' : '+';
         document.getElementById('cal-body').classList.toggle('hidden', !state.calVisible);
+        document.getElementById('cal-icon').innerText = state.calVisible ? '−' : '+';
 
-        // Render Dashboard Chore Cards
-        const dash = document.getElementById('chores-body');
-        dash.innerHTML = state.members.map(m => {
-            const chores = state.chores.filter(c => c.assigneeId === m.id);
-            return `<div class="user-card" id="card-${m.id}">
-                <div class="card-celebration" onclick="this.style.display='none';"><div class="card-celebration-msg"></div></div>
-                <div class="user-header"><h3>${m.name}</h3><span class="currency-pill">${m.points} ${currencyMap[m.role]}</span></div>
-                ${chores.map(c => {
-                    const isWaiting = state.approvals.some(a => a.choreId === c.id && a.type === 'points');
-                    const isDoneToday = c.lastCompleted === today;
-                    let goalHtml = "";
-                    if (c.goal > 0) {
-                        const pct = Math.min(100, (c.timesCompleted / c.goal) * 100);
-                        goalHtml = `<div class="progress-container"><div class="progress-fill" style="width:${pct}%"></div></div>
-                                    <div class="milestone-text">Goal: ${c.timesCompleted}/${c.goal} to ${c.prize}</div>`;
-                    }
-                    return `<div class="chore-item ${isDoneToday ? 'completed' : (isWaiting ? 'pending' : '')}">
-                        <input type="checkbox" ${isDoneToday || isWaiting ? 'checked disabled' : ''} onchange="completeChore(${c.id}, ${m.id}, this)">
-                        <div class="chore-info"><strong>${c.name}</strong><small>${c.desc||''}</small>${goalHtml}</div>
-                        <div class="chore-val">${m.role!=='adult'?calculateVal(c):''}</div>
-                    </div>`;
-                }).join('')}</div>`;
-        }).join('');
-
-        // Render Admin Member Table
-        document.getElementById('member-list-body').innerHTML = state.members.map(m => `<tr><td><strong>${m.name}</strong></td><td>${m.role}</td><td>${m.points}</td><td style="text-align:right"><button class="btn-outline-danger btn-mini" onclick="const x=state.members.find(u=>u.id==${m.id});x.points=0;save()">Reset</button><button class="btn-outline-primary btn-mini" onclick="openEditMember(${m.id})">Edit</button><button class="btn-outline-danger btn-mini" onclick="state.members=state.members.filter(u=>u.id!=${m.id});save()">X</button></td></tr>`).join('');
-        
-        // Render Admin Chore Config Table
-        document.getElementById('chore-list-body').innerHTML = state.chores.map(c => {
-            const logicTxt = c.type === 'static' ? `S:${c.points}` : `D:${c.dynamic.min}-${c.dynamic.max}`;
-            return `<tr><td><strong>${c.name}</strong><br><small>${state.members.find(m=>m.id===c.assigneeId)?.name || 'None'}</small></td><td>${c.goal}</td><td>${c.prize||'--'}</td><td>${logicTxt}</td><td style="text-align:right"><button class="btn-outline-primary btn-mini" onclick="openEditChore(${c.id})">Edit</button><button class="btn-outline-danger btn-mini" onclick="state.chores=state.chores.filter(u=>u.id!=${c.id});save()">X</button></td></tr>`;
-        }).join('');
-        
-        // Render Admin Approval Queue
-        document.getElementById('approval-list-body').innerHTML = state.approvals.map(a => `<tr><td>${state.members.find(m=>m.id===a.memberId)?.name}</td><td>${a.choreName}${a.type==='prize'?' <span class="prize-badge">REWARD</span>':''}</td><td>${a.points||'--'}</td><td style="text-align:right"><button class="btn-outline-accent btn-mini" style="background:var(--success); color:white; border:none;" onclick="approveItem(${a.id})">Approve</button><button class="btn-outline-danger btn-mini" onclick="state.approvals=state.approvals.filter(x=>x.id!=${a.id});save()">Reject</button></td></tr>`).join('');
-        
-        // Inject Calendar iframe only if URL exists
-        if (state.calVisible && state.calendarUrl && !document.querySelector('#calendar-slot iframe')) {
-            document.getElementById('calendar-slot').innerHTML = `<iframe src="${state.calendarUrl}"></iframe>`;
+        // Calendar
+        const calSlot = document.getElementById('calendar-slot');
+        if (state.calendarUrl) {
+            if (!calSlot.querySelector('iframe') || calSlot.querySelector('iframe').src !== state.calendarUrl) {
+                calSlot.innerHTML = `<iframe src="${state.calendarUrl}"></iframe>`;
+            }
+        } else {
+            calSlot.innerHTML = `<p style="color:#7f8c8d; text-align:center; padding:20px;">No calendar configured. Add a Google Calendar Embed URL in Settings.</p>`;
         }
+        document.getElementById('cal-url-input').value = state.calendarUrl || '';
+
+        // Populate Chore Creation Multi-User Checkboxes & Edit Modal Dropdown
+        const assigneeList = document.getElementById('c-assignee-list');
+        if (assigneeList) {
+            const currentlyChecked = Array.from(document.querySelectorAll('.c-assignee-cb:checked')).map(cb => Number(cb.value));
+            assigneeList.innerHTML = state.members.length
+                ? state.members.map(m => `
+                    <label style="display:flex; align-items:center; gap:6px; cursor:pointer; font-size:0.9rem; font-weight:normal; text-transform:none; color:var(--text);">
+                        <input type="checkbox" class="c-assignee-cb" value="${m.id}" ${currentlyChecked.includes(m.id) ? 'checked' : ''}> ${m.name}
+                    </label>
+                `).join('')
+                : `<span style="color:#7f8c8d; font-size:0.85rem;">Add family members first</span>`;
+        }
+
+        const editAssigneeSelect = document.getElementById('edit-c-assignee');
+        if (editAssigneeSelect) {
+            editAssigneeSelect.innerHTML = state.members.map(m => `<option value="${m.id}">${m.name}</option>`).join('');
+        }
+
+        // Dashboard User Cards
+        const choresBody = document.getElementById('chores-body');
+        choresBody.innerHTML = state.members.map(m => {
+            const memberChores = state.chores.filter(c => c.assigneeId === m.id);
+            const unit = currencyMap[m.role] || '';
+            const choresHtml = memberChores.length ? memberChores.map(c => {
+                const isDone = c.lastCompleted === today;
+                const pct = c.goal > 0 ? Math.min(100, Math.round(((c.timesCompleted || 0) / c.goal) * 100)) : 0;
+                const rewardText = c.type === 'dynamic' ? `${c.dynamic.min}-${c.dynamic.max} ${unit}` : `${c.points} ${unit}`;
+                return `
+                    <div class="chore-item ${isDone ? 'completed' : ''}">
+                        <div class="chore-info" style="flex:1; padding-right:10px;">
+                            <h4>${c.name}</h4>
+                            <p>${c.desc ? c.desc + ' • ' : ''}<strong>${rewardText}</strong></p>
+                            ${c.goal > 0 ? `
+                                <p style="font-size:0.75rem; color:var(--primary); margin-top:4px;">🎁 ${c.prize || 'Goal'}: ${c.timesCompleted || 0}/${c.goal}</p>
+                                <div class="goal-bar"><div class="goal-fill" style="width:${pct}%"></div></div>
+                            ` : ''}
+                        </div>
+                        <button class="btn-check" ${isDone ? 'disabled' : ''} onclick="completeChore(${c.id})">${isDone ? '✓ Done' : 'Complete'}</button>
+                    </div>
+                `;
+            }).join('') : `<p style="color:#95a5a6; font-size:0.9rem;">No chores assigned.</p>`;
+
+            return `
+                <div class="user-card ${m.role}">
+                    <div class="user-header">
+                        <span class="user-name">${m.name}</span>
+                        ${m.role !== 'adult' ? `<span class="user-points">${m.points} ${unit}</span>` : ''}
+                    </div>
+                    ${choresHtml}
+                </div>
+            `;
+        }).join('');
+
+        // Members Table
+        document.getElementById('member-list-body').innerHTML = state.members.map(m => `
+            <tr>
+                <td><strong>${m.name}</strong></td>
+                <td style="text-transform:capitalize;">${m.role}</td>
+                <td>${m.points}</td>
+                <td style="text-align:right;">
+                    <button class="btn-outline-primary" style="padding:4px 8px; font-size:0.8rem;" onclick="openEditMember(${m.id})">Edit</button>
+                    <button class="btn-outline-danger" style="padding:4px 8px; font-size:0.8rem;" onclick="deleteMember(${m.id})">X</button>
+                </td>
+            </tr>
+        `).join('');
+
+        // Chores Table
+        document.getElementById('chore-list-body').innerHTML = state.chores.map(c => {
+            const owner = state.members.find(m => m.id === c.assigneeId);
+            const logicLabel = c.type === 'dynamic' ? `D:${c.dynamic.min}-${c.dynamic.max}` : `S:${c.points}`;
+            return `
+                <tr>
+                    <td><strong>${c.name}</strong> <span style="color:#7f8c8d; font-size:0.85rem;">${owner ? owner.name : 'Unassigned'}</span></td>
+                    <td>${c.goal || 0}</td>
+                    <td>${c.prize || '--'}</td>
+                    <td>${logicLabel}</td>
+                    <td style="text-align:right;">
+                        <button class="btn-outline-primary" style="padding:4px 8px; font-size:0.8rem;" onclick="openEditChore(${c.id})">Edit</button>
+                        <button class="btn-outline-danger" style="padding:4px 8px; font-size:0.8rem;" onclick="deleteChore(${c.id})">X</button>
+                    </td>
+                </tr>
+            `;
+        }).join('');
+
+        // Approvals Table
+        document.getElementById('badge-count').innerText = state.approvals.length;
+        document.getElementById('approval-list-body').innerHTML = state.approvals.length ? state.approvals.map(a => `
+            <tr>
+                <td><strong>${a.memberName}</strong></td>
+                <td>${a.choreName}</td>
+                <td>+${a.points}</td>
+                <td style="text-align:right;">
+                    <button class="btn-check" style="padding:5px 10px; font-size:0.8rem;" onclick="handleApproval(${a.id}, true)">Approve</button>
+                    <button class="btn-outline-danger" style="padding:4px 8px; font-size:0.8rem;" onclick="handleApproval(${a.id}, false)">Reject</button>
+                </td>
+            </tr>
+        `).join('') : `<tr><td colspan="4" style="text-align:center; color:#7f8c8d;">No pending approvals.</td></tr>`;
     }
 
-    /* -------------------------------------------------------------------------
-       UTILITY FUNCTIONS (Navigation, Data Management, Setup)
-    ------------------------------------------------------------------------- */
-    function toggleAccordion(k) { state[k] = !state[k]; save(); }
-    function showSection(id) { 
-        document.querySelectorAll('.content-section').forEach(s => s.classList.add('hidden')); 
-        document.getElementById(id).classList.remove('hidden'); 
-        document.querySelectorAll('nav button').forEach(b => b.classList.remove('active')); 
+    function updateClock() {
+        const now = new Date();
+        document.getElementById('clock').innerText = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
     }
-    function addMember() { const n=document.getElementById('m-name'); if(n.value){ state.members.push({id:Date.now(), name:n.value, role:document.getElementById('m-role').value, points:0}); save(); n.value='';} }
-    function addChore() { const n=document.getElementById('c-name'); if(n.value){ state.chores.push({id:Date.now(), name:n.value, desc:document.getElementById('c-desc').value, assigneeId:parseInt(document.getElementById('c-assignee').value), lastCompleted:null, points:parseInt(document.getElementById('c-points').value), type:document.getElementById('c-type').value, dynamic:{max:parseInt(document.getElementById('c-max').value), min:parseInt(document.getElementById('c-min').value)}, goal:parseInt(document.getElementById('c-goal').value), prize:document.getElementById('c-prize').value, timesCompleted:0}); save(); n.value='';} }
-    function togglePointForm(s, r1, r2) { const v = document.getElementById(s).value; document.getElementById(r1).classList.toggle('hidden', v !== 'static'); document.getElementById(r2).classList.toggle('hidden', v !== 'dynamic'); }
-    function updateAssigneeDropdowns() { const h = state.members.map(m => `<option value="${m.id}">${m.name}</option>`).join(''); document.getElementById('c-assignee').innerHTML = h; document.getElementById('edit-c-assignee').innerHTML = h; }
-    function saveCalendarUrl() { state.calendarUrl = document.getElementById('cal-url-input').value; save(); alert("Settings Saved!"); }
-    function updatePasscode() { const p = document.getElementById('change-pass-input').value; if(p){ state.adminPasscode = p; save(); alert("Passcode Updated!"); document.getElementById('change-pass-input').value=''; } }
-    function toggleSidebar() { document.getElementById('sidebar').classList.toggle('collapsed'); document.getElementById('main-content').classList.toggle('expanded'); }
-    function resetSidebarTimer() { clearTimeout(sidebarTimer); sidebarTimer = setTimeout(() => { if (!isUnlocked) toggleSidebar(); }, 15000); }
-    function resetAllChoreChecks() { state.chores.forEach(c => c.lastCompleted = null); state.approvals = []; save(); }
-    function resetAllChoreGoals() { state.chores.forEach(c => c.timesCompleted = 0); save(); }
-    function nuclearReset() { if (confirm("This will wipe all members, chores, and points. Continue?")) {localStorage.clear(); familyDocRef.delete().then(() => location.reload());}}
-    function clearAllPoints() { if(confirm("Reset all balances to 0?")) { state.members.forEach(m => m.points = 0); save(); } }
-    
-    // EXPORT: Downloads state as a .json file
-    function exportData() { const d = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(state)); const a = document.createElement('a'); a.href = d; a.download = `FamilyHub_Backup_${new Date().toISOString().split('T')[0]}.json`; a.click(); }
-    // IMPORT: Loads a .json file back into state
-    function importData(e) { const r = new FileReader(); r.onload = (x) => { try { state = JSON.parse(x.target.result); save(); location.reload(); } catch(err) { alert("Invalid File Format"); } }; r.readAsText(e.target.files[0]); }
-    
-    // Initialization
-    setInterval(() => { document.getElementById('clock').innerText = new Date().toLocaleTimeString(); }, 1000);
-    if (state.calendarUrl) document.getElementById('cal-url-input').value = state.calendarUrl;
+
+    setInterval(updateClock, 1000);
+    updateClock();
     renderAll();
 </script>
 </body>
