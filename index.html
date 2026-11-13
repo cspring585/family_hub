@@ -419,6 +419,40 @@
     }
 
     /* -------------------------------------------------------------------------
+       STREAK & DYNAMIC REWARD HELPERS
+       ------------------------------------------------------------------------- */
+    function getYesterdayString() {
+        const d = new Date();
+        d.setDate(d.getDate() - 1);
+        return d.toDateString();
+    }
+
+    // Calculates today's dynamic reward: starts at Max on Day 1 (or after a missed day),
+    // and steps down toward Min for each consecutive day completed in a row.
+    function getDynamicRewardInfo(chore) {
+        const today = new Date().toDateString();
+        const yesterday = getYesterdayString();
+        const min = Number(chore.dynamic?.min) || 2;
+        const max = Number(chore.dynamic?.max) || 10;
+
+        let activeStreak = 0;
+        if (chore.lastCompleted === today) {
+            activeStreak = chore.streak || 1;
+        } else if (chore.lastCompleted === yesterday) {
+            activeStreak = chore.streak || 1;
+        } else {
+            activeStreak = 0; // Missed a day or never completed: resets to Max
+        }
+
+        // If already done today, show the streak/points earned today; otherwise preview today's next step
+        const effectiveStreak = chore.lastCompleted === today ? activeStreak : activeStreak + 1;
+        const step = Math.max(1, Math.round((max - min) / 4));
+        const earned = Math.max(min, max - ((effectiveStreak - 1) * step));
+
+        return { earned, effectiveStreak, activeStreak };
+    }
+
+    /* -------------------------------------------------------------------------
        MEMBER MANAGEMENT
        ------------------------------------------------------------------------- */
     function addMember() {
@@ -494,7 +528,9 @@
                 dynamic: { min, max },
                 desc,
                 timesCompleted: 0,
-                lastCompleted: null
+                streak: 0,
+                lastCompleted: null,
+                prevLastCompleted: null
             });
         });
 
@@ -574,12 +610,15 @@
 
         let earned = chore.points;
         if (chore.type === 'dynamic') {
-            const min = chore.dynamic?.min || 2;
-            const max = chore.dynamic?.max || 10;
-            earned = Math.floor(Math.random() * (max - min + 1)) + min;
+            const info = getDynamicRewardInfo(chore);
+            earned = info.earned;
+            chore.prevStreak = chore.streak || 0;
+            chore.streak = info.effectiveStreak;
         }
 
+        chore.prevLastCompleted = chore.lastCompleted || null;
         chore.lastCompleted = today;
+
         state.approvals.push({
             id: Date.now(),
             memberId: member.id,
@@ -610,7 +649,12 @@
                 }
             }
         } else {
-            if (chore) chore.lastCompleted = null;
+            if (chore) {
+                chore.lastCompleted = chore.prevLastCompleted || null;
+                if (chore.type === 'dynamic' && chore.prevStreak !== undefined) {
+                    chore.streak = chore.prevStreak;
+                }
+            }
         }
 
         state.approvals.splice(appIndex, 1);
@@ -717,7 +761,14 @@
             const choresHtml = memberChores.length ? memberChores.map(c => {
                 const isDone = c.lastCompleted === today;
                 const pct = c.goal > 0 ? Math.min(100, Math.round(((c.timesCompleted || 0) / c.goal) * 100)) : 0;
-                const rewardText = c.type === 'dynamic' ? `${c.dynamic.min}-${c.dynamic.max} ${unit}` : `${c.points} ${unit}`;
+
+                let rewardText = `${c.points} ${unit}`;
+                if (c.type === 'dynamic') {
+                    const info = getDynamicRewardInfo(c);
+                    const streakLabel = info.activeStreak > 0 ? ` • 🔥 ${info.activeStreak}d streak` : '';
+                    rewardText = `${info.earned} ${unit}${streakLabel}`;
+                }
+
                 return `
                     <div class="chore-item ${isDone ? 'completed' : ''}">
                         <div class="chore-info" style="flex:1; padding-right:10px;">
