@@ -190,40 +190,46 @@
             background: var(--surface-card); border-radius: 24px; padding: 32px;
             border: 1px solid var(--border); margin-bottom: 32px;
             box-shadow: 0 4px 24px -4px rgba(0, 0, 0, 0.02);
+            position: relative;
         }
         h1 { font-size: 1.75rem; font-weight: 800; color: var(--text); letter-spacing: -0.03em; margin-bottom: 24px; }
         
-        /* ACCORDION SECTIONS */
-        .section-header {
+        /* CHORES HEADER & INLINE MEMBER TABS */
+        .chores-header-row {
             display: flex; justify-content: space-between; align-items: center;
-            cursor: pointer; padding-bottom: 16px; border-bottom: 1px solid var(--border); margin-bottom: 24px;
+            flex-wrap: wrap; gap: 16px; padding-bottom: 16px; border-bottom: 1px solid var(--border); margin-bottom: 24px;
         }
-        .section-header h3 { font-size: 1.25rem; font-weight: 700; color: var(--text); letter-spacing: -0.01em; }
-        .section-header span {
-            width: 32px; height: 32px; border-radius: 10px; background: var(--surface);
-            border: 1px solid var(--border);
-            display: inline-flex; align-items: center; justify-content: center;
-            font-weight: 700; color: var(--text-muted);
-        }
-
-        /* MEMBER TABS (CLICK-TO-SELECT CHORES) */
+        .chores-header-title { font-size: 1.25rem; font-weight: 700; color: var(--text); letter-spacing: -0.01em; display: flex; align-items: center; gap: 10px; }
+        
         .member-tabs {
-            display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 24px;
+            display: flex; gap: 10px; flex-wrap: wrap; align-items: center;
         }
         .member-tab-btn {
             background: var(--surface); color: var(--text); border: 1.5px solid var(--border);
-            padding: 10px 20px; border-radius: 999px; font-size: 0.95rem; font-weight: 700;
-            cursor: pointer; transition: 0.18s; display: inline-flex; align-items: center; gap: 8px;
+            padding: 7px 16px; border-radius: 999px; font-size: 0.88rem; font-weight: 700;
+            cursor: pointer; transition: 0.18s; display: inline-flex; align-items: center; gap: 6px;
         }
         .member-tab-btn:hover { border-color: var(--primary); }
         .member-tab-btn.active { background: var(--primary); color: white; border-color: var(--primary); }
         .member-tab-badge {
-            background: rgba(255,255,255,0.25); padding: 2px 8px; border-radius: 999px; font-size: 0.78rem;
+            background: rgba(255,255,255,0.25); padding: 2px 7px; border-radius: 999px; font-size: 0.75rem;
+        }
+
+        /* OVERLAY CHORE CARD OVER THE CALENDAR */
+        #selected-member-card-slot {
+            position: absolute; top: 90px; left: 32px; right: 32px; z-index: 100;
+            display: none; animation: fadeInModal 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        #selected-member-card-slot.show { display: block; }
+        @keyframes fadeInModal {
+            from { opacity: 0; transform: translateY(-8px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .user-card {
-            background: var(--surface); border-radius: 20px; padding: 24px;
+            background: var(--surface-card); border-radius: 20px; padding: 24px;
             border: 1px solid var(--border); border-top: 6px solid var(--primary);
+            box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.25);
         }
         .user-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
         .user-name { font-size: 1.25rem; font-weight: 800; color: var(--text); letter-spacing: -0.02em; }
@@ -233,7 +239,7 @@
         }
 
         .chore-item {
-            background: var(--surface-card); padding: 18px; border-radius: 16px; margin-bottom: 14px;
+            background: var(--surface); padding: 18px; border-radius: 16px; margin-bottom: 14px;
             border: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center;
             border-left: 4px solid var(--warning); transition: transform 0.15s, box-shadow 0.15s;
         }
@@ -241,7 +247,7 @@
         .chore-item.completed { border-left-color: var(--success); opacity: 0.55; }
         .chore-info h4 { font-size: 1.02rem; font-weight: 700; margin-bottom: 4px; color: var(--text); }
         .chore-info p { font-size: 0.88rem; color: var(--text-muted); }
-        .goal-bar { height: 6px; background: var(--surface); border-radius: 999px; margin-top: 10px; overflow: hidden; }
+        .goal-bar { height: 6px; background: var(--surface-card); border-radius: 999px; margin-top: 10px; overflow: hidden; }
         .goal-fill { height: 100%; background: var(--primary); transition: width 0.3s; }
 
         /* BUTTONS & FORMS */
@@ -320,6 +326,7 @@
             main.with-sidebar { margin-left: 0; }
             header.topbar { padding: 0 20px; }
             #clock { display: none; }
+            #selected-member-card-slot { left: 16px; right: 16px; top: 110px; }
         }
     </style>
 </head>
@@ -373,19 +380,19 @@
 <main id="main-content">
     <!-- DASHBOARD SECTION -->
     <section id="dashboard" class="content-section">
-        <div class="card">
-            <div class="section-header" onclick="toggleAccordion('choresVisible')">
-                <h3>📋 Daily Chores</h3><span id="chores-icon">−</span>
-            </div>
-            <div id="chores-body">
+        <div class="card" style="position:relative;">
+            <div class="chores-header-row">
+                <div class="chores-header-title">
+                    📋 Daily Chores
+                </div>
                 <div id="member-tabs-container" class="member-tabs"></div>
-                <div id="selected-member-card-slot"></div>
             </div>
+            <div id="selected-member-card-slot"></div>
         </div>
 
         <div id="calendar-card-wrapper" class="card">
             <div class="section-header" onclick="toggleAccordion('calVisible')">
-                <h3>📅 Family Schedule</h3><span id="cal-icon">−</span>
+                <h3>📅 Family Calendar</h3><span id="cal-icon">−</span>
             </div>
             <div id="cal-body"><div id="calendar-slot" class="calendar-container"></div></div>
         </div>
@@ -599,7 +606,7 @@
     let isUnlocked = false;
     let redirectAfterLogin = null;
     let editId = null;
-    let selectedMemberId = null;
+    let selectedMemberId = null; // null means no card popped open
     const currencyMap = { kid: "tokens", teen: "minutes", adult: "" };
 
     function save() {
@@ -811,6 +818,7 @@
         if (!confirm("Delete this member and their chores?")) return;
         state.members = state.members.filter(m => m.id !== id);
         state.chores = state.chores.filter(c => c.assigneeId !== id);
+        if (selectedMemberId === id) selectedMemberId = null;
         save();
     }
 
@@ -1115,12 +1123,6 @@
         document.getElementById('show-calendar-toggle').checked = showCal;
         document.getElementById('calendar-card-wrapper').classList.toggle('hidden', !showCal);
 
-        // Accordion visibility
-        document.getElementById('chores-body').classList.toggle('hidden', !state.choresVisible);
-        document.getElementById('chores-icon').innerText = state.choresVisible ? '−' : '+';
-        document.getElementById('cal-body').classList.toggle('hidden', !state.calVisible);
-        document.getElementById('cal-icon').innerText = state.calVisible ? '−' : '+';
-
         // Calendar
         const calSlot = document.getElementById('calendar-slot');
         if (state.calendarUrl) {
@@ -1151,25 +1153,21 @@
             editAssigneeSelect.innerHTML = state.members.map(m => `<option value="${m.id}">${m.name}</option>`).join('');
         }
 
-        // Dashboard Member Tabs & Selected Card
+        // Dashboard Member Tabs & Overlay Card
         const tabsContainer = document.getElementById('member-tabs-container');
         const cardSlot = document.getElementById('selected-member-card-slot');
 
         if (state.members.length === 0) {
             tabsContainer.innerHTML = '';
-            cardSlot.innerHTML = `<p style="color:var(--text-muted); font-size:0.95rem; padding:12px 0;">No family members added yet. Go to Admin > Members to add someone!</p>`;
+            cardSlot.innerHTML = '';
+            cardSlot.classList.remove('show');
         } else {
-            // Default select first member if none selected or if selected member no longer exists
-            if (!selectedMemberId || !state.members.some(m => m.id === selectedMemberId)) {
-                selectedMemberId = state.members[0].id;
-            }
-
             tabsContainer.innerHTML = state.members.map(m => {
                 const isActive = m.id === selectedMemberId;
                 const unit = currencyMap[m.role] || '';
                 const pointsBadge = m.role !== 'adult' ? ` <span class="member-tab-badge">${m.points} ${unit}</span>` : '';
                 return `
-                    <button class="member-tab-btn ${isActive ? 'active' : ''}" onclick="selectedMemberId = ${m.id}; renderAll();" style="${isActive ? `background:${m.color || 'var(--primary)'}; border-color:${m.color || 'var(--primary)'};` : ''}">
+                    <button class="member-tab-btn ${isActive ? 'active' : ''}" onclick="selectedMemberId = (selectedMemberId === ${m.id} ? null : ${m.id}); renderAll();" style="${isActive ? `background:${m.color || 'var(--primary)'}; border-color:${m.color || 'var(--primary)'};` : ''}">
                         ${m.name}${pointsBadge}
                     </button>
                 `;
@@ -1210,11 +1208,18 @@
                     <div class="user-card" style="border-top-color: ${cardColor};">
                         <div class="user-header">
                             <span class="user-name">${activeMember.name}'s Chores</span>
-                            ${activeMember.role !== 'adult' ? `<span class="user-points" style="background:${cardColor};">${activeMember.points} ${unit}</span>` : ''}
+                            <div style="display:flex; align-items:center; gap:10px;">
+                                ${activeMember.role !== 'adult' ? `<span class="user-points" style="background:${cardColor};">${activeMember.points} ${unit}</span>` : ''}
+                                <button onclick="selectedMemberId = null; renderAll();" style="background:none; border:none; font-size:1.1rem; cursor:pointer; color:var(--text-muted); padding:4px 8px;" title="Close">✕</button>
+                            </div>
                         </div>
                         ${choresHtml}
                     </div>
                 `;
+                cardSlot.classList.add('show');
+            } else {
+                cardSlot.innerHTML = '';
+                cardSlot.classList.remove('show');
             }
         }
 
