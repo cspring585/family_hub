@@ -422,7 +422,6 @@
       font-weight: 700;
     }
 
-    /* No vertical translateY on hover so buttons never shift/bounce under the cursor */
     .task-item {
       background: var(--surface);
       padding: 18px;
@@ -443,7 +442,7 @@
     .goal-bar { height: 6px; background: var(--surface-card); border-radius: var(--radius-sm); margin-top: 10px; overflow: hidden; }
     .goal-fill { height: 100%; background: var(--primary); transition: width 0.3s; }
 
-    /* BUTTONS & FORMS (Strict color-only transitions prevent layout/size bouncing) */
+    /* BUTTONS & FORMS */
     button {
       cursor: pointer;
       font-weight: 600;
@@ -860,6 +859,7 @@
     let redirectAfterLogin = null;
     let editId = null;
     let selectedMemberId = null;
+    let pendingLocalWrites = 0;
     let lastTabsSignature = '';
     let lastCardSignature = '';
     let lastMembersTableSignature = '';
@@ -908,18 +908,29 @@
 
     function save() {
       localStorage.setItem('familyHubData', JSON.stringify(state));
-      familyDocRef.set(state).catch(err => console.error("Firebase save error:", err));
       renderAll();
+      pendingLocalWrites++;
+      familyDocRef.set(state)
+        .catch(err => console.error("Firebase save error:", err))
+        .finally(() => {
+          pendingLocalWrites = Math.max(0, pendingLocalWrites - 1);
+        });
     }
 
     familyDocRef.onSnapshot((doc) => {
+      // Ignore stale server snapshots while a local write is still in flight
+      if (pendingLocalWrites > 0 || doc.metadata.hasPendingWrites) {
+        return;
+      }
+
       if (doc.exists) {
         const rawData = doc.data();
         const hadLegacyKeys = Boolean(rawData.chores || typeof rawData.choresVisible === 'boolean');
         state = migrateLegacyFields({ ...state, ...rawData });
         localStorage.setItem('familyHubData', JSON.stringify(state));
         if (hadLegacyKeys) {
-          familyDocRef.set(state).catch(err => console.error("Firebase migration save error:", err));
+          save();
+          return;
         }
         checkSiteGate();
         renderAll();
@@ -928,7 +939,7 @@
         if (localBackup) {
           state = migrateLegacyFields({ ...state, ...localBackup });
         }
-        familyDocRef.set(state);
+        save();
         checkSiteGate();
       }
     });
@@ -1261,8 +1272,9 @@
     ------------------------------------------------------------------------- */
     function completeTask(taskId) {
       const task = state.tasks.find(t => t.id === taskId);
+      if (!task) return;
       const member = state.members.find(m => m.id === task.assigneeId);
-      if (!task || !member) return;
+      if (!member) return;
 
       const today = new Date().toDateString();
       if (task.lastCompleted === today) return;
@@ -1275,7 +1287,7 @@
       task.lastCompleted = today;
 
       state.approvals.push({
-        id: Date.now(),
+        id: Date.now() + Math.floor(Math.random() * 1000),
         memberId: member.id,
         memberName: member.name,
         taskId: task.id,
