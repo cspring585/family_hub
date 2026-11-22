@@ -4,6 +4,15 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Family Hub</title>
+
+  <!-- PWA Manifest & Mobile Web App Meta -->
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#0d9488">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Family Hub">
+  <link rel="apple-touch-icon" href="/icon-192.png">
+
   <style>
     :root {
       --primary: #0d9488;
@@ -751,6 +760,28 @@
   <script src="https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore-compat.js"></script>
 
   <script>
+    /* -------------------------------------------------------------------------
+       SERVICE WORKER REGISTRATION & IMMEDIATE AUTO-UPDATE
+    ------------------------------------------------------------------------- */
+    if ('serviceWorker' in navigator) {
+      let refreshing = false;
+      navigator.serviceWorker.addEventListener('controllerchange', () => {
+        if (!refreshing) {
+          refreshing = true;
+          window.location.reload();
+        }
+      });
+
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js')
+          .then((reg) => {
+            // Check for updates every 15 minutes while open
+            setInterval(() => reg.update(), 15 * 60 * 1000);
+          })
+          .catch((err) => console.error('Service Worker registration failed:', err));
+      });
+    }
+
     /* -------------------------------------------------------------------------
        THEME (LIGHT / DARK MODE) INITIALIZATION
     ------------------------------------------------------------------------- */
