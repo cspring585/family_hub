@@ -822,7 +822,7 @@
     initTheme();
 
     /* -------------------------------------------------------------------------
-       FIREBASE & DATA STATE INITIALIZATION
+       FIREBASE & DATA STATE INITIALIZATION (ATOMIC UPDATES & TRANSACTIONS)
     ------------------------------------------------------------------------- */
     const firebaseConfig = {
       apiKey: "AIzaSyB2v8EYgBpbQHTSqr_k4fDEjdcJpemqwbE",
@@ -836,6 +836,7 @@
 
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
+    const FieldValue = firebase.firestore.FieldValue;
     const familyDocRef = db.collection("households").doc("spring_family");
 
     const kidMessages = ["BOOM! 🔥", "LEGEND! 🏆", "CLUTCH! ⚡", "BOOYAH! 🚀", "W! 👑", "WINNING! 🏁"];
@@ -906,7 +907,26 @@
       return migrated;
     }
 
-    function save() {
+    // Optimistic local UI render + partial Firestore field update (never overwrites unrelated fields)
+    function updateFields(patchObj) {
+      localStorage.setItem('familyHubData', JSON.stringify(state));
+      renderAll();
+      pendingLocalWrites++;
+      familyDocRef.update(patchObj)
+        .catch((err) => {
+          // If document does not exist yet, initialize it with set()
+          if (err.code === 'not-found') {
+            return familyDocRef.set(state);
+          }
+          console.error("Firebase atomic update error:", err);
+        })
+        .finally(() => {
+          pendingLocalWrites = Math.max(0, pendingLocalWrites - 1);
+        });
+    }
+
+    // Full document save reserved strictly for full restore / migration / initial seed
+    function saveFullDocument() {
       localStorage.setItem('familyHubData', JSON.stringify(state));
       renderAll();
       pendingLocalWrites++;
@@ -918,7 +938,6 @@
     }
 
     familyDocRef.onSnapshot((doc) => {
-      // Ignore stale server snapshots while a local write is still in flight
       if (pendingLocalWrites > 0 || doc.metadata.hasPendingWrites) {
         return;
       }
@@ -929,7 +948,7 @@
         state = migrateLegacyFields({ ...state, ...rawData });
         localStorage.setItem('familyHubData', JSON.stringify(state));
         if (hadLegacyKeys) {
-          save();
+          saveFullDocument();
           return;
         }
         checkSiteGate();
@@ -939,7 +958,7 @@
         if (localBackup) {
           state = migrateLegacyFields({ ...state, ...localBackup });
         }
-        save();
+        saveFullDocument();
         checkSiteGate();
       }
     });
@@ -1068,7 +1087,10 @@
       }
     }
 
-    function toggleAccordion(key) { state[key] = !state[key]; save(); }
+    function toggleAccordion(key) {
+      state[key] = !state[key];
+      updateFields({ [key]: state[key] });
+    }
 
     function togglePointForm(selectId, staticId, dynamicId) {
       const val = document.getElementById(selectId).value;
@@ -1116,17 +1138,17 @@
     }
 
     /* -------------------------------------------------------------------------
-       MEMBER MANAGEMENT
+       MEMBER MANAGEMENT (ATOMIC UPDATES)
     ------------------------------------------------------------------------- */
     function addMember() {
       const name = document.getElementById('m-name').value.trim();
       const role = document.getElementById('m-role').value;
       const color = document.getElementById('m-color').value;
       if (!name) return alert("Enter a member name.");
-      const newId = Date.now();
-      state.members.push({ id: newId, name, role, points: 0, color: color || '#0d9488' });
+      const newMember = { id: Date.now(), name, role, points: 0, color: color || '#0d9488' };
+      state.members.push(newMember);
       document.getElementById('m-name').value = '';
-      save();
+      updateFields({ members: FieldValue.arrayUnion(newMember) });
     }
 
     function deleteMember(id) {
@@ -1134,7 +1156,7 @@
       state.members = state.members.filter(m => m.id !== id);
       state.tasks = state.tasks.filter(t => t.assigneeId !== id);
       if (selectedMemberId === id) selectedMemberId = null;
-      save();
+      updateFields({ members: state.members, tasks: state.tasks });
     }
 
     function openEditMember(id) {
@@ -1149,25 +1171,55 @@
     }
 
     function submitMemberEdit() {
-      const m = state.members.find(x => x.id === editId);
-      if (m) {
-        m.name = document.getElementById('edit-m-name').value.trim();
-        m.role = document.getElementById('edit-m-role').value;
-        m.points = Number(document.getElementById('edit-m-points').value) || 0;
-        m.color = document.getElementById('edit-m-color').value;
-      }
+      const newName = document.getElementById('edit-m-name').value.trim();
+      const newRole = document.getElementById('edit-m-role').value;
+      const newPoints = Number(document.getElementById('edit-m-points').value) || 0;
+      const newColor = document.getElementById('edit-m-color').value;
+      const targetId = editId;
+
       closeModals();
-      save();
+
+      const localMember = state.members.find(x => x.id === targetId);
+      if (localMember) {
+        localMember.name = newName;
+        localMember.role = newRole;
+        localMember.points = newPoints;
+        localMember.color = newColor;
+      }
+      localStorage.setItem('familyHubData', JSON.stringify(state));
+      renderAll();
+
+      pendingLocalWrites++;
+      db.runTransaction(async (tx) => {
+        const snap = await tx.get(familyDocRef);
+        if (!snap.exists) return;
+        const data = snap.data();
+        const members = (data.members || []).map(m =>
+          m.id === targetId ? { ...m, name: newName, role: newRole, points: newPoints, color: newColor } : m
+        );
+        tx.update(familyDocRef, { members });
+      }).catch(err => console.error("Member edit transaction failed:", err))
+        .finally(() => { pendingLocalWrites = Math.max(0, pendingLocalWrites - 1); });
     }
 
     function clearAllPoints() {
       if (!confirm("Reset all member point balances to 0?")) return;
       state.members.forEach(m => m.points = 0);
-      save();
+      localStorage.setItem('familyHubData', JSON.stringify(state));
+      renderAll();
+
+      pendingLocalWrites++;
+      db.runTransaction(async (tx) => {
+        const snap = await tx.get(familyDocRef);
+        if (!snap.exists) return;
+        const members = (snap.data().members || []).map(m => ({ ...m, points: 0 }));
+        tx.update(familyDocRef, { members });
+      }).catch(err => console.error("Clear points transaction failed:", err))
+        .finally(() => { pendingLocalWrites = Math.max(0, pendingLocalWrites - 1); });
     }
 
     /* -------------------------------------------------------------------------
-       TASK LIST MANAGEMENT (MULTI-USER CREATION)
+       TASK LIST MANAGEMENT (ATOMIC UPDATES & TRANSACTIONS)
     ------------------------------------------------------------------------- */
     function addTask() {
       const name = document.getElementById('t-name').value.trim();
@@ -1184,36 +1236,42 @@
       if (!name) return alert("Please enter a task name.");
       if (selectedUserIds.length === 0) return alert("Please select at least one user.");
 
-      selectedUserIds.forEach((userId, index) => {
-        state.tasks.push({
-          id: Date.now() + index,
-          name,
-          assigneeId: userId,
-          goal,
-          prize,
-          type,
-          points,
-          dynamic: { min, max },
-          desc,
-          streak: 0,
-          goalStreak: 0,
-          lastCompleted: null,
-          prevLastCompleted: null
-        });
-      });
+      const createdTasks = selectedUserIds.map((userId, index) => ({
+        id: Date.now() + index,
+        name,
+        assigneeId: userId,
+        goal,
+        prize,
+        type,
+        points,
+        dynamic: { min, max },
+        desc,
+        streak: 0,
+        goalStreak: 0,
+        lastCompleted: null,
+        prevLastCompleted: null
+      }));
+
+      state.tasks.push(...createdTasks);
 
       document.getElementById('t-name').value = '';
       document.getElementById('t-goal').value = '0';
       document.getElementById('t-prize').value = '';
       document.getElementById('t-desc').value = '';
       document.querySelectorAll('.t-assignee-cb').forEach(cb => cb.checked = false);
-      save();
+
+      updateFields({ tasks: FieldValue.arrayUnion(...createdTasks) });
     }
 
     function deleteTask(id) {
       if (!confirm("Delete this task?")) return;
+      const targetTask = state.tasks.find(t => t.id === id);
       state.tasks = state.tasks.filter(t => t.id !== id);
-      save();
+      if (targetTask) {
+        updateFields({ tasks: FieldValue.arrayRemove(targetTask) });
+      } else {
+        updateFields({ tasks: state.tasks });
+      }
     }
 
     function openEditTask(id) {
@@ -1234,28 +1292,54 @@
     }
 
     function submitTaskEdit() {
-      const t = state.tasks.find(x => x.id === editId);
-      if (t) {
-        t.name = document.getElementById('edit-t-name').value.trim();
-        t.assigneeId = Number(document.getElementById('edit-t-assignee').value);
-        t.goal = Number(document.getElementById('edit-t-goal').value) || 0;
-        t.prize = document.getElementById('edit-t-prize').value.trim();
-        t.type = document.getElementById('edit-t-type').value;
-        t.points = Number(document.getElementById('edit-t-points').value) || 0;
-        t.dynamic = {
+      const targetId = editId;
+      const updatedFields = {
+        name: document.getElementById('edit-t-name').value.trim(),
+        assigneeId: Number(document.getElementById('edit-t-assignee').value),
+        goal: Number(document.getElementById('edit-t-goal').value) || 0,
+        prize: document.getElementById('edit-t-prize').value.trim(),
+        type: document.getElementById('edit-t-type').value,
+        points: Number(document.getElementById('edit-t-points').value) || 0,
+        dynamic: {
           max: Number(document.getElementById('edit-t-max').value) || 10,
           min: Number(document.getElementById('edit-t-min').value) || 2
-        };
-        t.desc = document.getElementById('edit-t-desc').value.trim();
-      }
+        },
+        desc: document.getElementById('edit-t-desc').value.trim()
+      };
+
       closeModals();
-      save();
+
+      const localTask = state.tasks.find(x => x.id === targetId);
+      if (localTask) Object.assign(localTask, updatedFields);
+      localStorage.setItem('familyHubData', JSON.stringify(state));
+      renderAll();
+
+      pendingLocalWrites++;
+      db.runTransaction(async (tx) => {
+        const snap = await tx.get(familyDocRef);
+        if (!snap.exists) return;
+        const tasks = (snap.data().tasks || []).map(t =>
+          t.id === targetId ? { ...t, ...updatedFields } : t
+        );
+        tx.update(familyDocRef, { tasks });
+      }).catch(err => console.error("Task edit transaction failed:", err))
+        .finally(() => { pendingLocalWrites = Math.max(0, pendingLocalWrites - 1); });
     }
 
     function resetAllTaskChecks() {
       if (!confirm("Reset today's completion checkmarks for all tasks?")) return;
       state.tasks.forEach(t => t.lastCompleted = null);
-      save();
+      localStorage.setItem('familyHubData', JSON.stringify(state));
+      renderAll();
+
+      pendingLocalWrites++;
+      db.runTransaction(async (tx) => {
+        const snap = await tx.get(familyDocRef);
+        if (!snap.exists) return;
+        const tasks = (snap.data().tasks || []).map(t => ({ ...t, lastCompleted: null }));
+        tx.update(familyDocRef, { tasks });
+      }).catch(err => console.error("Reset checks transaction failed:", err))
+        .finally(() => { pendingLocalWrites = Math.max(0, pendingLocalWrites - 1); });
     }
 
     function resetAllTaskGoals() {
@@ -1264,11 +1348,23 @@
         t.streak = 0;
         t.goalStreak = 0;
       });
-      save();
+      localStorage.setItem('familyHubData', JSON.stringify(state));
+      renderAll();
+
+      pendingLocalWrites++;
+      db.runTransaction(async (tx) => {
+        const snap = await tx.get(familyDocRef);
+        if (!snap.exists) return;
+        const tasks = (snap.data().tasks || []).map(t => ({ ...t, streak: 0, goalStreak: 0 }));
+        tx.update(familyDocRef, { tasks });
+      }).catch(err => console.error("Reset goals transaction failed:", err))
+        .finally(() => { pendingLocalWrites = Math.max(0, pendingLocalWrites - 1); });
     }
 
     /* -------------------------------------------------------------------------
-       COMPLETION & APPROVAL WORKFLOW
+       CONFLICT-FREE TASK COMPLETION & APPROVAL WORKFLOW
+       Uses Firestore transactions + FieldValue.arrayUnion / arrayRemove
+       so concurrent completions & approvals across devices never collide.
     ------------------------------------------------------------------------- */
     function completeTask(taskId) {
       const task = state.tasks.find(t => t.id === taskId);
@@ -1281,23 +1377,58 @@
 
       const info = getStreakAndRewardInfo(task);
 
+      // Optimistic local state update for instant UI feedback
       task.prevStreak = task.streak || 0;
       task.streak = info.effectiveStreak;
       task.prevLastCompleted = task.lastCompleted || null;
       task.lastCompleted = today;
 
-      state.approvals.push({
-        id: Date.now() + Math.floor(Math.random() * 1000),
+      const newApproval = {
+        id: Date.now() + Math.floor(Math.random() * 10000),
         memberId: member.id,
         memberName: member.name,
         taskId: task.id,
         taskName: task.name,
         points: info.earned,
         wasConsecutive: info.activeStreak > 0
-      });
+      };
 
+      state.approvals.push(newApproval);
       showToast(member.role);
-      save();
+      localStorage.setItem('familyHubData', JSON.stringify(state));
+      renderAll();
+
+      pendingLocalWrites++;
+      db.runTransaction(async (tx) => {
+        const snap = await tx.get(familyDocRef);
+        if (!snap.exists) return;
+        const data = snap.data();
+        const serverTasks = data.tasks || [];
+        const serverTask = serverTasks.find(t => t.id === taskId);
+        if (!serverTask || serverTask.lastCompleted === today) return;
+
+        const serverInfo = getStreakAndRewardInfo(serverTask);
+        const updatedTasks = serverTasks.map(t => {
+          if (t.id !== taskId) return t;
+          return {
+            ...t,
+            prevStreak: t.streak || 0,
+            streak: serverInfo.effectiveStreak,
+            prevLastCompleted: t.lastCompleted || null,
+            lastCompleted: today
+          };
+        });
+
+        tx.update(familyDocRef, {
+          tasks: updatedTasks,
+          approvals: FieldValue.arrayUnion({
+            ...newApproval,
+            points: serverInfo.earned,
+            wasConsecutive: serverInfo.activeStreak > 0
+          })
+        });
+      }).catch(err => console.error("Complete task transaction failed:", err))
+        .finally(() => { pendingLocalWrites = Math.max(0, pendingLocalWrites - 1); });
     }
 
     function handleApproval(appId, approved) {
@@ -1308,6 +1439,7 @@
       const task = state.tasks.find(t => t.id === targetTaskId);
       const member = state.members.find(m => m.id === app.memberId);
 
+      // Optimistic local state update
       if (approved) {
         if (member) member.points += app.points;
         if (task) {
@@ -1327,15 +1459,60 @@
       }
 
       state.approvals.splice(appIndex, 1);
-      save();
+      localStorage.setItem('familyHubData', JSON.stringify(state));
+      renderAll();
+
+      pendingLocalWrites++;
+      db.runTransaction(async (tx) => {
+        const snap = await tx.get(familyDocRef);
+        if (!snap.exists) return;
+        const data = snap.data();
+        const serverApprovals = data.approvals || [];
+        const serverApp = serverApprovals.find(a => a.id === appId);
+        if (!serverApp) return;
+
+        const srvTaskId = serverApp.taskId ?? serverApp.choreId;
+        let updatedMembers = data.members || [];
+        let updatedTasks = data.tasks || [];
+
+        if (approved) {
+          updatedMembers = updatedMembers.map(m =>
+            m.id === serverApp.memberId ? { ...m, points: (Number(m.points) || 0) + (Number(serverApp.points) || 0) } : m
+          );
+          updatedTasks = updatedTasks.map(t => {
+            if (t.id !== srvTaskId) return t;
+            let nextGoalStreak = serverApp.wasConsecutive ? ((t.goalStreak || 0) + 1) : 1;
+            if (t.goal > 0 && nextGoalStreak >= t.goal) {
+              nextGoalStreak = 0;
+            }
+            return { ...t, goalStreak: nextGoalStreak };
+          });
+        } else {
+          updatedTasks = updatedTasks.map(t => {
+            if (t.id !== srvTaskId) return t;
+            return {
+              ...t,
+              lastCompleted: t.prevLastCompleted || null,
+              streak: t.prevStreak !== undefined ? t.prevStreak : (t.streak || 0)
+            };
+          });
+        }
+
+        tx.update(familyDocRef, {
+          members: updatedMembers,
+          tasks: updatedTasks,
+          approvals: FieldValue.arrayRemove(serverApp)
+        });
+      }).catch(err => console.error("Approval transaction failed:", err))
+        .finally(() => { pendingLocalWrites = Math.max(0, pendingLocalWrites - 1); });
     }
 
     /* -------------------------------------------------------------------------
-       SETTINGS, BACKUP & RESTORE
+       SETTINGS, BACKUP & RESTORE (ATOMIC FIELD UPDATES)
     ------------------------------------------------------------------------- */
     function saveFamilyName() {
       state.familyName = document.getElementById('family-name-input').value.trim();
-      save();
+      updateFields({ familyName: state.familyName });
       alert("Hub name saved!");
     }
 
@@ -1343,23 +1520,30 @@
       const rawUrl = document.getElementById('cal-url-input').value.trim();
       state.calendarUrl = normalizeCalendarUrl(rawUrl);
       document.getElementById('cal-url-input').value = state.calendarUrl;
-      save();
+      updateFields({ calendarUrl: state.calendarUrl });
       alert("Calendar URL saved!");
     }
 
     function toggleCalendarVisibility() {
       state.showCalendar = document.getElementById('show-calendar-toggle').checked;
-      save();
+      updateFields({ showCalendar: state.showCalendar });
     }
 
     function updateAdminCredentials() {
       const newUser = document.getElementById('change-admin-user-input').value.trim();
       const newPass = document.getElementById('change-pass-input').value.trim();
       if (!newUser && !newPass) return alert("Enter a new username or password.");
-      if (newUser) state.adminUsername = newUser;
-      if (newPass) state.adminPasscode = newPass;
+      const patch = {};
+      if (newUser) {
+        state.adminUsername = newUser;
+        patch.adminUsername = newUser;
+      }
+      if (newPass) {
+        state.adminPasscode = newPass;
+        patch.adminPasscode = newPass;
+      }
       document.getElementById('change-pass-input').value = '';
-      save();
+      updateFields(patch);
       alert("Admin login credentials updated!");
     }
 
@@ -1370,7 +1554,7 @@
       localStorage.setItem('familyHubRememberedPass', newSitePass);
       sessionStorage.setItem('familyHubSessionPass', newSitePass);
       document.getElementById('change-site-pass-input').value = '';
-      save();
+      updateFields({ sitePassword: newSitePass });
       alert("Website entry password updated!");
     }
 
@@ -1391,7 +1575,7 @@
         try {
           const imported = JSON.parse(e.target.result);
           state = migrateLegacyFields({ ...state, ...imported });
-          save();
+          saveFullDocument();
           alert("Hub data restored successfully!");
         } catch (err) {
           alert("Invalid backup file.");
