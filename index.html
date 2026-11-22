@@ -329,8 +329,8 @@
     .section-header h3 { font-size: 1.25rem; font-weight: 700; color: var(--text); letter-spacing: -0.01em; }
     .section-header span { font-size: 1.4rem; font-weight: 700; color: var(--text-muted); }
 
-    /* CHORES HEADER & INLINE MEMBER TABS */
-    .chores-header-row {
+    /* TASK LISTS HEADER & INLINE MEMBER TABS */
+    .tasks-header-row {
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -340,7 +340,7 @@
       border-bottom: 1px solid var(--border);
       margin-bottom: 24px;
     }
-    .chores-header-title { font-size: 1.25rem; font-weight: 700; color: var(--text); letter-spacing: -0.01em; display: flex; align-items: center; gap: 10px; }
+    .tasks-header-title { font-size: 1.25rem; font-weight: 700; color: var(--text); letter-spacing: -0.01em; display: flex; align-items: center; gap: 10px; }
     .member-tabs {
       display: flex;
       gap: 10px;
@@ -370,7 +370,7 @@
       font-size: 0.75rem;
     }
 
-    /* OVERLAY CHORE CARD OVER THE CALENDAR */
+    /* OVERLAY TASK LIST CARD OVER THE CALENDAR */
     #selected-member-card-slot {
       position: absolute;
       top: 90px;
@@ -405,7 +405,7 @@
       font-weight: 700;
     }
 
-    .chore-item {
+    .task-item {
       background: var(--surface);
       padding: 18px;
       border-radius: var(--radius-md);
@@ -417,10 +417,10 @@
       border-left: 4px solid var(--warning);
       transition: transform 0.15s, box-shadow 0.15s;
     }
-    .chore-item:hover { transform: translateY(-1px); box-shadow: 0 8px 20px rgba(0, 0, 0, 0.04); }
-    .chore-item.completed { border-left-color: var(--success); opacity: 0.55; }
-    .chore-info h4 { font-size: 1.02rem; font-weight: 700; margin-bottom: 4px; color: var(--text); }
-    .chore-info p { font-size: 0.88rem; color: var(--text-muted); }
+    .task-item:hover { transform: translateY(-1px); box-shadow: 0 8px 20px rgba(0, 0, 0, 0.04); }
+    .task-item.completed { border-left-color: var(--success); opacity: 0.55; }
+    .task-info h4 { font-size: 1.02rem; font-weight: 700; margin-bottom: 4px; color: var(--text); }
+    .task-info p { font-size: 0.88rem; color: var(--text-muted); }
 
     .goal-bar { height: 6px; background: var(--surface-card); border-radius: var(--radius-sm); margin-top: 10px; overflow: hidden; }
     .goal-fill { height: 100%; background: var(--primary); transition: width 0.3s; }
@@ -573,9 +573,9 @@
       <div class="nav-links">
         <button id="nav-dashboard" class="nav-btn active" onclick="showSection('dashboard', this)">🏠 Dashboard</button>
         <button id="nav-approvals" class="nav-btn" onclick="showSection('admin-approvals', this)">✅ Approvals <span id="badge-count" style="background:var(--danger); color:white; padding:2px 8px; border-radius:2px; font-size:0.75rem; margin-left:auto;">0</span></button>
-        <button id="nav-chores" class="nav-btn" onclick="showSection('admin-chores', this)">⚙️ Chores</button>
         <button id="nav-members" class="nav-btn" onclick="showSection('admin-members', this)">👥 Members</button>
         <button id="nav-settings" class="nav-btn" onclick="showSection('admin-settings', this)">🛠️ Settings</button>
+        <button id="nav-tasks" class="nav-btn" onclick="showSection('admin-tasks', this)">⚙️ Task Lists</button>
       </div>
     </div>
     <button class="btn-lock-sidebar" onclick="lockAdmin()">🔒 Lock Admin</button>
@@ -585,9 +585,9 @@
     <!-- DASHBOARD SECTION -->
     <section id="dashboard" class="content-section">
       <div class="card" style="position:relative;">
-        <div class="chores-header-row">
-          <div class="chores-header-title">
-            📋 Daily Chores
+        <div class="tasks-header-row">
+          <div class="tasks-header-title">
+            📋 Task Lists
           </div>
           <div id="member-tabs-container" class="member-tabs"></div>
         </div>
@@ -604,29 +604,29 @@
 
     <!-- APPROVAL QUEUE SECTION -->
     <section id="admin-approvals" class="content-section hidden">
-      <div class="card"><h1>Approval Queue</h1><table><thead><tr><th>Name</th><th>Chore</th><th>Val</th><th style="text-align:right">Action</th></tr></thead><tbody id="approval-list-body"></tbody></table></div>
+      <div class="card"><h1>Approval Queue</h1><table><thead><tr><th>Name</th><th>Task</th><th>Val</th><th style="text-align:right">Action</th></tr></thead><tbody id="approval-list-body"></tbody></table></div>
     </section>
 
-    <!-- CHORE CONFIGURATION SECTION -->
-    <section id="admin-chores" class="content-section hidden">
+    <!-- TASK LIST CONFIGURATION SECTION -->
+    <section id="admin-tasks" class="content-section hidden">
       <div class="card">
-        <h1>Chore Configuration</h1>
+        <h1>Task List Configuration</h1>
         <div style="display:flex; gap:12px; margin-bottom:20px; flex-wrap:wrap;">
-          <button class="btn-outline-danger" onclick="resetAllChoreChecks()">🧪 RESET DAILY SWEEP</button>
-          <button class="btn-outline-danger" onclick="resetAllChoreGoals()">🎁 RESET STREAK PROGRESS</button>
+          <button class="btn-outline-danger" onclick="resetAllTaskChecks()">🧪 RESET DAILY SWEEP</button>
+          <button class="btn-outline-danger" onclick="resetAllTaskGoals()">🎁 RESET STREAK PROGRESS</button>
         </div>
         <div class="admin-form-box">
-          <div class="form-group"><label>Chore Name</label><input type="text" id="c-name"></div>
-          <div class="form-group"><label>Users</label><div id="c-assignee-list" style="display:flex; gap:12px; flex-wrap:wrap; background:var(--input-bg); padding:10px 14px; border-radius:3px; border:1.5px solid var(--input-border); min-height:46px; align-items:center;"></div></div>
-          <div class="form-group"><label>Target Streak (Days in a Row)</label><input type="number" id="c-goal" value="0"></div>
-          <div class="form-group"><label>Prize Name</label><input type="text" id="c-prize"></div>
-          <div class="form-group"><label>Logic</label><select id="c-type" onchange="togglePointForm('c-type','c-static','c-dynamic')"><option value="static">Static</option><option value="dynamic">Dynamic</option></select></div>
-          <div id="c-static" class="form-group"><label>Points</label><input type="number" id="c-points" value="5"></div>
-          <div id="c-dynamic" class="hidden" style="display:flex; gap:10px;"><div class="form-group"><label>Max</label><input type="number" id="c-max" value="10"></div><div class="form-group"><label>Min</label><input type="number" id="c-min" value="2"></div></div>
-          <div class="form-group" style="grid-column: 1 / -1;"><label>Description</label><input type="text" id="c-desc"></div>
+          <div class="form-group"><label>Task Name</label><input type="text" id="t-name"></div>
+          <div class="form-group"><label>Users</label><div id="t-assignee-list" style="display:flex; gap:12px; flex-wrap:wrap; background:var(--input-bg); padding:10px 14px; border-radius:3px; border:1.5px solid var(--input-border); min-height:46px; align-items:center;"></div></div>
+          <div class="form-group"><label>Target Streak (Days in a Row)</label><input type="number" id="t-goal" value="0"></div>
+          <div class="form-group"><label>Prize Name</label><input type="text" id="t-prize"></div>
+          <div class="form-group"><label>Logic</label><select id="t-type" onchange="togglePointForm('t-type','t-static','t-dynamic')"><option value="static">Static</option><option value="dynamic">Dynamic</option></select></div>
+          <div id="t-static" class="form-group"><label>Points</label><input type="number" id="t-points" value="5"></div>
+          <div id="t-dynamic" class="hidden" style="display:flex; gap:10px;"><div class="form-group"><label>Max</label><input type="number" id="t-max" value="10"></div><div class="form-group"><label>Min</label><input type="number" id="t-min" value="2"></div></div>
+          <div class="form-group" style="grid-column: 1 / -1;"><label>Description</label><input type="text" id="t-desc"></div>
         </div>
-        <button class="btn-outline-primary" style="width:100%; padding:14px;" onclick="addChore()">Save Chore</button>
-        <table style="margin-top:24px;"><thead><tr><th style="width:30%">Chore</th><th style="width:15%">Streak Goal</th><th style="width:15%">Prize</th><th style="width:20%">Logic</th><th style="text-align:right; width:20%">Action</th></tr></thead><tbody id="chore-list-body"></tbody></table>
+        <button class="btn-outline-primary" style="width:100%; padding:14px;" onclick="addTask()">Save Task</button>
+        <table style="margin-top:24px;"><thead><tr><th style="width:30%">Task</th><th style="width:15%">Streak Goal</th><th style="width:15%">Prize</th><th style="width:20%">Logic</th><th style="text-align:right; width:20%">Action</th></tr></thead><tbody id="task-list-body"></tbody></table>
       </div>
     </section>
 
@@ -725,21 +725,21 @@
     </div>
   </div>
 
-  <!-- EDIT CHORE MODAL -->
-  <div id="edit-chore-modal" class="modal-overlay">
+  <!-- EDIT TASK MODAL -->
+  <div id="edit-task-modal" class="modal-overlay">
     <div class="modal-box">
-      <h3>Edit Chore Configuration</h3>
-      <div class="form-group" style="margin-bottom:14px;"><label>Chore Name</label><input type="text" id="edit-c-name"></div>
-      <div class="form-group" style="margin-bottom:14px;"><label>User</label><select id="edit-c-assignee"></select></div>
-      <div class="form-group" style="margin-bottom:14px;"><label>Target Streak (Days in a Row)</label><input type="number" id="edit-c-goal"></div>
-      <div class="form-group" style="margin-bottom:14px;"><label>Prize Name</label><input type="text" id="edit-c-prize"></div>
-      <div class="form-group" style="margin-bottom:14px;"><label>Logic</label><select id="edit-c-type" onchange="togglePointForm('edit-c-type','edit-c-static','edit-c-dynamic')"><option value="static">Static</option><option value="dynamic">Dynamic</option></select></div>
-      <div id="edit-c-static" class="form-group" style="margin-bottom:14px;"><label>Points</label><input type="number" id="edit-c-points"></div>
-      <div id="edit-c-dynamic" class="hidden" style="display:flex; gap:10px; margin-bottom:14px;"><div class="form-group"><label>Max</label><input type="number" id="edit-c-max"></div><div class="form-group"><label>Min</label><input type="number" id="edit-c-min"></div></div>
-      <div class="form-group"><label>Description</label><input type="text" id="edit-c-desc"></div>
+      <h3>Edit Task Configuration</h3>
+      <div class="form-group" style="margin-bottom:14px;"><label>Task Name</label><input type="text" id="edit-t-name"></div>
+      <div class="form-group" style="margin-bottom:14px;"><label>User</label><select id="edit-t-assignee"></select></div>
+      <div class="form-group" style="margin-bottom:14px;"><label>Target Streak (Days in a Row)</label><input type="number" id="edit-t-goal"></div>
+      <div class="form-group" style="margin-bottom:14px;"><label>Prize Name</label><input type="text" id="edit-t-prize"></div>
+      <div class="form-group" style="margin-bottom:14px;"><label>Logic</label><select id="edit-t-type" onchange="togglePointForm('edit-t-type','edit-t-static','edit-t-dynamic')"><option value="static">Static</option><option value="dynamic">Dynamic</option></select></div>
+      <div id="edit-t-static" class="form-group" style="margin-bottom:14px;"><label>Points</label><input type="number" id="edit-t-points"></div>
+      <div id="edit-t-dynamic" class="hidden" style="display:flex; gap:10px; margin-bottom:14px;"><div class="form-group"><label>Max</label><input type="number" id="edit-t-max"></div><div class="form-group"><label>Min</label><input type="number" id="edit-t-min"></div></div>
+      <div class="form-group"><label>Description</label><input type="text" id="edit-t-desc"></div>
       <div class="modal-actions">
         <button class="btn-outline-danger" onclick="closeModals()">Cancel</button>
-        <button class="btn-outline-primary" onclick="submitChoreEdit()">Save Changes</button>
+        <button class="btn-outline-primary" onclick="submitTaskEdit()">Save Changes</button>
       </div>
     </div>
   </div>
@@ -801,14 +801,14 @@
     let state = {
       familyName: "",
       members: [],
-      chores: [],
+      tasks: [],
       approvals: [],
       calendarUrl: "",
       showCalendar: true,
       adminUsername: "admin",
       adminPasscode: "1234",
       sitePassword: "family2026",
-      choresVisible: true,
+      tasksVisible: true,
       calVisible: true
     };
 
@@ -818,6 +818,26 @@
     let selectedMemberId = null;
     const currencyMap = { kid: "tokens", teen: "minutes", adult: "" };
 
+    function migrateLegacyFields(data) {
+      const migrated = { ...data };
+      if (Array.isArray(migrated.chores) && (!Array.isArray(migrated.tasks) || migrated.tasks.length === 0)) {
+        migrated.tasks = migrated.chores;
+      }
+      delete migrated.chores;
+      if (typeof migrated.choresVisible === 'boolean' && typeof migrated.tasksVisible !== 'boolean') {
+        migrated.tasksVisible = migrated.choresVisible;
+      }
+      delete migrated.choresVisible;
+      if (Array.isArray(migrated.approvals)) {
+        migrated.approvals = migrated.approvals.map(a => ({
+          ...a,
+          taskId: a.taskId ?? a.choreId,
+          taskName: a.taskName ?? a.choreName
+        }));
+      }
+      return migrated;
+    }
+
     function save() {
       localStorage.setItem('familyHubData', JSON.stringify(state));
       familyDocRef.set(state).catch(err => console.error("Firebase save error:", err));
@@ -826,14 +846,19 @@
 
     familyDocRef.onSnapshot((doc) => {
       if (doc.exists) {
-        state = { ...state, ...doc.data() };
+        const rawData = doc.data();
+        const hadLegacyKeys = Boolean(rawData.chores || typeof rawData.choresVisible === 'boolean');
+        state = migrateLegacyFields({ ...state, ...rawData });
         localStorage.setItem('familyHubData', JSON.stringify(state));
+        if (hadLegacyKeys) {
+          familyDocRef.set(state).catch(err => console.error("Firebase migration save error:", err));
+        }
         checkSiteGate();
         renderAll();
       } else {
         const localBackup = JSON.parse(localStorage.getItem('familyHubData'));
         if (localBackup) {
-          state = { ...state, ...localBackup };
+          state = migrateLegacyFields({ ...state, ...localBackup });
         }
         familyDocRef.set(state);
         checkSiteGate();
@@ -989,24 +1014,24 @@
       return d.toDateString();
     }
 
-    function getStreakAndRewardInfo(chore) {
+    function getStreakAndRewardInfo(task) {
       const today = new Date().toDateString();
       const yesterday = getYesterdayString();
-      const min = Number(chore.dynamic?.min) || 2;
-      const max = Number(chore.dynamic?.max) || 10;
+      const min = Number(task.dynamic?.min) || 2;
+      const max = Number(task.dynamic?.max) || 10;
 
       let activeStreak = 0;
-      if (chore.lastCompleted === today) {
-        activeStreak = chore.streak || 1;
-      } else if (chore.lastCompleted === yesterday) {
-        activeStreak = chore.streak || 1;
+      if (task.lastCompleted === today) {
+        activeStreak = task.streak || 1;
+      } else if (task.lastCompleted === yesterday) {
+        activeStreak = task.streak || 1;
       } else {
         activeStreak = 0;
       }
 
-      const effectiveStreak = chore.lastCompleted === today ? activeStreak : activeStreak + 1;
+      const effectiveStreak = task.lastCompleted === today ? activeStreak : activeStreak + 1;
       const step = Math.max(1, Math.round((max - min) / 4));
-      const earned = chore.type === 'dynamic' ? Math.max(min, max - ((effectiveStreak - 1) * step)) : (Number(chore.points) || 0);
+      const earned = task.type === 'dynamic' ? Math.max(min, max - ((effectiveStreak - 1) * step)) : (Number(task.points) || 0);
 
       return { earned, effectiveStreak, activeStreak };
     }
@@ -1026,9 +1051,9 @@
     }
 
     function deleteMember(id) {
-      if (!confirm("Delete this member and their chores?")) return;
+      if (!confirm("Delete this member and their tasks?")) return;
       state.members = state.members.filter(m => m.id !== id);
-      state.chores = state.chores.filter(c => c.assigneeId !== id);
+      state.tasks = state.tasks.filter(t => t.assigneeId !== id);
       if (selectedMemberId === id) selectedMemberId = null;
       save();
     }
@@ -1063,25 +1088,25 @@
     }
 
     /* -------------------------------------------------------------------------
-       CHORE MANAGEMENT (MULTI-USER CREATION)
+       TASK LIST MANAGEMENT (MULTI-USER CREATION)
     ------------------------------------------------------------------------- */
-    function addChore() {
-      const name = document.getElementById('c-name').value.trim();
-      const selectedUserIds = Array.from(document.querySelectorAll('.c-assignee-cb:checked'))
+    function addTask() {
+      const name = document.getElementById('t-name').value.trim();
+      const selectedUserIds = Array.from(document.querySelectorAll('.t-assignee-cb:checked'))
         .map(cb => Number(cb.value));
-      const goal = Number(document.getElementById('c-goal').value) || 0;
-      const prize = document.getElementById('c-prize').value.trim();
-      const type = document.getElementById('c-type').value;
-      const points = Number(document.getElementById('c-points').value) || 0;
-      const max = Number(document.getElementById('c-max').value) || 10;
-      const min = Number(document.getElementById('c-min').value) || 2;
-      const desc = document.getElementById('c-desc').value.trim();
+      const goal = Number(document.getElementById('t-goal').value) || 0;
+      const prize = document.getElementById('t-prize').value.trim();
+      const type = document.getElementById('t-type').value;
+      const points = Number(document.getElementById('t-points').value) || 0;
+      const max = Number(document.getElementById('t-max').value) || 10;
+      const min = Number(document.getElementById('t-min').value) || 2;
+      const desc = document.getElementById('t-desc').value.trim();
 
-      if (!name) return alert("Please enter a chore name.");
+      if (!name) return alert("Please enter a task name.");
       if (selectedUserIds.length === 0) return alert("Please select at least one user.");
 
       selectedUserIds.forEach((userId, index) => {
-        state.chores.push({
+        state.tasks.push({
           id: Date.now() + index,
           name,
           assigneeId: userId,
@@ -1098,67 +1123,67 @@
         });
       });
 
-      document.getElementById('c-name').value = '';
-      document.getElementById('c-goal').value = '0';
-      document.getElementById('c-prize').value = '';
-      document.getElementById('c-desc').value = '';
-      document.querySelectorAll('.c-assignee-cb').forEach(cb => cb.checked = false);
+      document.getElementById('t-name').value = '';
+      document.getElementById('t-goal').value = '0';
+      document.getElementById('t-prize').value = '';
+      document.getElementById('t-desc').value = '';
+      document.querySelectorAll('.t-assignee-cb').forEach(cb => cb.checked = false);
       save();
     }
 
-    function deleteChore(id) {
-      if (!confirm("Delete this chore?")) return;
-      state.chores = state.chores.filter(c => c.id !== id);
+    function deleteTask(id) {
+      if (!confirm("Delete this task?")) return;
+      state.tasks = state.tasks.filter(t => t.id !== id);
       save();
     }
 
-    function openEditChore(id) {
-      const c = state.chores.find(x => x.id === id);
-      if (!c) return;
+    function openEditTask(id) {
+      const t = state.tasks.find(x => x.id === id);
+      if (!t) return;
       editId = id;
-      document.getElementById('edit-c-name').value = c.name;
-      document.getElementById('edit-c-assignee').value = c.assigneeId;
-      document.getElementById('edit-c-goal').value = c.goal || 0;
-      document.getElementById('edit-c-prize').value = c.prize || '';
-      document.getElementById('edit-c-type').value = c.type || 'static';
-      document.getElementById('edit-c-points').value = c.points || 0;
-      document.getElementById('edit-c-max').value = c.dynamic?.max || 10;
-      document.getElementById('edit-c-min').value = c.dynamic?.min || 2;
-      document.getElementById('edit-c-desc').value = c.desc || '';
-      togglePointForm('edit-c-type', 'edit-c-static', 'edit-c-dynamic');
-      document.getElementById('edit-chore-modal').style.display = 'flex';
+      document.getElementById('edit-t-name').value = t.name;
+      document.getElementById('edit-t-assignee').value = t.assigneeId;
+      document.getElementById('edit-t-goal').value = t.goal || 0;
+      document.getElementById('edit-t-prize').value = t.prize || '';
+      document.getElementById('edit-t-type').value = t.type || 'static';
+      document.getElementById('edit-t-points').value = t.points || 0;
+      document.getElementById('edit-t-max').value = t.dynamic?.max || 10;
+      document.getElementById('edit-t-min').value = t.dynamic?.min || 2;
+      document.getElementById('edit-t-desc').value = t.desc || '';
+      togglePointForm('edit-t-type', 'edit-t-static', 'edit-t-dynamic');
+      document.getElementById('edit-task-modal').style.display = 'flex';
     }
 
-    function submitChoreEdit() {
-      const c = state.chores.find(x => x.id === editId);
-      if (c) {
-        c.name = document.getElementById('edit-c-name').value.trim();
-        c.assigneeId = Number(document.getElementById('edit-c-assignee').value);
-        c.goal = Number(document.getElementById('edit-c-goal').value) || 0;
-        c.prize = document.getElementById('edit-c-prize').value.trim();
-        c.type = document.getElementById('edit-c-type').value;
-        c.points = Number(document.getElementById('edit-c-points').value) || 0;
-        c.dynamic = {
-          max: Number(document.getElementById('edit-c-max').value) || 10,
-          min: Number(document.getElementById('edit-c-min').value) || 2
+    function submitTaskEdit() {
+      const t = state.tasks.find(x => x.id === editId);
+      if (t) {
+        t.name = document.getElementById('edit-t-name').value.trim();
+        t.assigneeId = Number(document.getElementById('edit-t-assignee').value);
+        t.goal = Number(document.getElementById('edit-t-goal').value) || 0;
+        t.prize = document.getElementById('edit-t-prize').value.trim();
+        t.type = document.getElementById('edit-t-type').value;
+        t.points = Number(document.getElementById('edit-t-points').value) || 0;
+        t.dynamic = {
+          max: Number(document.getElementById('edit-t-max').value) || 10,
+          min: Number(document.getElementById('edit-t-min').value) || 2
         };
-        c.desc = document.getElementById('edit-c-desc').value.trim();
+        t.desc = document.getElementById('edit-t-desc').value.trim();
       }
       closeModals();
       save();
     }
 
-    function resetAllChoreChecks() {
-      if (!confirm("Reset today's completion checkmarks for all chores?")) return;
-      state.chores.forEach(c => c.lastCompleted = null);
+    function resetAllTaskChecks() {
+      if (!confirm("Reset today's completion checkmarks for all tasks?")) return;
+      state.tasks.forEach(t => t.lastCompleted = null);
       save();
     }
 
-    function resetAllChoreGoals() {
+    function resetAllTaskGoals() {
       if (!confirm("Reset all streak progress counters to 0?")) return;
-      state.chores.forEach(c => {
-        c.streak = 0;
-        c.goalStreak = 0;
+      state.tasks.forEach(t => {
+        t.streak = 0;
+        t.goalStreak = 0;
       });
       save();
     }
@@ -1166,27 +1191,27 @@
     /* -------------------------------------------------------------------------
        COMPLETION & APPROVAL WORKFLOW
     ------------------------------------------------------------------------- */
-    function completeChore(choreId) {
-      const chore = state.chores.find(c => c.id === choreId);
-      const member = state.members.find(m => m.id === chore.assigneeId);
-      if (!chore || !member) return;
+    function completeTask(taskId) {
+      const task = state.tasks.find(t => t.id === taskId);
+      const member = state.members.find(m => m.id === task.assigneeId);
+      if (!task || !member) return;
 
       const today = new Date().toDateString();
-      if (chore.lastCompleted === today) return;
+      if (task.lastCompleted === today) return;
 
-      const info = getStreakAndRewardInfo(chore);
+      const info = getStreakAndRewardInfo(task);
 
-      chore.prevStreak = chore.streak || 0;
-      chore.streak = info.effectiveStreak;
-      chore.prevLastCompleted = chore.lastCompleted || null;
-      chore.lastCompleted = today;
+      task.prevStreak = task.streak || 0;
+      task.streak = info.effectiveStreak;
+      task.prevLastCompleted = task.lastCompleted || null;
+      task.lastCompleted = today;
 
       state.approvals.push({
         id: Date.now(),
         memberId: member.id,
         memberName: member.name,
-        choreId: chore.id,
-        choreName: chore.name,
+        taskId: task.id,
+        taskName: task.name,
         points: info.earned,
         wasConsecutive: info.activeStreak > 0
       });
@@ -1199,23 +1224,24 @@
       const appIndex = state.approvals.findIndex(a => a.id === appId);
       if (appIndex === -1) return;
       const app = state.approvals[appIndex];
-      const chore = state.chores.find(c => c.id === app.choreId);
+      const targetTaskId = app.taskId ?? app.choreId;
+      const task = state.tasks.find(t => t.id === targetTaskId);
       const member = state.members.find(m => m.id === app.memberId);
 
       if (approved) {
         if (member) member.points += app.points;
-        if (chore) {
-          chore.goalStreak = app.wasConsecutive ? ((chore.goalStreak || 0) + 1) : 1;
-          if (chore.goal > 0 && chore.goalStreak >= chore.goal) {
-            alert(`🎉 ${member.name} completed "${chore.name}" ${chore.goal} days in a row and unlocked: ${chore.prize || 'Prize'}!`);
-            chore.goalStreak = 0;
+        if (task) {
+          task.goalStreak = app.wasConsecutive ? ((task.goalStreak || 0) + 1) : 1;
+          if (task.goal > 0 && task.goalStreak >= task.goal) {
+            alert(`🎉 ${member.name} completed "${task.name}" ${task.goal} days in a row and unlocked: ${task.prize || 'Prize'}!`);
+            task.goalStreak = 0;
           }
         }
       } else {
-        if (chore) {
-          chore.lastCompleted = chore.prevLastCompleted || null;
-          if (chore.prevStreak !== undefined) {
-            chore.streak = chore.prevStreak;
+        if (task) {
+          task.lastCompleted = task.prevLastCompleted || null;
+          if (task.prevStreak !== undefined) {
+            task.streak = task.prevStreak;
           }
         }
       }
@@ -1282,7 +1308,7 @@
       reader.onload = function(e) {
         try {
           const imported = JSON.parse(e.target.result);
-          state = { ...state, ...imported };
+          state = migrateLegacyFields({ ...state, ...imported });
           save();
           alert("Hub data restored successfully!");
         } catch (err) {
@@ -1293,7 +1319,7 @@
     }
 
     function nuclearReset() {
-      if (confirm("This will wipe all members, chores, and points. Continue?")) {
+      if (confirm("This will wipe all members, task lists, and points. Continue?")) {
         localStorage.clear();
         sessionStorage.clear();
         familyDocRef.delete().then(() => location.reload());
@@ -1303,17 +1329,17 @@
     /* -------------------------------------------------------------------------
        UI RENDERING ENGINE
     ------------------------------------------------------------------------- */
-    function renderChoreRow(c) {
-      const logicLabel = c.type === 'dynamic' ? `D:${c.dynamic.min}-${c.dynamic.max}` : `S:${c.points}`;
+    function renderTaskRow(t) {
+      const logicLabel = t.type === 'dynamic' ? `D:${t.dynamic.min}-${t.dynamic.max}` : `S:${t.points}`;
       return `
         <tr>
-          <td><strong>${c.name}</strong>${c.desc ? `<div style="font-size:0.85rem; color:var(--text-muted); margin-top:2px;">${c.desc}</div>` : ''}</td>
-          <td>${c.goal ? c.goal + 'd' : 0}</td>
-          <td>${c.prize || '--'}</td>
+          <td><strong>${t.name}</strong>${t.desc ? `<div style="font-size:0.85rem; color:var(--text-muted); margin-top:2px;">${t.desc}</div>` : ''}</td>
+          <td>${t.goal ? t.goal + 'd' : 0}</td>
+          <td>${t.prize || '--'}</td>
           <td>${logicLabel}</td>
           <td style="text-align:right;">
-            <button class="btn-outline-primary" style="padding:6px 12px; font-size:0.85rem;" onclick="openEditChore(${c.id})">Edit</button>
-            <button class="btn-outline-danger" style="padding:6px 12px; font-size:0.85rem;" onclick="deleteChore(${c.id})">X</button>
+            <button class="btn-outline-primary" style="padding:6px 12px; font-size:0.85rem;" onclick="openEditTask(${t.id})">Edit</button>
+            <button class="btn-outline-danger" style="padding:6px 12px; font-size:0.85rem;" onclick="deleteTask(${t.id})">X</button>
           </td>
         </tr>
       `;
@@ -1353,18 +1379,18 @@
       document.getElementById('cal-url-input').value = state.calendarUrl || '';
       document.getElementById('change-admin-user-input').value = state.adminUsername || 'admin';
 
-      // Populate Chore Creation Multi-User Checkboxes & Edit Modal Dropdown
-      const assigneeList = document.getElementById('c-assignee-list');
+      // Populate Task Creation Multi-User Checkboxes & Edit Modal Dropdown
+      const assigneeList = document.getElementById('t-assignee-list');
       if (assigneeList) {
-        const currentlyChecked = Array.from(document.querySelectorAll('.c-assignee-cb:checked')).map(cb => Number(cb.value));
+        const currentlyChecked = Array.from(document.querySelectorAll('.t-assignee-cb:checked')).map(cb => Number(cb.value));
         assigneeList.innerHTML = state.members.length ? state.members.map(m => `
           <label style="display:flex; align-items:center; gap:8px; cursor:pointer; font-size:0.95rem; font-weight:normal; text-transform:none; color:var(--text);">
-            <input type="checkbox" class="c-assignee-cb" value="${m.id}" ${currentlyChecked.includes(m.id) ? 'checked' : ''}> ${m.name}
+            <input type="checkbox" class="t-assignee-cb" value="${m.id}" ${currentlyChecked.includes(m.id) ? 'checked' : ''}> ${m.name}
           </label>
         `).join('') : `<span style="color:var(--text-muted); font-size:0.9rem;">Add family members first</span>`;
       }
 
-      const editAssigneeSelect = document.getElementById('edit-c-assignee');
+      const editAssigneeSelect = document.getElementById('edit-t-assignee');
       if (editAssigneeSelect) {
         editAssigneeSelect.innerHTML = state.members.map(m => `<option value="${m.id}">${m.name}</option>`).join('');
       }
@@ -1391,43 +1417,43 @@
 
         const activeMember = state.members.find(m => m.id === selectedMemberId);
         if (activeMember) {
-          const memberChores = state.chores.filter(c => c.assigneeId === activeMember.id);
+          const memberTasks = state.tasks.filter(t => t.assigneeId === activeMember.id);
           const unit = currencyMap[activeMember.role] || '';
           const cardColor = activeMember.color || '#0d9488';
 
-          const choresHtml = memberChores.length ? memberChores.map(c => {
-            const isDone = c.lastCompleted === today;
-            const info = getStreakAndRewardInfo(c);
-            const currentGoalStreak = info.activeStreak > 0 ? (c.goalStreak || 0) : 0;
-            const pct = c.goal > 0 ? Math.min(100, Math.round((currentGoalStreak / c.goal) * 100)) : 0;
+          const tasksHtml = memberTasks.length ? memberTasks.map(t => {
+            const isDone = t.lastCompleted === today;
+            const info = getStreakAndRewardInfo(t);
+            const currentGoalStreak = info.activeStreak > 0 ? (t.goalStreak || 0) : 0;
+            const pct = t.goal > 0 ? Math.min(100, Math.round((currentGoalStreak / t.goal) * 100)) : 0;
             const streakLabel = info.activeStreak > 0 ? ` • 🔥 ${info.activeStreak}d streak` : '';
             const rewardText = `${info.earned} ${unit}${streakLabel}`;
 
             return `
-              <div class="chore-item ${isDone ? 'completed' : ''}">
-                <div class="chore-info" style="flex:1; padding-right:14px;">
-                  <h4>${c.name}</h4>
-                  <p>${c.desc ? c.desc + ' • ' : ''}<strong>${rewardText}</strong></p>
-                  ${c.goal > 0 ? `
-                    <p style="font-size:0.8rem; color:${cardColor}; font-weight:700; margin-top:6px;">🎁 ${c.prize || 'Streak Prize'}: ${currentGoalStreak}/${c.goal} days</p>
+              <div class="task-item ${isDone ? 'completed' : ''}">
+                <div class="task-info" style="flex:1; padding-right:14px;">
+                  <h4>${t.name}</h4>
+                  <p>${t.desc ? t.desc + ' • ' : ''}<strong>${rewardText}</strong></p>
+                  ${t.goal > 0 ? `
+                    <p style="font-size:0.8rem; color:${cardColor}; font-weight:700; margin-top:6px;">🎁 ${t.prize || 'Streak Prize'}: ${currentGoalStreak}/${t.goal} days</p>
                     <div class="goal-bar"><div class="goal-fill" style="width:${pct}%; background:${cardColor};"></div></div>
                   ` : ''}
                 </div>
-                <button class="btn-check" ${isDone ? 'disabled' : ''} onclick="completeChore(${c.id})">${isDone ? '✓ Done' : 'Complete'}</button>
+                <button class="btn-check" ${isDone ? 'disabled' : ''} onclick="completeTask(${t.id})">${isDone ? '✓ Done' : 'Complete'}</button>
               </div>
             `;
-          }).join('') : `<p style="color:var(--text-muted); font-size:0.95rem; padding:12px 0;">No chores assigned to ${activeMember.name}.</p>`;
+          }).join('') : `<p style="color:var(--text-muted); font-size:0.95rem; padding:12px 0;">No tasks assigned to ${activeMember.name}.</p>`;
 
           cardSlot.innerHTML = `
             <div class="user-card" style="border-top-color: ${cardColor};">
               <div class="user-header">
-                <span class="user-name">${activeMember.name}'s Chores</span>
+                <span class="user-name">${activeMember.name}'s Task List</span>
                 <div style="display:flex; align-items:center; gap:10px;">
                   ${activeMember.role !== 'adult' ? `<span class="user-points" style="background:${cardColor};">${activeMember.points} ${unit}</span>` : ''}
                   <button onclick="selectedMemberId = null; renderAll();" style="background:none; border:none; font-size:1.1rem; cursor:pointer; color:var(--text-muted); padding:4px 8px;" title="Close">✕</button>
                 </div>
               </div>
-              ${choresHtml}
+              ${tasksHtml}
             </div>
           `;
           cardSlot.classList.add('show');
@@ -1450,34 +1476,34 @@
         </tr>
       `).join('');
 
-      // Chores Table (Grouped by Family Member)
-      let groupedChoresHtml = '';
+      // Task Lists Table (Grouped by Family Member)
+      let groupedTasksHtml = '';
       state.members.forEach(m => {
-        const memberChores = state.chores.filter(c => c.assigneeId === m.id);
+        const memberTasks = state.tasks.filter(t => t.assigneeId === m.id);
         const mColor = m.color || '#0d9488';
-        groupedChoresHtml += `
+        groupedTasksHtml += `
           <tr class="group-header" style="background: ${mColor}12; border-top: 2px solid ${mColor}35; border-bottom: 1px solid ${mColor}35;">
-            <td colspan="5" style="color:var(--text);">${m.name.trim()}<span class="group-badge">${memberChores.length} ${memberChores.length === 1 ? 'chore' : 'chores'}</span></td>
+            <td colspan="5" style="color:var(--text);">${m.name.trim()}<span class="group-badge">${memberTasks.length} ${memberTasks.length === 1 ? 'task' : 'tasks'}</span></td>
           </tr>
         `;
-        if (memberChores.length) {
-          groupedChoresHtml += memberChores.map(renderChoreRow).join('');
+        if (memberTasks.length) {
+          groupedTasksHtml += memberTasks.map(renderTaskRow).join('');
         } else {
-          groupedChoresHtml += `<tr><td colspan="5" style="color:var(--text-muted); font-size:0.9rem; padding-left:24px;">No chores assigned.</td></tr>`;
+          groupedTasksHtml += `<tr><td colspan="5" style="color:var(--text-muted); font-size:0.9rem; padding-left:24px;">No tasks assigned.</td></tr>`;
         }
       });
 
       const memberIds = new Set(state.members.map(m => m.id));
-      const unassignedChores = state.chores.filter(c => !memberIds.has(c.assigneeId));
-      if (unassignedChores.length) {
-        groupedChoresHtml += `
+      const unassignedTasks = state.tasks.filter(t => !memberIds.has(t.assigneeId));
+      if (unassignedTasks.length) {
+        groupedTasksHtml += `
           <tr class="group-header" style="background: rgba(100,100,100,0.1);">
-            <td colspan="5">Unassigned<span class="group-badge">${unassignedChores.length}</span></td>
+            <td colspan="5">Unassigned<span class="group-badge">${unassignedTasks.length}</span></td>
           </tr>
-        ` + unassignedChores.map(renderChoreRow).join('');
+        ` + unassignedTasks.map(renderTaskRow).join('');
       }
 
-      document.getElementById('chore-list-body').innerHTML = groupedChoresHtml || `<tr><td colspan="5" style="text-align:center; color:var(--text-muted);">No chores configured yet.</td></tr>`;
+      document.getElementById('task-list-body').innerHTML = groupedTasksHtml || `<tr><td colspan="5" style="text-align:center; color:var(--text-muted);">No tasks configured yet.</td></tr>`;
 
       // Approvals Badges & Table
       const waitingCount = state.approvals.length;
@@ -1488,7 +1514,7 @@
       document.getElementById('approval-list-body').innerHTML = waitingCount ? state.approvals.map(a => `
         <tr>
           <td><strong>${a.memberName}</strong></td>
-          <td>${a.choreName}</td>
+          <td>${a.taskName || a.choreName}</td>
           <td>+${a.points}</td>
           <td style="text-align:right;">
             <button class="btn-check" style="padding:8px 14px; font-size:0.88rem;" onclick="handleApproval(${a.id}, true)">Approve</button>
