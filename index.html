@@ -133,7 +133,6 @@
       font-size: 1rem;
       font-weight: 700;
       cursor: pointer;
-      transition: background 0.2s;
     }
     .btn-primary-full:hover { background: var(--primary-hover); }
 
@@ -216,7 +215,6 @@
       display: flex;
       align-items: center;
       gap: 7px;
-      transition: 0.2s;
     }
     .btn-admin-header:hover { background: var(--primary-hover); }
     .btn-admin-header.unlocked { background: var(--success); }
@@ -260,7 +258,6 @@
       font-size: 0.96rem;
       border-radius: var(--radius-md);
       cursor: pointer;
-      transition: 0.18s;
       display: flex;
       align-items: center;
       gap: 12px;
@@ -371,7 +368,6 @@
       font-weight: 700;
       cursor: pointer;
       user-select: none;
-      transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
       display: inline-flex;
       align-items: center;
       gap: 6px;
@@ -404,13 +400,8 @@
       right: 32px;
       z-index: 100;
       display: none;
-      animation: fadeInModal 0.2s cubic-bezier(0.16, 1, 0.3, 1);
     }
     #selected-member-card-slot.show { display: block; }
-    @keyframes fadeInModal {
-      from { opacity: 0; transform: translateY(-8px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
 
     .user-card {
       background: var(--surface-card);
@@ -431,6 +422,7 @@
       font-weight: 700;
     }
 
+    /* No vertical translateY on hover so buttons never shift/bounce under the cursor */
     .task-item {
       background: var(--surface);
       padding: 18px;
@@ -441,9 +433,9 @@
       justify-content: space-between;
       align-items: center;
       border-left: 4px solid var(--warning);
-      transition: transform 0.15s, box-shadow 0.15s;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease;
     }
-    .task-item:hover { transform: translateY(-1px); box-shadow: 0 8px 20px rgba(0, 0, 0, 0.04); }
+    .task-item:hover { box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08); }
     .task-item.completed { border-left-color: var(--success); opacity: 0.55; }
     .task-info h4 { font-size: 1.02rem; font-weight: 700; margin-bottom: 4px; color: var(--text); }
     .task-info p { font-size: 0.88rem; color: var(--text-muted); }
@@ -451,8 +443,13 @@
     .goal-bar { height: 6px; background: var(--surface-card); border-radius: var(--radius-sm); margin-top: 10px; overflow: hidden; }
     .goal-fill { height: 100%; background: var(--primary); transition: width 0.3s; }
 
-    /* BUTTONS & FORMS */
-    button { cursor: pointer; font-weight: 600; border-radius: var(--radius-md); transition: 0.18s; }
+    /* BUTTONS & FORMS (Strict color-only transitions prevent layout/size bouncing) */
+    button {
+      cursor: pointer;
+      font-weight: 600;
+      border-radius: var(--radius-md);
+      transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+    }
     .btn-check { background: var(--success); color: white; border: none; padding: 10px 18px; font-size: 0.92rem; font-weight: 700; }
     .btn-check:hover { background: #059669; }
     .btn-check:disabled { background: var(--surface); color: var(--text-muted); cursor: default; }
@@ -571,7 +568,7 @@
       <label class="remember-row">
         <input type="checkbox" id="remember-device-cb" checked> Remember this device
       </label>
-      <button class="btn-primary-full" onclick="verifySitePassword()">Enter Family Hub</button>
+      <button type="button" class="btn-primary-full" onclick="verifySitePassword()">Enter Family Hub</button>
     </div>
   </div>
 
@@ -583,11 +580,11 @@
       </div>
       <div class="topbar-right">
         <div id="clock"></div>
-        <button id="header-approval-flag" class="approval-flag hidden" onclick="handleApprovalFlagClick()">
+        <button type="button" id="header-approval-flag" class="approval-flag hidden" onclick="handleApprovalFlagClick()">
           🔔 <span id="header-approval-count">0</span> Waiting
         </button>
-        <button id="theme-toggle-btn" class="btn-theme-toggle" onclick="toggleTheme()" title="Toggle Dark Mode">🌙</button>
-        <button id="admin-header-btn" class="btn-admin-header" onclick="handleAdminButtonClick()">🔒 Admin</button>
+        <button type="button" id="theme-toggle-btn" class="btn-theme-toggle" onclick="toggleTheme()" title="Toggle Dark Mode">🌙</button>
+        <button type="button" id="admin-header-btn" class="btn-admin-header" onclick="handleAdminButtonClick()">🔒 Admin</button>
       </div>
     </div>
   </header>
@@ -597,14 +594,14 @@
     <div>
       <div class="sidebar-label">Navigation</div>
       <div class="nav-links">
-        <button id="nav-dashboard" class="nav-btn active" onclick="showSection('dashboard', this)">🏠 Dashboard</button>
-        <button id="nav-approvals" class="nav-btn" onclick="showSection('admin-approvals', this)">✅ Approvals <span id="badge-count" style="background:var(--danger); color:white; padding:2px 8px; border-radius:2px; font-size:0.75rem; margin-left:auto;">0</span></button>
-        <button id="nav-members" class="nav-btn" onclick="showSection('admin-members', this)">👥 Members</button>
-        <button id="nav-settings" class="nav-btn" onclick="showSection('admin-settings', this)">🛠️ Settings</button>
-        <button id="nav-tasks" class="nav-btn" onclick="showSection('admin-tasks', this)">⚙️ Task Lists</button>
+        <button type="button" id="nav-dashboard" class="nav-btn active" onclick="showSection('dashboard', this)">🏠 Dashboard</button>
+        <button type="button" id="nav-approvals" class="nav-btn" onclick="showSection('admin-approvals', this)">✅ Approvals <span id="badge-count" style="background:var(--danger); color:white; padding:2px 8px; border-radius:2px; font-size:0.75rem; margin-left:auto;">0</span></button>
+        <button type="button" id="nav-members" class="nav-btn" onclick="showSection('admin-members', this)">👥 Members</button>
+        <button type="button" id="nav-settings" class="nav-btn" onclick="showSection('admin-settings', this)">🛠️ Settings</button>
+        <button type="button" id="nav-tasks" class="nav-btn" onclick="showSection('admin-tasks', this)">⚙️ Task Lists</button>
       </div>
     </div>
-    <button class="btn-lock-sidebar" onclick="lockAdmin()">🔒 Lock Admin</button>
+    <button type="button" class="btn-lock-sidebar" onclick="lockAdmin()">🔒 Lock Admin</button>
   </nav>
 
   <main id="main-content">
@@ -638,8 +635,8 @@
       <div class="card">
         <h1>Task List Configuration</h1>
         <div style="display:flex; gap:12px; margin-bottom:20px; flex-wrap:wrap;">
-          <button class="btn-outline-danger" onclick="resetAllTaskChecks()">🧪 RESET DAILY SWEEP</button>
-          <button class="btn-outline-danger" onclick="resetAllTaskGoals()">🎁 RESET STREAK PROGRESS</button>
+          <button type="button" class="btn-outline-danger" onclick="resetAllTaskChecks()">🧪 RESET DAILY SWEEP</button>
+          <button type="button" class="btn-outline-danger" onclick="resetAllTaskGoals()">🎁 RESET STREAK PROGRESS</button>
         </div>
         <div class="admin-form-box">
           <div class="form-group"><label>Task Name</label><input type="text" id="t-name"></div>
@@ -651,7 +648,7 @@
           <div id="t-dynamic" class="hidden" style="display:flex; gap:10px;"><div class="form-group"><label>Max</label><input type="number" id="t-max" value="10"></div><div class="form-group"><label>Min</label><input type="number" id="t-min" value="2"></div></div>
           <div class="form-group" style="grid-column: 1 / -1;"><label>Description</label><input type="text" id="t-desc"></div>
         </div>
-        <button class="btn-outline-primary" style="width:100%; padding:14px;" onclick="addTask()">Save Task</button>
+        <button type="button" class="btn-outline-primary" style="width:100%; padding:14px;" onclick="addTask()">Save Task</button>
         <table style="margin-top:24px;"><thead><tr><th style="width:30%">Task</th><th style="width:15%">Streak Goal</th><th style="width:15%">Prize</th><th style="width:20%">Logic</th><th style="text-align:right; width:20%">Action</th></tr></thead><tbody id="task-list-body"></tbody></table>
       </div>
     </section>
@@ -660,12 +657,12 @@
     <section id="admin-members" class="content-section hidden">
       <div class="card">
         <h1>Family Members</h1>
-        <button class="btn-outline-danger" onclick="clearAllPoints()" style="margin-bottom:20px;">💰 RESET ALL BALANCES</button>
+        <button type="button" class="btn-outline-danger" onclick="clearAllPoints()" style="margin-bottom:20px;">💰 RESET ALL BALANCES</button>
         <div class="admin-form-box">
           <div class="form-group"><label>Name</label><input type="text" id="m-name"></div>
           <div class="form-group"><label>Role</label><select id="m-role"><option value="kid">Kid</option><option value="teen">Teen</option><option value="adult">Adult</option></select></div>
           <div class="form-group"><label>Card Color</label><input type="color" id="m-color" value="#0d9488" style="height:46px; width:100%; padding:2px; cursor:pointer; border-radius:3px; border:1.5px solid var(--input-border); background:var(--input-bg);"></div>
-          <button class="btn-outline-primary" onclick="addMember()">Add Member</button>
+          <button type="button" class="btn-outline-primary" onclick="addMember()">Add Member</button>
         </div>
         <table><thead><tr><th>Name</th><th>Role</th><th>Points</th><th style="text-align:right">Action</th></tr></thead><tbody id="member-list-body"></tbody></table>
       </div>
@@ -677,11 +674,11 @@
         <h1>Hub Settings</h1>
         <div class="admin-form-box">
           <div class="form-group" style="grid-column: 1 / -1;"><label>Hub / Family Name (Replaces Family Hub in Header)</label><input type="text" id="family-name-input" placeholder="e.g. Spring Family"></div>
-          <button class="btn-outline-primary" onclick="saveFamilyName()">Save Hub Name</button>
+          <button type="button" class="btn-outline-primary" onclick="saveFamilyName()">Save Hub Name</button>
         </div>
         <div class="admin-form-box">
           <div class="form-group" style="grid-column: 1 / -1;"><label>Google Calendar Embed URL</label><input type="text" id="cal-url-input"></div>
-          <button class="btn-outline-primary" onclick="saveCalendarUrl()">Save URL</button>
+          <button type="button" class="btn-outline-primary" onclick="saveCalendarUrl()">Save URL</button>
         </div>
         <div class="admin-form-box">
           <div class="form-group" style="grid-column: 1 / -1;">
@@ -693,19 +690,19 @@
         <div class="admin-form-box">
           <div class="form-group"><label>Admin Username</label><input type="text" id="change-admin-user-input" placeholder="admin"></div>
           <div class="form-group"><label>Admin Password</label><input type="password" id="change-pass-input" placeholder="New Admin Password"></div>
-          <button class="btn-outline-primary" onclick="updateAdminCredentials()">Update Admin Login</button>
+          <button type="button" class="btn-outline-primary" onclick="updateAdminCredentials()">Update Admin Login</button>
         </div>
         <div class="admin-form-box">
           <div class="form-group" style="grid-column: 1 / -1;"><label>Website Entry Password</label><input type="password" id="change-site-pass-input" placeholder="New Site Password"></div>
-          <button class="btn-outline-primary" onclick="updateSitePassword()">Update Site Password</button>
+          <button type="button" class="btn-outline-primary" onclick="updateSitePassword()">Update Site Password</button>
         </div>
         <hr style="margin:24px 0; border:0; border-top:1px solid var(--border);">
         <div style="display:flex; gap:12px; margin-bottom:24px;">
-          <button class="btn-outline-primary" onclick="exportData()" style="flex:1;">📤 Backup Hub</button>
-          <button class="btn-outline-primary" onclick="document.getElementById('importFile').click()" style="flex:1;">📥 Restore Hub</button>
+          <button type="button" class="btn-outline-primary" onclick="exportData()" style="flex:1;">📤 Backup Hub</button>
+          <button type="button" class="btn-outline-primary" onclick="document.getElementById('importFile').click()" style="flex:1;">📥 Restore Hub</button>
           <input type="file" id="importFile" class="hidden" accept=".json" onchange="importData(event)">
         </div>
-        <button class="btn-outline-danger" onclick="nuclearReset()" style="width:100%; margin-top:20px; padding:15px; font-weight:800;">☢️ NUCLEAR SYSTEM RESET</button>
+        <button type="button" class="btn-outline-danger" onclick="nuclearReset()" style="width:100%; margin-top:20px; padding:15px; font-weight:800;">☢️ NUCLEAR SYSTEM RESET</button>
       </div>
     </section>
   </main>
@@ -730,8 +727,8 @@
         <input type="password" id="admin-login-pass" placeholder="Password" onkeydown="if(event.key==='Enter') submitAdminLogin()">
       </div>
       <div class="modal-actions">
-        <button class="btn-outline-danger" onclick="closeModals()">Cancel</button>
-        <button class="btn-outline-primary" onclick="submitAdminLogin()">Sign In</button>
+        <button type="button" class="btn-outline-danger" onclick="closeModals()">Cancel</button>
+        <button type="button" class="btn-outline-primary" onclick="submitAdminLogin()">Sign In</button>
       </div>
     </div>
   </div>
@@ -745,8 +742,8 @@
       <div class="form-group" style="margin-bottom:14px;"><label>Points Balance</label><input type="number" id="edit-m-points"></div>
       <div class="form-group" style="margin-bottom:14px;"><label>Card Color</label><input type="color" id="edit-m-color" style="height:46px; width:100%; padding:2px; cursor:pointer; border-radius:3px; border:1.5px solid var(--input-border); background:var(--input-bg);"></div>
       <div class="modal-actions">
-        <button class="btn-outline-danger" onclick="closeModals()">Cancel</button>
-        <button class="btn-outline-primary" onclick="submitMemberEdit()">Save Changes</button>
+        <button type="button" class="btn-outline-danger" onclick="closeModals()">Cancel</button>
+        <button type="button" class="btn-outline-primary" onclick="submitMemberEdit()">Save Changes</button>
       </div>
     </div>
   </div>
@@ -764,8 +761,8 @@
       <div id="edit-t-dynamic" class="hidden" style="display:flex; gap:10px; margin-bottom:14px;"><div class="form-group"><label>Max</label><input type="number" id="edit-t-max"></div><div class="form-group"><label>Min</label><input type="number" id="edit-t-min"></div></div>
       <div class="form-group"><label>Description</label><input type="text" id="edit-t-desc"></div>
       <div class="modal-actions">
-        <button class="btn-outline-danger" onclick="closeModals()">Cancel</button>
-        <button class="btn-outline-primary" onclick="submitTaskEdit()">Save Changes</button>
+        <button type="button" class="btn-outline-danger" onclick="closeModals()">Cancel</button>
+        <button type="button" class="btn-outline-primary" onclick="submitTaskEdit()">Save Changes</button>
       </div>
     </div>
   </div>
@@ -864,6 +861,10 @@
     let editId = null;
     let selectedMemberId = null;
     let lastTabsSignature = '';
+    let lastCardSignature = '';
+    let lastMembersTableSignature = '';
+    let lastTasksTableSignature = '';
+    let lastApprovalsSignature = '';
     const currencyMap = { kid: "tokens", teen: "minutes", adult: "" };
 
     // Single delegated click listener so member tabs never drop clicks during background syncs
@@ -1407,8 +1408,8 @@
           <td>${t.prize || '--'}</td>
           <td>${logicLabel}</td>
           <td style="text-align:right;">
-            <button class="btn-outline-primary" style="padding:6px 12px; font-size:0.85rem;" onclick="openEditTask(${t.id})">Edit</button>
-            <button class="btn-outline-danger" style="padding:6px 12px; font-size:0.85rem;" onclick="deleteTask(${t.id})">X</button>
+            <button type="button" class="btn-outline-primary" style="padding:6px 12px; font-size:0.85rem;" onclick="openEditTask(${t.id})">Edit</button>
+            <button type="button" class="btn-outline-danger" style="padding:6px 12px; font-size:0.85rem;" onclick="deleteTask(${t.id})">X</button>
           </td>
         </tr>
       `;
@@ -1473,7 +1474,7 @@
       }
 
       const editAssigneeSelect = document.getElementById('edit-t-assignee');
-      if (editAssigneeSelect) {
+      if (editAssigneeSelect && document.activeElement !== editAssigneeSelect) {
         editAssigneeSelect.innerHTML = state.members.map(m => `<option value="${m.id}">${m.name}</option>`).join('');
       }
 
@@ -1485,6 +1486,7 @@
         tabsContainer.innerHTML = '';
         lastTabsSignature = '';
         cardSlot.innerHTML = '';
+        lastCardSignature = '';
         cardSlot.classList.remove('show');
       } else {
         const tabsSignature = JSON.stringify({
@@ -1492,7 +1494,6 @@
           members: state.members.map(m => ({ id: m.id, name: m.name, role: m.role, points: m.points, color: m.color }))
         });
 
-        // Only rebuild tab DOM nodes if member data or selection actually changed
         if (tabsSignature !== lastTabsSignature) {
           lastTabsSignature = tabsSignature;
           tabsContainer.innerHTML = state.members.map(m => {
@@ -1511,110 +1512,128 @@
         const activeMember = state.members.find(m => m.id === selectedMemberId);
         if (activeMember) {
           const memberTasks = state.tasks.filter(t => t.assigneeId === activeMember.id);
-          const unit = currencyMap[activeMember.role] || '';
-          const cardColor = activeMember.color || '#0d9488';
+          const cardSignature = JSON.stringify({ today, activeMember, memberTasks });
 
-          const tasksHtml = memberTasks.length ? memberTasks.map(t => {
-            const isDone = t.lastCompleted === today;
-            const info = getStreakAndRewardInfo(t);
-            const currentGoalStreak = info.activeStreak > 0 ? (t.goalStreak || 0) : 0;
-            const pct = t.goal > 0 ? Math.min(100, Math.round((currentGoalStreak / t.goal) * 100)) : 0;
-            const streakLabel = info.activeStreak > 0 ? ` • 🔥 ${info.activeStreak}d streak` : '';
-            const rewardText = `${info.earned} ${unit}${streakLabel}`;
+          if (cardSignature !== lastCardSignature) {
+            lastCardSignature = cardSignature;
+            const unit = currencyMap[activeMember.role] || '';
+            const cardColor = activeMember.color || '#0d9488';
 
-            return `
-              <div class="task-item ${isDone ? 'completed' : ''}">
-                <div class="task-info" style="flex:1; padding-right:14px;">
-                  <h4>${t.name}</h4>
-                  <p>${t.desc ? t.desc + ' • ' : ''}<strong>${rewardText}</strong></p>
-                  ${t.goal > 0 ? `
-                    <p style="font-size:0.8rem; color:${cardColor}; font-weight:700; margin-top:6px;">🎁 ${t.prize || 'Streak Prize'}: ${currentGoalStreak}/${t.goal} days</p>
-                    <div class="goal-bar"><div class="goal-fill" style="width:${pct}%; background:${cardColor};"></div></div>
-                  ` : ''}
+            const tasksHtml = memberTasks.length ? memberTasks.map(t => {
+              const isDone = t.lastCompleted === today;
+              const info = getStreakAndRewardInfo(t);
+              const currentGoalStreak = info.activeStreak > 0 ? (t.goalStreak || 0) : 0;
+              const pct = t.goal > 0 ? Math.min(100, Math.round((currentGoalStreak / t.goal) * 100)) : 0;
+              const streakLabel = info.activeStreak > 0 ? ` • 🔥 ${info.activeStreak}d streak` : '';
+              const rewardText = `${info.earned} ${unit}${streakLabel}`;
+
+              return `
+                <div class="task-item ${isDone ? 'completed' : ''}">
+                  <div class="task-info" style="flex:1; padding-right:14px;">
+                    <h4>${t.name}</h4>
+                    <p>${t.desc ? t.desc + ' • ' : ''}<strong>${rewardText}</strong></p>
+                    ${t.goal > 0 ? `
+                      <p style="font-size:0.8rem; color:${cardColor}; font-weight:700; margin-top:6px;">🎁 ${t.prize || 'Streak Prize'}: ${currentGoalStreak}/${t.goal} days</p>
+                      <div class="goal-bar"><div class="goal-fill" style="width:${pct}%; background:${cardColor};"></div></div>
+                    ` : ''}
+                  </div>
+                  <button type="button" class="btn-check" ${isDone ? 'disabled' : ''} onclick="completeTask(${t.id})">${isDone ? '✓ Done' : 'Complete'}</button>
                 </div>
-                <button class="btn-check" ${isDone ? 'disabled' : ''} onclick="completeTask(${t.id})">${isDone ? '✓ Done' : 'Complete'}</button>
+              `;
+            }).join('') : `<p style="color:var(--text-muted); font-size:0.95rem; padding:12px 0;">No tasks assigned to ${activeMember.name}.</p>`;
+
+            cardSlot.innerHTML = `
+              <div class="user-card" style="border-top-color: ${cardColor};">
+                <div class="user-header">
+                  <span class="user-name">${activeMember.name}'s Task List</span>
+                  <div style="display:flex; align-items:center; gap:10px;">
+                    ${activeMember.role !== 'adult' ? `<span class="user-points" style="background:${cardColor};">${activeMember.points} ${unit}</span>` : ''}
+                    <button type="button" onclick="selectedMemberId = null; renderAll();" style="background:none; border:none; font-size:1.1rem; cursor:pointer; color:var(--text-muted); padding:4px 8px;" title="Close">✕</button>
+                  </div>
+                </div>
+                ${tasksHtml}
               </div>
             `;
-          }).join('') : `<p style="color:var(--text-muted); font-size:0.95rem; padding:12px 0;">No tasks assigned to ${activeMember.name}.</p>`;
-
-          cardSlot.innerHTML = `
-            <div class="user-card" style="border-top-color: ${cardColor};">
-              <div class="user-header">
-                <span class="user-name">${activeMember.name}'s Task List</span>
-                <div style="display:flex; align-items:center; gap:10px;">
-                  ${activeMember.role !== 'adult' ? `<span class="user-points" style="background:${cardColor};">${activeMember.points} ${unit}</span>` : ''}
-                  <button type="button" onclick="selectedMemberId = null; renderAll();" style="background:none; border:none; font-size:1.1rem; cursor:pointer; color:var(--text-muted); padding:4px 8px;" title="Close">✕</button>
-                </div>
-              </div>
-              ${tasksHtml}
-            </div>
-          `;
+          }
           cardSlot.classList.add('show');
         } else {
           cardSlot.innerHTML = '';
+          lastCardSignature = '';
           cardSlot.classList.remove('show');
         }
       }
 
-      // Members Table
-      document.getElementById('member-list-body').innerHTML = state.members.map(m => `
-        <tr>
-          <td><strong>${m.name}</strong> <span style="display:inline-block; width:12px; height:12px; border-radius:2px; background:${m.color || '#0d9488'}; margin-left:8px; vertical-align:middle;"></span></td>
-          <td style="text-transform:capitalize;">${m.role}</td>
-          <td>${m.points}</td>
-          <td style="text-align:right;">
-            <button class="btn-outline-primary" style="padding:6px 12px; font-size:0.85rem;" onclick="openEditMember(${m.id})">Edit</button>
-            <button class="btn-outline-danger" style="padding:6px 12px; font-size:0.85rem;" onclick="deleteMember(${m.id})">X</button>
-          </td>
-        </tr>
-      `).join('');
-
-      // Task Lists Table (Grouped by Family Member)
-      let groupedTasksHtml = '';
-      state.members.forEach(m => {
-        const memberTasks = state.tasks.filter(t => t.assigneeId === m.id);
-        const mColor = m.color || '#0d9488';
-        groupedTasksHtml += `
-          <tr class="group-header" style="background: ${mColor}12; border-top: 2px solid ${mColor}35; border-bottom: 1px solid ${mColor}35;">
-            <td colspan="5" style="color:var(--text);">${m.name.trim()}<span class="group-badge">${memberTasks.length} ${memberTasks.length === 1 ? 'task' : 'tasks'}</span></td>
+      // Members Table (Only rebuild when members change)
+      const membersTableSignature = JSON.stringify(state.members);
+      if (membersTableSignature !== lastMembersTableSignature) {
+        lastMembersTableSignature = membersTableSignature;
+        document.getElementById('member-list-body').innerHTML = state.members.map(m => `
+          <tr>
+            <td><strong>${m.name}</strong> <span style="display:inline-block; width:12px; height:12px; border-radius:2px; background:${m.color || '#0d9488'}; margin-left:8px; vertical-align:middle;"></span></td>
+            <td style="text-transform:capitalize;">${m.role}</td>
+            <td>${m.points}</td>
+            <td style="text-align:right;">
+              <button type="button" class="btn-outline-primary" style="padding:6px 12px; font-size:0.85rem;" onclick="openEditMember(${m.id})">Edit</button>
+              <button type="button" class="btn-outline-danger" style="padding:6px 12px; font-size:0.85rem;" onclick="deleteMember(${m.id})">X</button>
+            </td>
           </tr>
-        `;
-        if (memberTasks.length) {
-          groupedTasksHtml += memberTasks.map(renderTaskRow).join('');
-        } else {
-          groupedTasksHtml += `<tr><td colspan="5" style="color:var(--text-muted); font-size:0.9rem; padding-left:24px;">No tasks assigned.</td></tr>`;
-        }
-      });
-
-      const memberIds = new Set(state.members.map(m => m.id));
-      const unassignedTasks = state.tasks.filter(t => !memberIds.has(t.assigneeId));
-      if (unassignedTasks.length) {
-        groupedTasksHtml += `
-          <tr class="group-header" style="background: rgba(100,100,100,0.1);">
-            <td colspan="5">Unassigned<span class="group-badge">${unassignedTasks.length}</span></td>
-          </tr>
-        ` + unassignedTasks.map(renderTaskRow).join('');
+        `).join('');
       }
 
-      document.getElementById('task-list-body').innerHTML = groupedTasksHtml || `<tr><td colspan="5" style="text-align:center; color:var(--text-muted);">No tasks configured yet.</td></tr>`;
+      // Task Lists Table (Only rebuild when members or tasks change)
+      const tasksTableSignature = JSON.stringify({ members: state.members, tasks: state.tasks });
+      if (tasksTableSignature !== lastTasksTableSignature) {
+        lastTasksTableSignature = tasksTableSignature;
+        let groupedTasksHtml = '';
+        state.members.forEach(m => {
+          const memberTasks = state.tasks.filter(t => t.assigneeId === m.id);
+          const mColor = m.color || '#0d9488';
+          groupedTasksHtml += `
+            <tr class="group-header" style="background: ${mColor}12; border-top: 2px solid ${mColor}35; border-bottom: 1px solid ${mColor}35;">
+              <td colspan="5" style="color:var(--text);">${m.name.trim()}<span class="group-badge">${memberTasks.length} ${memberTasks.length === 1 ? 'task' : 'tasks'}</span></td>
+            </tr>
+          `;
+          if (memberTasks.length) {
+            groupedTasksHtml += memberTasks.map(renderTaskRow).join('');
+          } else {
+            groupedTasksHtml += `<tr><td colspan="5" style="color:var(--text-muted); font-size:0.9rem; padding-left:24px;">No tasks assigned.</td></tr>`;
+          }
+        });
 
-      // Approvals Badges & Table
+        const memberIds = new Set(state.members.map(m => m.id));
+        const unassignedTasks = state.tasks.filter(t => !memberIds.has(t.assigneeId));
+        if (unassignedTasks.length) {
+          groupedTasksHtml += `
+            <tr class="group-header" style="background: rgba(100,100,100,0.1);">
+              <td colspan="5">Unassigned<span class="group-badge">${unassignedTasks.length}</span></td>
+            </tr>
+          ` + unassignedTasks.map(renderTaskRow).join('');
+        }
+
+        document.getElementById('task-list-body').innerHTML = groupedTasksHtml || `<tr><td colspan="5" style="text-align:center; color:var(--text-muted);">No tasks configured yet.</td></tr>`;
+      }
+
+      // Approvals Badges & Table (Only rebuild when approvals change)
       const waitingCount = state.approvals.length;
       document.getElementById('badge-count').innerText = waitingCount;
       document.getElementById('header-approval-count').innerText = waitingCount;
       document.getElementById('header-approval-flag').classList.toggle('hidden', waitingCount === 0);
 
-      document.getElementById('approval-list-body').innerHTML = waitingCount ? state.approvals.map(a => `
-        <tr>
-          <td><strong>${a.memberName}</strong></td>
-          <td>${a.taskName || a.choreName}</td>
-          <td>+${a.points}</td>
-          <td style="text-align:right;">
-            <button class="btn-check" style="padding:8px 14px; font-size:0.88rem;" onclick="handleApproval(${a.id}, true)">Approve</button>
-            <button class="btn-outline-danger" style="padding:6px 12px; font-size:0.88rem;" onclick="handleApproval(${a.id}, false)">Reject</button>
-          </td>
-        </tr>
-      `).join('') : `<tr><td colspan="4" style="text-align:center; color:var(--text-muted);">No pending approvals.</td></tr>`;
+      const approvalsSignature = JSON.stringify(state.approvals);
+      if (approvalsSignature !== lastApprovalsSignature) {
+        lastApprovalsSignature = approvalsSignature;
+        document.getElementById('approval-list-body').innerHTML = waitingCount ? state.approvals.map(a => `
+          <tr>
+            <td><strong>${a.memberName}</strong></td>
+            <td>${a.taskName || a.choreName}</td>
+            <td>+${a.points}</td>
+            <td style="text-align:right;">
+              <button type="button" class="btn-check" style="padding:8px 14px; font-size:0.88rem;" onclick="handleApproval(${a.id}, true)">Approve</button>
+              <button type="button" class="btn-outline-danger" style="padding:6px 12px; font-size:0.88rem;" onclick="handleApproval(${a.id}, false)">Reject</button>
+            </td>
+          </tr>
+        `).join('') : `<tr><td colspan="4" style="text-align:center; color:var(--text-muted);">No pending approvals.</td></tr>`;
+      }
     }
 
     function updateClock() {
