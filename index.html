@@ -875,6 +875,16 @@
       renderAll();
     });
 
+    function normalizeCalendarUrl(rawUrl) {
+      if (!rawUrl) return "";
+      const trimmed = rawUrl.trim();
+      if (!trimmed) return "";
+      if (trimmed.includes('mode=')) {
+        return trimmed.replace(/mode=[^&]+/i, 'mode=AGENDA');
+      }
+      return trimmed + (trimmed.includes('?') ? '&' : '?') + 'mode=AGENDA';
+    }
+
     function migrateLegacyFields(data) {
       const migrated = { ...data };
       if (Array.isArray(migrated.chores) && (!Array.isArray(migrated.tasks) || migrated.tasks.length === 0)) {
@@ -1317,7 +1327,9 @@
     }
 
     function saveCalendarUrl() {
-      state.calendarUrl = document.getElementById('cal-url-input').value.trim();
+      const rawUrl = document.getElementById('cal-url-input').value.trim();
+      state.calendarUrl = normalizeCalendarUrl(rawUrl);
+      document.getElementById('cal-url-input').value = state.calendarUrl;
       save();
       alert("Calendar URL saved!");
     }
@@ -1411,7 +1423,11 @@
       const activeHubName = (state.familyName && state.familyName.trim() !== "") ? state.familyName.trim() : "Family Hub";
       brandTitleEl.innerText = activeHubName;
       if (footerTitleEl) footerTitleEl.innerText = activeHubName;
-      document.getElementById('family-name-input').value = state.familyName || '';
+
+      const familyNameInput = document.getElementById('family-name-input');
+      if (familyNameInput && document.activeElement !== familyNameInput) {
+        familyNameInput.value = state.familyName || '';
+      }
 
       // Calendar Accordion & Visibility Settings
       const showCal = state.showCalendar !== false;
@@ -1424,17 +1440,26 @@
       if (calBody) calBody.classList.toggle('hidden', !isCalOpen);
       if (calIcon) calIcon.innerText = isCalOpen ? '−' : '+';
 
-      // Calendar Iframe
+      // Calendar Iframe (Automatically enforces Schedule / mode=AGENDA view)
       const calSlot = document.getElementById('calendar-slot');
-      if (state.calendarUrl) {
-        if (!calSlot.querySelector('iframe') || calSlot.querySelector('iframe').src !== state.calendarUrl) {
-          calSlot.innerHTML = `<iframe src="${state.calendarUrl}"></iframe>`;
+      const embedUrl = normalizeCalendarUrl(state.calendarUrl);
+      if (embedUrl) {
+        if (!calSlot.querySelector('iframe') || calSlot.querySelector('iframe').src !== embedUrl) {
+          calSlot.innerHTML = `<iframe src="${embedUrl}"></iframe>`;
         }
       } else {
         calSlot.innerHTML = `<p style="color:var(--text-muted); text-align:center; padding:32px;">No calendar configured. Add a Google Calendar Embed URL in Settings.</p>`;
       }
-      document.getElementById('cal-url-input').value = state.calendarUrl || '';
-      document.getElementById('change-admin-user-input').value = state.adminUsername || 'admin';
+
+      const calUrlInput = document.getElementById('cal-url-input');
+      if (calUrlInput && document.activeElement !== calUrlInput) {
+        calUrlInput.value = embedUrl || '';
+      }
+
+      const adminUserInput = document.getElementById('change-admin-user-input');
+      if (adminUserInput && document.activeElement !== adminUserInput) {
+        adminUserInput.value = state.adminUsername || 'admin';
+      }
 
       // Populate Task Creation Multi-User Checkboxes & Edit Modal Dropdown
       const assigneeList = document.getElementById('t-assignee-list');
