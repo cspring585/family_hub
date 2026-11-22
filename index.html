@@ -357,8 +357,11 @@
       gap: 10px;
       flex-wrap: wrap;
       align-items: center;
+      position: relative;
+      z-index: 150;
     }
     .member-tab-btn {
+      --member-color: var(--primary);
       background: var(--surface);
       color: var(--text);
       border: 1.5px solid var(--border);
@@ -367,18 +370,30 @@
       font-size: 0.88rem;
       font-weight: 700;
       cursor: pointer;
-      transition: 0.18s;
+      user-select: none;
+      transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
       display: inline-flex;
       align-items: center;
       gap: 6px;
     }
-    .member-tab-btn:hover { border-color: var(--primary); }
-    .member-tab-btn.active { background: var(--primary); color: white; border-color: var(--primary); }
+    .member-tab-btn:hover {
+      border-color: var(--member-color);
+    }
+    .member-tab-btn.active {
+      background: var(--member-color);
+      color: white;
+      border-color: var(--member-color);
+    }
+    .member-tab-btn.active:hover {
+      border-color: var(--member-color);
+      filter: brightness(1.06);
+    }
     .member-tab-badge {
-      background: rgba(255,255,255,0.25);
+      background: rgba(255,255,255,0.22);
       padding: 2px 7px;
       border-radius: var(--radius-sm);
       font-size: 0.75rem;
+      pointer-events: none;
     }
 
     /* OVERLAY TASK LIST CARD OVER THE CALENDAR */
@@ -777,7 +792,6 @@
       window.addEventListener('load', () => {
         navigator.serviceWorker.register('/sw.js')
           .then((reg) => {
-            // Check for updates every 15 minutes while open
             setInterval(() => reg.update(), 15 * 60 * 1000);
           })
           .catch((err) => console.error('Service Worker registration failed:', err));
@@ -849,7 +863,17 @@
     let redirectAfterLogin = null;
     let editId = null;
     let selectedMemberId = null;
+    let lastTabsSignature = '';
     const currencyMap = { kid: "tokens", teen: "minutes", adult: "" };
+
+    // Single delegated click listener so member tabs never drop clicks during background syncs
+    document.getElementById('member-tabs-container').addEventListener('click', (e) => {
+      const btn = e.target.closest('.member-tab-btn');
+      if (!btn) return;
+      const memberId = Number(btn.dataset.memberId);
+      selectedMemberId = (selectedMemberId === memberId) ? null : memberId;
+      renderAll();
+    });
 
     function migrateLegacyFields(data) {
       const migrated = { ...data };
@@ -1434,19 +1458,30 @@
 
       if (state.members.length === 0) {
         tabsContainer.innerHTML = '';
+        lastTabsSignature = '';
         cardSlot.innerHTML = '';
         cardSlot.classList.remove('show');
       } else {
-        tabsContainer.innerHTML = state.members.map(m => {
-          const isActive = m.id === selectedMemberId;
-          const unit = currencyMap[m.role] || '';
-          const pointsBadge = m.role !== 'adult' ? ` <span class="member-tab-badge">${m.points} ${unit}</span>` : '';
-          return `
-            <button class="member-tab-btn ${isActive ? 'active' : ''}" onclick="selectedMemberId = (selectedMemberId === ${m.id} ? null : ${m.id}); renderAll();" style="${isActive ? `background:${m.color || 'var(--primary)'}; border-color:${m.color || 'var(--primary)'};` : ''}">
-              ${m.name}${pointsBadge}
-            </button>
-          `;
-        }).join('');
+        const tabsSignature = JSON.stringify({
+          selectedMemberId,
+          members: state.members.map(m => ({ id: m.id, name: m.name, role: m.role, points: m.points, color: m.color }))
+        });
+
+        // Only rebuild tab DOM nodes if member data or selection actually changed
+        if (tabsSignature !== lastTabsSignature) {
+          lastTabsSignature = tabsSignature;
+          tabsContainer.innerHTML = state.members.map(m => {
+            const isActive = m.id === selectedMemberId;
+            const unit = currencyMap[m.role] || '';
+            const pointsBadge = m.role !== 'adult' ? ` <span class="member-tab-badge">${m.points} ${unit}</span>` : '';
+            const memberColor = m.color || 'var(--primary)';
+            return `
+              <button type="button" class="member-tab-btn ${isActive ? 'active' : ''}" data-member-id="${m.id}" style="--member-color: ${memberColor};">
+                ${m.name}${pointsBadge}
+              </button>
+            `;
+          }).join('');
+        }
 
         const activeMember = state.members.find(m => m.id === selectedMemberId);
         if (activeMember) {
@@ -1483,7 +1518,7 @@
                 <span class="user-name">${activeMember.name}'s Task List</span>
                 <div style="display:flex; align-items:center; gap:10px;">
                   ${activeMember.role !== 'adult' ? `<span class="user-points" style="background:${cardColor};">${activeMember.points} ${unit}</span>` : ''}
-                  <button onclick="selectedMemberId = null; renderAll();" style="background:none; border:none; font-size:1.1rem; cursor:pointer; color:var(--text-muted); padding:4px 8px;" title="Close">✕</button>
+                  <button type="button" onclick="selectedMemberId = null; renderAll();" style="background:none; border:none; font-size:1.1rem; cursor:pointer; color:var(--text-muted); padding:4px 8px;" title="Close">✕</button>
                 </div>
               </div>
               ${tasksHtml}
