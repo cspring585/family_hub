@@ -345,12 +345,67 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      cursor: pointer;
+      gap: 12px;
       user-select: none;
       margin-bottom: 16px;
     }
+    .section-header-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+    }
     .section-header h3 { font-size: 1.25rem; font-weight: 700; color: var(--text); letter-spacing: -0.01em; }
-    .section-header span { font-size: 1.4rem; font-weight: 700; color: var(--text-muted); }
+    .section-header-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .btn-cal-auth {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--surface);
+      color: var(--text);
+      border: 1px solid var(--border);
+      padding: 6px 12px;
+      border-radius: var(--radius-md);
+      font-size: 0.82rem;
+      font-weight: 700;
+      text-decoration: none;
+      cursor: pointer;
+      transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+      white-space: nowrap;
+    }
+    .btn-cal-auth:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+    .cal-toggle-btn {
+      background: none;
+      border: none;
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      padding: 2px 8px;
+      line-height: 1;
+    }
+    .cal-auth-hint {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      margin-top: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .cal-auth-hint a {
+      color: var(--primary);
+      font-weight: 700;
+      text-decoration: none;
+    }
+    .cal-auth-hint a:hover { text-decoration: underline; }
 
     /* TASK LISTS HEADER & INLINE MEMBER TABS */
     .tasks-header-row {
@@ -598,6 +653,10 @@
       .card { padding: 18px 14px; margin-bottom: 16px; }
       h1 { font-size: 1.4rem; margin-bottom: 16px; }
 
+      .section-header { flex-wrap: wrap; gap: 8px; }
+      .section-header h3 { font-size: 1.1rem; }
+      .btn-cal-auth { padding: 6px 10px; font-size: 0.78rem; }
+
       /* Stack Task Lists title & member tabs cleanly on mobile */
       .tasks-header-row {
         flex-direction: column;
@@ -617,7 +676,7 @@
         font-size: 0.88rem;
       }
 
-      /* Render active member's task list inline inside the card on mobile so it never clips or covers tabs */
+      /* Render active member's task list inline inside the card on mobile */
       #selected-member-card-slot {
         position: static;
         margin-top: 16px;
@@ -654,7 +713,6 @@
         gap: 14px;
       }
 
-      /* Compact table cells for horizontal scroll on mobile */
       th, td { padding: 12px 10px; font-size: 0.88rem; white-space: nowrap; }
       td:first-child { white-space: normal; min-width: 140px; }
 
@@ -730,10 +788,23 @@
       </div>
 
       <div id="calendar-card-wrapper" class="card">
-        <div class="section-header" onclick="toggleAccordion('calVisible')">
-          <h3>📅 Family Calendar</h3><span id="cal-icon">−</span>
+        <div class="section-header">
+          <div class="section-header-title" onclick="toggleAccordion('calVisible')">
+            <h3>📅 Family Calendar</h3>
+          </div>
+          <div class="section-header-actions">
+            <a href="https://accounts.google.com/ServiceLogin?service=cl&continue=https://calendar.google.com/" target="_blank" rel="noopener noreferrer" class="btn-cal-auth" title="Sign in to Google to view private calendars">🔑 Google Sign-In</a>
+            <button type="button" class="btn-cal-auth" onclick="reloadCalendarFrame()" title="Reload Calendar after signing in">↻ Refresh</button>
+            <button type="button" class="cal-toggle-btn" onclick="toggleAccordion('calVisible')" title="Collapse or Expand"><span id="cal-icon">−</span></button>
+          </div>
         </div>
-        <div id="cal-body"><div id="calendar-slot" class="calendar-container"></div></div>
+        <div id="cal-body">
+          <div id="calendar-slot" class="calendar-container"></div>
+          <div class="cal-auth-hint">
+            <span>Missing events from a private calendar? <a href="https://accounts.google.com/ServiceLogin?service=cl&continue=https://calendar.google.com/" target="_blank" rel="noopener noreferrer">Sign in to Google</a>, then click <strong>↻ Refresh</strong>.</span>
+            <a href="https://calendar.google.com/calendar/r" target="_blank" rel="noopener noreferrer">Open Full Google Calendar ↗</a>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -1009,6 +1080,17 @@
       return trimmed + (trimmed.includes('?') ? '&' : '?') + 'mode=AGENDA';
     }
 
+    function reloadCalendarFrame() {
+      const calSlot = document.getElementById('calendar-slot');
+      const embedUrl = normalizeCalendarUrl(state.calendarUrl);
+      if (embedUrl && calSlot) {
+        calSlot.innerHTML = '';
+        setTimeout(() => {
+          calSlot.innerHTML = `<iframe src="${embedUrl}" title="Family Calendar"></iframe>`;
+        }, 50);
+      }
+    }
+
     function migrateLegacyFields(data) {
       const migrated = { ...data };
       if (Array.isArray(migrated.chores) && (!Array.isArray(migrated.tasks) || migrated.tasks.length === 0)) {
@@ -1029,7 +1111,6 @@
       return migrated;
     }
 
-    // Optimistic local UI render + partial Firestore field update
     function updateFields(patchObj) {
       localStorage.setItem('familyHubData', JSON.stringify(state));
       renderAll();
@@ -1046,7 +1127,6 @@
         });
     }
 
-    // Full document save reserved strictly for full restore / migration / initial seed
     function saveFullDocument() {
       localStorage.setItem('familyHubData', JSON.stringify(state));
       renderAll();
@@ -1759,7 +1839,7 @@
       const embedUrl = normalizeCalendarUrl(state.calendarUrl);
       if (embedUrl) {
         if (!calSlot.querySelector('iframe') || calSlot.querySelector('iframe').src !== embedUrl) {
-          calSlot.innerHTML = `<iframe src="${embedUrl}"></iframe>`;
+          calSlot.innerHTML = `<iframe src="${embedUrl}" title="Family Calendar"></iframe>`;
         }
       } else {
         calSlot.innerHTML = `<p style="color:var(--text-muted); text-align:center; padding:32px;">No calendar configured. Add a Google Calendar Embed URL in Settings.</p>`;
@@ -1876,7 +1956,7 @@
         }
       }
 
-      // Members Table (Only rebuild when members change)
+      // Members Table
       const membersTableSignature = JSON.stringify(state.members);
       if (membersTableSignature !== lastMembersTableSignature) {
         lastMembersTableSignature = membersTableSignature;
@@ -1893,7 +1973,7 @@
         `).join('');
       }
 
-      // Task Lists Table (Only rebuild when members or tasks change)
+      // Task Lists Table
       const tasksTableSignature = JSON.stringify({ members: state.members, tasks: state.tasks });
       if (tasksTableSignature !== lastTasksTableSignature) {
         lastTasksTableSignature = tasksTableSignature;
@@ -1926,7 +2006,7 @@
         document.getElementById('task-list-body').innerHTML = groupedTasksHtml || `<tr><td colspan="5" style="text-align:center; color:var(--text-muted);">No tasks configured yet.</td></tr>`;
       }
 
-      // Approvals Badges & Table (Only rebuild when approvals change)
+      // Approvals Badges & Table
       const waitingCount = state.approvals.length;
       document.getElementById('badge-count').innerText = waitingCount;
       document.getElementById('header-approval-count').innerText = waitingCount;
