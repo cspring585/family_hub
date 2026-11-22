@@ -1,71 +1,55 @@
 🏠 Family Hub
 Family Hub is a lightweight, gamified chore tracker and family economy system. It is designed to bridge the gap between digital task management and physical rewards, featuring a dual-track currency system for kids and teens.
 
-Currently, this project is in Phase 1: Standalone Web App, running entirely in the browser using localStorage.
+Currently, this project includes Firebase cloud synchronization, multi-user chore management, customizable themes, and admin security features.
 
-🚀 Vision & Roadmap
+📌 Vision & Roadmap
 The ultimate goal of Family Hub is to become a self-hosted "command center" for the modern home.
 
-[x] Phase 1: Standalone Prototype – Single-file HTML/JS app using browser storage.
+[x] Phase 1: Standalone Prototype: Single-file HTML/JS app using browser storage.
 
-[ ] Phase 2: Local Network Hosting – Transition to a Node.js/SQLite backend for hosting on a Raspberry Pi or Synology NAS, allowing sync across all household devices.
+[x] Firebase Cloud Integration: Real-time database sync using Firebase.
 
-[ ] Phase 3: Secure Remote Access – Cloud accessibility via Docker, secure authentication, and native mobile notifications.
+[ ] Phase 2: Local Network Hosting: Transition to a Node.js/SQLite backend for hosting on a Raspberry Pi or Synology NAS, allowing sync across all household devices.
+
+[ ] Phase 3: Secure Remote Access: Cloud accessibility via Docker, secure authentication, and native mobile notifications.
 
 ✨ Key Features
 💰 The Dual-Track Economy
-🧒 Kid Mode: Earn Tokens for physical rewards or big prizes.
+🪙 Kid Mode: Earn Tokens for physical rewards or big prizes.
 
-📱 Teen Mode: Earn Minutes for screen time.
+⌛ Teen Mode: Earn Minutes for screen time.
 
-🛡️ Adult Mode: Manage the household and approve tasks.
+🗣️ Adult Mode: Manage the household and approve tasks.
 
 🧹 Smart Chore Logic
-Dynamic Value Decay: Chores can be set to "Dynamic," where the point value is high if skipped but "decays" to a lower value if performed daily, encouraging a varied routine.
+Dynamic Value Decay: Chores can be set to "Dynamic," where the point value starts at full value on Day 1 or after skipping, then decays to a lower value if performed daily, encouraging a varied routine.
 
-Milestone Goals: Set specific repetition goals (e.g., "Do dishes 10 times") to unlock a custom Big Prize.
+Streak Rewards: Target goals switched to Target Streaks (Days in a Row) tracking to unlock custom milestone rewards.
+
+Multi-User Assignment: Assign a chore to multiple members simultaneously with independent tracking for each member.
 
 Daily Reset: Teen screen time minutes automatically reset at midnight to start a fresh day.
 
-🎭 Role-Based Experience
+🎭 Role-Based & UI Experience
+Dark & Light Themes: Toggle between Dark Mode and a high-contrast Light Mode featuring a Warm Evergreen and Slate color palette.
+
+Interactive Dashboard: Filter and view chores using interactive member tabs and clear header groupings.
+
+Site-Wide Security & Admin Gate: Features a site-wide entry password gate with optional session remembering, passcode-protected management sections, and live pending approvals badges in the header bar.
+
 Kid Celebrations: High-energy, bouncy, colorful localized overlays when a task is completed.
 
-Teen Feedback: Sleek, sarcastic notifications because... well, teens.
-
-Admin Lock: Secure the management sections behind a passcode.
+Teen Feedback: Sleek, sarcastic notifications tailored for teens.
 
 📅 Integrated Calendars
-View your family schedules via embedded Google Calendars directly on the dashboard.
+View your family schedules via embedded Google Calendars directly on the dashboard, with a customizable dynamic Family Name header display.
 
-📥 Data Portability
-Export/Import: Easily move your family data between devices using JSON backups. No cloud account required.
+💾 Cloud Sync & Data Portability
+Firebase Real-Time Sync: Sync data seamlessly across multiple devices using Firebase cloud integration.
+
+Export/Import & Database Reset: Move family data between devices using JSON backups or use the nuclear function to reset local storage and cloud database data.
 
 🛠️ Installation & Usage
 Running Locally
-Since Phase 1 is a standalone app, no installation is required:
-
-Download the index.html file.
-
-Open it in any modern web browser (Chrome, Safari, Firefox).
-
-📱 Installing as a Web App (PWA)
-Family Hub is a Progressive Web App. You can install it on your mobile device for a full-screen, app-like experience:
-
-iOS: Open in Safari -> Tap Share -> Add to Home Screen.
-
-Android: Open in Chrome -> Tap Three Dots -> Install App.
-
-⚙️ Configuration
-Default Admin Passcode: 1234 (Changeable in the <script> section of the code).
-
-Storage: All data is saved to your browser's localStorage. Clearing your browser cache will delete your data—please use the Export Data feature regularly!
-
-🏗️ Technical Stack
-Frontend: Vanilla JavaScript, HTML5, CSS3.
-
-Logic: Role-based conditional rendering and local data persistence.
-
-Manifest: Embedded JSON Data URI for PWA support.
-
-🤝 Contributing
-This project is currently in early development. If you have ideas for the Raspberry Pi/NAS implementation (Phase 2), feel free to open an issue or a pull request!
+Download the index.html file or open the web app directly in your browser.
