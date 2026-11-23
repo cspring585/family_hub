@@ -691,7 +691,7 @@
 <body>
 
   <!-- SITE ACCESS & GOOGLE SIGN-IN GATE -->
-<div id="site-gate">
+  <div id="site-gate">
     <div class="gate-card">
       <div class="gate-accent-bar"></div>
       <h2 id="gate-title">Family Hub</h2>
@@ -741,6 +741,15 @@
   </nav>
 
   <main id="main-content">
+    <!-- ACCESS RESTRICTED NOTICE (SHOWN WHEN FIRESTORE DENIES ACCESS) -->
+    <div id="access-restricted-notice" class="card hidden" style="text-align:center; padding:44px 24px;">
+      <h2 style="font-size:1.45rem; font-weight:800; margin-bottom:10px;">Google Account Not Approved</h2>
+      <p style="color:var(--text-muted); max-width:520px; margin:0 auto 24px; line-height:1.5;">
+        You are signed in with Google, but this account does not have access to this household's Family Hub data. Sign out and try an approved Google account instead.
+      </p>
+      <button type="button" class="btn-outline-primary" onclick="signOutGoogle()">🚪 Sign Out Google</button>
+    </div>
+
     <!-- DASHBOARD SECTION -->
     <section id="dashboard" class="content-section">
       <div class="card" style="position:relative;">
@@ -1008,6 +1017,7 @@
     };
 
     let currentAuthUser = null;
+    let firestorePermissionDenied = false;
     let unsubscribeHousehold = null;
     let isUnlocked = false;
     let redirectAfterLogin = null;
@@ -1083,10 +1093,14 @@
       stopHouseholdListener();
       if (!auth.currentUser) return;
 
+      firestorePermissionDenied = false;
+
       unsubscribeHousehold = familyDocRef.onSnapshot((doc) => {
         if (pendingLocalWrites > 0 || doc.metadata.hasPendingWrites) {
           return;
         }
+
+        firestorePermissionDenied = false;
 
         if (doc.exists) {
           const rawData = doc.data();
@@ -1109,6 +1123,10 @@
         }
       }, (err) => {
         console.error('Firestore listener error:', err);
+        if (err && err.code === 'permission-denied') {
+          firestorePermissionDenied = true;
+          renderAll();
+        }
       });
     }
 
@@ -1197,30 +1215,6 @@
       }
     }
 
-    function verifySitePassword() {
-      if (!currentAuthUser) {
-        setAuthError('Please sign in with Google first.');
-        return;
-      }
-      const entered = document.getElementById('site-pass-input').value;
-      const expectedPass = state.sitePassword || "family2026";
-      const remember = document.getElementById('remember-device-cb').checked;
-
-      if (entered === expectedPass) {
-        setAuthError('');
-        sessionStorage.setItem('familyHubSessionPass', expectedPass);
-        if (remember) {
-          localStorage.setItem('familyHubRememberedPass', expectedPass);
-        } else {
-          localStorage.removeItem('familyHubRememberedPass');
-        }
-        document.getElementById('site-pass-input').value = '';
-        document.getElementById('site-gate').classList.add('hidden');
-      } else {
-        alert("Incorrect website password.");
-      }
-    }
-
     /* -------------------------------------------------------------------------
        ADMIN AUTHENTICATION & NAVIGATION
     ------------------------------------------------------------------------- */
@@ -1287,6 +1281,7 @@
     }
 
     function showSection(id, btn) {
+      if (firestorePermissionDenied) return;
       if (id !== 'dashboard' && !isUnlocked) return;
       document.querySelectorAll('.content-section').forEach(s => s.classList.add('hidden'));
       document.getElementById(id).classList.remove('hidden');
@@ -1833,6 +1828,29 @@
     }
 
     function renderAll() {
+      const restrictedNotice = document.getElementById('access-restricted-notice');
+      if (restrictedNotice) {
+        restrictedNotice.classList.toggle('hidden', !firestorePermissionDenied);
+      }
+
+      if (firestorePermissionDenied) {
+        document.querySelectorAll('.content-section').forEach(s => s.classList.add('hidden'));
+        document.getElementById('badge-count').innerText = '0';
+        document.getElementById('header-approval-count').innerText = '0';
+        document.getElementById('header-approval-flag').classList.add('hidden');
+        return;
+      }
+
+      const activeNav = document.querySelector('.nav-btn.active');
+      const activeSectionId = activeNav && activeNav.id === 'nav-approvals' ? 'admin-approvals'
+        : activeNav && activeNav.id === 'nav-members' ? 'admin-members'
+        : activeNav && activeNav.id === 'nav-settings' ? 'admin-settings'
+        : activeNav && activeNav.id === 'nav-tasks' ? 'admin-tasks'
+        : 'dashboard';
+      document.querySelectorAll('.content-section').forEach(s => {
+        s.classList.toggle('hidden', s.id !== activeSectionId);
+      });
+
       const today = new Date().toDateString();
 
       const brandTitleEl = document.getElementById('header-brand-title');
@@ -2052,6 +2070,7 @@
 
     auth.onAuthStateChanged((user) => {
       currentAuthUser = user;
+      firestorePermissionDenied = false;
       if (user) {
         setAuthError('');
         startHouseholdListener();
@@ -2060,6 +2079,7 @@
         if (isUnlocked) {
           lockAdmin();
         }
+        renderAll();
       }
       checkSiteGate();
     });
