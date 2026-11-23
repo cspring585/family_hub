@@ -1203,17 +1203,6 @@
       }
     }
 
-      const expectedPass = state.sitePassword || "family2026";
-      const rememberedPass = localStorage.getItem('familyHubRememberedPass');
-      const sessionPass = sessionStorage.getItem('familyHubSessionPass');
-
-      if (rememberedPass === expectedPass || sessionPass === expectedPass) {
-        gateEl.classList.add('hidden');
-      } else {
-        gateEl.classList.remove('hidden');
-      }
-    }
-
     function verifySitePassword() {
       if (!currentAuthUser) {
         setAuthError('Please sign in with Google first.');
