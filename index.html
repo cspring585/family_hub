@@ -1196,11 +1196,12 @@
     function checkSiteGate() {
       const gateEl = document.getElementById('site-gate');
       if (!gateEl) return;
-
-      if (!currentAuthUser) {
+      if (currentAuthUser) {
+        gateEl.classList.add('hidden');
+      } else {
         gateEl.classList.remove('hidden');
-        return;
       }
+    }
 
       const expectedPass = state.sitePassword || "family2026";
       const rememberedPass = localStorage.getItem('familyHubRememberedPass');
