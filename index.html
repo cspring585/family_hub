@@ -1043,7 +1043,7 @@
     async function signInWithGoogle() {
       setAuthError('');
       try {
-        await auth.signInWithPopup(googleProvider);
+        await auth.signInWithRedirect(googleProvider);
       } catch (err) {
         if (
           err.code === 'auth/popup-blocked' ||
