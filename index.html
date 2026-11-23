@@ -717,7 +717,7 @@
           🔔 <span id="header-approval-count">0</span> Waiting
         </button>
         <button type="button" id="theme-toggle-btn" class="btn-theme-toggle" onclick="toggleTheme()" title="Toggle Dark Mode">🌙</button>
-        <button type="button" id="admin-header-btn" class="btn-admin-header" onclick="handleAdminButtonClick()">🔒 Admin</button>
+        <button type="button" id="admin-header-btn" class="btn-admin-header hidden" onclick="handleAdminButtonClick()">🔒 Admin</button>
       </div>
     </div>
   </header>
@@ -1828,6 +1828,12 @@
     }
 
     function renderAll() {
+      const adminBtn = document.getElementById('admin-header-btn');
+      if (adminBtn) {
+        const hideAdminBtn = !currentAuthUser || firestorePermissionDenied;
+        adminBtn.classList.toggle('hidden', hideAdminBtn);
+      }
+
       const restrictedNotice = document.getElementById('access-restricted-notice');
       if (restrictedNotice) {
         restrictedNotice.classList.toggle('hidden', !firestorePermissionDenied);
@@ -2079,9 +2085,9 @@
         if (isUnlocked) {
           lockAdmin();
         }
-        renderAll();
       }
       checkSiteGate();
+      renderAll();
     });
 
     checkSiteGate();
