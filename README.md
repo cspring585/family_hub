@@ -1,55 +1,84 @@
-🏠 Family Hub
-Family Hub is a lightweight, gamified chore tracker and family economy system. It is designed to bridge the gap between digital task management and physical rewards, featuring a dual-track currency system for kids and teens.
+# 🏠 Family Hub
 
-Currently, this project includes Firebase cloud synchronization, multi-user chore management, customizable themes, and admin security features.
+Family Hub is a gamified family chore and rewards dashboard. It helps households assign chores, track points or screen-time minutes, manage streak rewards, review approvals, and display a shared Google Calendar.
 
-📌 Vision & Roadmap
-The ultimate goal of Family Hub is to become a self-hosted "command center" for the modern home.
+## Features
 
-[x] Phase 1: Standalone Prototype: Single-file HTML/JS app using browser storage.
+- Google sign-in with account approval checks
+- Real-time Firebase synchronization across devices
+- Multi-user chore assignments
+- Static and dynamic chore values
+- Streak goals and customizable prizes
+- Point, token, and screen-time tracking for different member roles
+- Pending-task approval queue
+- Light and dark themes
+- Embedded Google Calendar
+- Installable PWA support and offline app-shell caching
+- JSON export/import for hub backups
+- Configurable family name and household settings
 
-[x] Firebase Cloud Integration: Real-time database sync using Firebase.
+## Technology
 
-[ ] Phase 2: Local Network Hosting: Transition to a Node.js/SQLite backend for hosting on a Raspberry Pi or Synology NAS, allowing sync across all household devices.
+- HTML and CSS
+- Vanilla JavaScript
+- Firebase Authentication and Cloud Firestore
+- Firebase Hosting
+- Progressive Web App manifest and service worker
 
-[ ] Phase 3: Secure Remote Access: Cloud accessibility via Docker, secure authentication, and native mobile notifications.
+This is currently implemented primarily in `index.html`, with `sw.js` providing offline caching.
 
-✨ Key Features
-💰 The Dual-Track Economy
-🪙 Kid Mode: Earn Tokens for physical rewards or big prizes.
+## Running locally
 
-⌛ Teen Mode: Earn Minutes for screen time.
+Firebase Authentication and Firestore require an internet connection and an approved Firebase project configuration.
 
-🗣️ Adult Mode: Manage the household and approve tasks.
+For a basic local preview:
 
-🧹 Smart Chore Logic
-Dynamic Value Decay: Chores can be set to "Dynamic," where the point value starts at full value on Day 1 or after skipping, then decays to a lower value if performed daily, encouraging a varied routine.
+```bash
+python3 -m http.server 8000
+```
 
-Streak Rewards: Target goals switched to Target Streaks (Days in a Row) tracking to unlock custom milestone rewards.
+Then open `http://localhost:8000`.
 
-Multi-User Assignment: Assign a chore to multiple members simultaneously with independent tracking for each member.
+For Firebase Hosting:
 
-Daily Reset: Teen screen time minutes automatically reset at midnight to start a fresh day.
+```bash
+firebase login
+firebase use <your-firebase-project-id>
+firebase deploy
+```
 
-🎭 Role-Based & UI Experience
-Dark & Light Themes: Toggle between Dark Mode and a high-contrast Light Mode featuring a Warm Evergreen and Slate color palette.
+## Security
 
-Interactive Dashboard: Filter and view chores using interactive member tabs and clear header groupings.
+The Firebase configuration embedded in `index.html` identifies your Firebase project; it is not an administrative secret. Data access must be protected with Firebase Authentication and appropriately configured Firestore Security Rules.
 
-Site-Wide Security & Admin Gate: Features a site-wide entry password gate with optional session remembering, passcode-protected management sections, and live pending approvals badges in the header bar.
+Before production use:
 
-Kid Celebrations: High-energy, bouncy, colorful localized overlays when a task is completed.
+- Restrict Firestore reads and writes with tested security rules
+- Verify that only approved Google accounts can access household data
+- Use privileged operations only through trusted server-side code
+- Validate user input before storing it
+- Review the app's admin and credential-management behavior
 
-Teen Feedback: Sleek, sarcastic notifications tailored for teens.
+The browser UI must not be treated as the application's security boundary.
 
-📅 Integrated Calendars
-View your family schedules via embedded Google Calendars directly on the dashboard, with a customizable dynamic Family Name header display.
+## Data backup
 
-💾 Cloud Sync & Data Portability
-Firebase Real-Time Sync: Sync data seamlessly across multiple devices using Firebase cloud integration.
+Signed-in family administrators can use the Hub Settings panel to export a JSON backup or restore a previously exported backup.
 
-Export/Import & Database Reset: Move family data between devices using JSON backups or use the nuclear function to reset local storage and cloud database data.
+## Roadmap
 
-🛠️ Installation & Usage
-Running Locally
-Download the index.html file or open the web app directly in your browser.
+- [x] Standalone app prototype
+- [x] Firebase cloud synchronization
+- [x] Google Calendar integration
+- [x] Installable PWA shell
+- [ ] Hardened remote access and server-side authorization
+- [ ] Native mobile notifications
+
+## Project structure
+
+- `index.html` — application markup, styles, and client-side logic
+- `sw.js` — service-worker cache and update handling
+- `manifest.json` — PWA installation metadata
+- `firebase.json` — Firebase Hosting configuration
+- `.firebaserc` — local Firebase project mapping
+- `icon.svg`, `icon-192.png`, `icon-512.png` — app icons
