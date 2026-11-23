@@ -691,23 +691,17 @@
 <body>
 
   <!-- SITE ACCESS & GOOGLE SIGN-IN GATE -->
-  <div id="site-gate">
+<div id="site-gate">
     <div class="gate-card">
       <div class="gate-accent-bar"></div>
       <h2 id="gate-title">Family Hub</h2>
-      <p>Sign in with your Google account or enter the household password</p>
+      <p>Sign in with your Google account</p>
 
       <button type="button" id="google-signin-btn" class="btn-google-signin" onclick="signInWithGoogle()">
         <span>Sign in with Google</span>
       </button>
 
       <div id="auth-error-msg" class="auth-error-text"></div>
-
-      <input type="password" id="site-pass-input" class="gate-input" placeholder="Site Password" onkeydown="if(event.key==='Enter') verifySitePassword()">
-      <label class="remember-row">
-        <input type="checkbox" id="remember-device-cb" checked> Remember this device
-      </label>
-      <button type="button" class="btn-primary-full" onclick="verifySitePassword()">Enter Family Hub</button>
     </div>
   </div>
 
