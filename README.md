@@ -71,7 +71,6 @@ Signed-in family administrators can use the Hub Settings panel to export a JSON 
 - [x] Firebase cloud synchronization
 - [x] Google Calendar integration
 - [x] Installable PWA shell
-- [ ] Local-network or self-hosted backend
 - [ ] Hardened remote access and server-side authorization
 - [ ] Native mobile notifications
 
