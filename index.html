@@ -417,11 +417,16 @@
     }
     .task-group-link:hover { color: var(--primary-hover); }
 
+    .member-task-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+
     .task-item {
       background: var(--surface);
-      padding: 18px;
+      padding: 16px 18px;
       border-radius: var(--radius-md);
-      margin-bottom: 14px;
       border: 1px solid var(--border);
       display: flex;
       justify-content: space-between;
@@ -431,7 +436,6 @@
       transition: border-color 0.15s ease, box-shadow 0.15s ease;
     }
 
-    .task-item:last-child { margin-bottom: 0; }
     .task-item:hover { box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08); }
     .task-item.completed { border-left-color: var(--success); opacity: 0.55; }
     .task-info h4 { font-size: 1.02rem; font-weight: 700; margin-bottom: 4px; color: var(--text); }
@@ -444,6 +448,25 @@
     .btn-check { background: var(--success); color: white; border: none; padding: 10px 18px; font-size: 0.92rem; font-weight: 700; flex-shrink: 0; }
     .btn-check:hover { background: #059669; }
     .btn-check:disabled { background: var(--surface); color: var(--text-muted); cursor: default; }
+
+    .task-order-input {
+      width: 64px;
+      padding: 6px 8px;
+      border: 1.5px solid var(--input-border);
+      border-radius: var(--radius-sm);
+      background: var(--input-bg);
+      color: var(--text);
+      font-size: 0.9rem;
+      font-weight: 700;
+      text-align: center;
+      -moz-appearance: textfield;
+    }
+    .task-order-input::-webkit-outer-spin-button,
+    .task-order-input::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+    .task-order-input:focus { outline: none; border-color: var(--primary); }
 
     .admin-form-box {
       display: grid;
@@ -474,16 +497,6 @@
     .btn-outline-primary:hover { background: var(--primary); color: white; }
     .btn-outline-danger { background: transparent; border: 1.5px solid var(--danger); color: var(--danger); padding: 9px 16px; font-size: 0.9rem; font-weight: 700; }
     .btn-outline-danger:hover { background: var(--danger); color: white; }
-    .btn-order {
-      background: var(--surface);
-      border: 1px solid var(--input-border);
-      color: var(--text);
-      padding: 6px 10px;
-      font-size: 0.82rem;
-      font-weight: 700;
-    }
-    .btn-order:hover:not(:disabled) { border-color: var(--primary); color: var(--primary); }
-    .btn-order:disabled { opacity: 0.35; cursor: default; }
 
     /* LOG PILLS */
     .log-pill {
@@ -511,6 +524,15 @@
     th, td { text-align: left; padding: 16px 20px; border-bottom: 1px solid var(--border); }
     th { background: var(--surface); font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); }
     tr.group-header td { font-weight: 800; font-size: 0.98rem; padding: 14px 20px; }
+    tr.type-subheader td {
+      font-weight: 700;
+      font-size: 0.84rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      background: var(--surface);
+      padding: 10px 20px;
+    }
     .group-badge { display: inline-block; background: var(--surface-card); color: var(--text); border: 1px solid var(--border); font-size: 0.78rem; font-weight: 700; padding: 3px 10px; border-radius: var(--radius-sm); margin-left: 12px; }
 
     /* CALENDAR */
@@ -588,6 +610,7 @@
       .user-card { padding: 16px; box-shadow: none; border-color: var(--border); }
       .user-header { margin-bottom: 14px; }
       .user-name { font-size: 1.1rem; }
+      .member-task-grid { grid-template-columns: 1fr; gap: 12px; }
       .task-item { flex-direction: column; align-items: stretch; padding: 14px; gap: 12px; }
       .task-info { padding-right: 0 !important; }
       .task-item .btn-check { width: 100%; padding: 12px; font-size: 0.95rem; text-align: center; }
@@ -758,11 +781,12 @@
           <table>
             <thead>
               <tr>
+                <th style="width:10%">Order</th>
                 <th style="width:30%">Task</th>
-                <th style="width:15%">Streak Goal</th>
-                <th style="width:15%">Prize</th>
-                <th style="width:18%">Logic</th>
-                <th style="text-align:right; width:22%">Action</th>
+                <th style="width:14%">Streak Goal</th>
+                <th style="width:14%">Prize</th>
+                <th style="width:14%">Logic</th>
+                <th style="text-align:right; width:18%">Action</th>
               </tr>
             </thead>
             <tbody id="task-list-body"></tbody>
@@ -1160,6 +1184,20 @@
       return task && task.taskType === 'as-needed' ? 'as-needed' : 'daily';
     }
 
+    function getTaskSortOrder(task, fallbackOrder = 0) {
+      const n = Number(task?.sortOrder);
+      return Number.isFinite(n) ? n : fallbackOrder;
+    }
+
+    function sortTasksByOrder(taskList) {
+      return [...taskList].sort((a, b) => {
+        const orderA = getTaskSortOrder(a, 0);
+        const orderB = getTaskSortOrder(b, 0);
+        if (orderA !== orderB) return orderA - orderB;
+        return (a.id || 0) - (b.id || 0);
+      });
+    }
+
     function migrateLegacyFields(data) {
       const migrated = { ...data };
       if (Array.isArray(migrated.chores) && (!Array.isArray(migrated.tasks) || migrated.tasks.length === 0)) {
@@ -1171,10 +1209,19 @@
       }
       delete migrated.choresVisible;
       if (Array.isArray(migrated.tasks)) {
-        migrated.tasks = migrated.tasks.map(t => ({
-          ...t,
-          taskType: normalizeTaskCategory(t)
-        }));
+        const perGroupCounters = new Map();
+        migrated.tasks = migrated.tasks.map(t => {
+          const taskType = normalizeTaskCategory(t);
+          const groupKey = `${t.assigneeId ?? 'unassigned'}:${taskType}`;
+          const nextDefaultOrder = (perGroupCounters.get(groupKey) || 0) + 1;
+          perGroupCounters.set(groupKey, nextDefaultOrder);
+          const sortOrder = Number.isFinite(Number(t.sortOrder)) ? Number(t.sortOrder) : nextDefaultOrder;
+          return {
+            ...t,
+            taskType,
+            sortOrder
+          };
+        });
       } else {
         migrated.tasks = [];
       }
@@ -1551,22 +1598,32 @@
       if (!name) return alert("Please enter a task name.");
       if (selectedUserIds.length === 0) return alert("Please select at least one user.");
 
-      const createdTasks = selectedUserIds.map((userId, index) => ({
-        id: Date.now() + index,
-        name,
-        taskType,
-        assigneeId: userId,
-        goal,
-        prize,
-        type,
-        points,
-        dynamic: { min, max },
-        desc,
-        streak: 0,
-        goalStreak: 0,
-        lastCompleted: null,
-        prevLastCompleted: null
-      }));
+      const createdTasks = selectedUserIds.map((userId, index) => {
+        const existingInGroup = state.tasks.filter(
+          t => t.assigneeId === userId && normalizeTaskCategory(t) === taskType
+        );
+        const maxOrder = existingInGroup.reduce(
+          (maxVal, item, idx) => Math.max(maxVal, getTaskSortOrder(item, idx + 1)),
+          0
+        );
+        return {
+          id: Date.now() + index,
+          name,
+          taskType,
+          sortOrder: maxOrder + 1,
+          assigneeId: userId,
+          goal,
+          prize,
+          type,
+          points,
+          dynamic: { min, max },
+          desc,
+          streak: 0,
+          goalStreak: 0,
+          lastCompleted: null,
+          prevLastCompleted: null
+        };
+      });
 
       state.tasks.push(...createdTasks);
       document.getElementById('t-name').value = '';
@@ -1578,28 +1635,14 @@
       updateFields({ tasks: FieldValue.arrayUnion(...createdTasks) });
     }
 
-    function moveTask(taskId, direction) {
+    function updateTaskOrder(taskId, rawValue) {
       requireAuthUser();
-      const idx = state.tasks.findIndex(t => t.id === taskId);
-      if (idx === -1) return;
-      const currentTask = state.tasks[idx];
-      const delta = direction === 'up' ? -1 : 1;
+      const digitsOnly = String(rawValue ?? '').replace(/\D+/g, '');
+      const parsedOrder = digitsOnly === '' ? 0 : Number(digitsOnly);
+      const targetTask = state.tasks.find(t => t.id === taskId);
+      if (!targetTask || getTaskSortOrder(targetTask, 0) === parsedOrder) return;
 
-      let swapIdx = -1;
-      for (let i = idx + delta; i >= 0 && i < state.tasks.length; i += delta) {
-        if (state.tasks[i].assigneeId === currentTask.assigneeId) {
-          swapIdx = i;
-          break;
-        }
-      }
-      if (swapIdx === -1) return;
-
-      const reordered = [...state.tasks];
-      const temp = reordered[idx];
-      reordered[idx] = reordered[swapIdx];
-      reordered[swapIdx] = temp;
-      state.tasks = reordered;
-
+      targetTask.sortOrder = parsedOrder;
       localStorage.setItem('familyHubData', JSON.stringify(state));
       renderAll();
 
@@ -1607,23 +1650,11 @@
       db.runTransaction(async (tx) => {
         const snap = await tx.get(familyDocRef);
         if (!snap.exists) return;
-        const serverTasks = [...(snap.data().tasks || [])];
-        const sIdx = serverTasks.findIndex(t => t.id === taskId);
-        if (sIdx === -1) return;
-        const sTask = serverTasks[sIdx];
-        let sSwapIdx = -1;
-        for (let i = sIdx + delta; i >= 0 && i < serverTasks.length; i += delta) {
-          if (serverTasks[i].assigneeId === sTask.assigneeId) {
-            sSwapIdx = i;
-            break;
-          }
-        }
-        if (sSwapIdx === -1) return;
-        const sTemp = serverTasks[sIdx];
-        serverTasks[sIdx] = serverTasks[sSwapIdx];
-        serverTasks[sSwapIdx] = sTemp;
-        tx.update(familyDocRef, { tasks: serverTasks });
-      }).catch(err => console.error("Move task transaction failed:", err))
+        const tasks = (snap.data().tasks || []).map(t =>
+          t.id === taskId ? { ...t, sortOrder: parsedOrder } : t
+        );
+        tx.update(familyDocRef, { tasks });
+      }).catch(err => console.error("Task order transaction failed:", err))
         .finally(() => {
           pendingLocalWrites = Math.max(0, pendingLocalWrites - 1);
         });
@@ -2031,7 +2062,7 @@
 
       return `
         <div class="task-item ${isLockedDone ? 'completed' : ''}">
-          <div class="task-info" style="flex:1; padding-right:14px;">
+          <div class="task-info" style="flex:1; padding-right:8px;">
             <h4>${t.name}</h4>
             <p>${t.desc ? t.desc + ' • ' : ''}<strong>${rewardText}</strong></p>
             ${t.goal > 0 ? `
@@ -2046,24 +2077,32 @@
       `;
     }
 
-    function renderTaskRow(t, indexInMemberGroup, memberGroupCount) {
+    function renderTaskRow(t, fallbackOrder = 0) {
       const logicLabel = t.type === 'dynamic' ? `D:${t.dynamic.min}-${t.dynamic.max}` : `S:${t.points}`;
-      const categoryLabel = normalizeTaskCategory(t) === 'as-needed' ? 'As Needed' : 'Daily';
-      const isFirst = indexInMemberGroup === 0;
-      const isLast = indexInMemberGroup === memberGroupCount - 1;
+      const orderVal = getTaskSortOrder(t, fallbackOrder);
       return `
         <tr>
           <td>
+            <input
+              type="text"
+              inputmode="numeric"
+              pattern="[0-9]*"
+              class="task-order-input"
+              value="${orderVal}"
+              aria-label="Order for ${t.name}"
+              oninput="this.value = this.value.replace(/\\D+/g, '')"
+              onchange="updateTaskOrder(${t.id}, this.value)"
+              onkeydown="if(event.key==='Enter'){ this.blur(); }"
+            >
+          </td>
+          <td>
             <strong>${t.name}</strong>
-            <span class="group-badge" style="margin-left:8px;">${categoryLabel}</span>
             ${t.desc ? `<div style="font-size:0.85rem; color:var(--text-muted); margin-top:2px;">${t.desc}</div>` : ''}
           </td>
           <td>${t.goal ? t.goal + 'd' : 0}</td>
           <td>${t.prize || '--'}</td>
           <td>${logicLabel}</td>
           <td style="text-align:right; white-space:nowrap;">
-            <button type="button" class="btn-order" ${isFirst ? 'disabled' : ''} onclick="moveTask(${t.id}, 'up')" title="Move Up">↑</button>
-            <button type="button" class="btn-order" ${isLast ? 'disabled' : ''} onclick="moveTask(${t.id}, 'down')" title="Move Down">↓</button>
             <button type="button" class="btn-outline-primary" style="padding:6px 12px; font-size:0.85rem;" onclick="openEditTask(${t.id})">Edit</button>
             <button type="button" class="btn-outline-danger" style="padding:6px 12px; font-size:0.85rem;" onclick="deleteTask(${t.id})">X</button>
           </td>
@@ -2213,8 +2252,12 @@
             const unit = currencyMap[activeMember.role] || '';
             const cardColor = activeMember.color || '#0d9488';
 
-            const dailyTasks = memberTasks.filter(t => normalizeTaskCategory(t) === 'daily');
-            const asNeededTasks = memberTasks.filter(t => normalizeTaskCategory(t) === 'as-needed');
+            const dailyTasks = sortTasksByOrder(
+              memberTasks.filter(t => normalizeTaskCategory(t) === 'daily')
+            );
+            const asNeededTasks = sortTasksByOrder(
+              memberTasks.filter(t => normalizeTaskCategory(t) === 'as-needed')
+            );
 
             const completedTodayCount = dailyTasks.filter(t => t.lastCompleted === today).length;
             const remainingTodayCount = Math.max(0, dailyTasks.length - completedTodayCount);
@@ -2226,7 +2269,9 @@
                   <div class="task-group-header-row">
                     <span class="task-group-heading">Daily Tasks</span>
                   </div>
-                  ${dailyTasks.map(t => renderMemberTaskItem(t, today, unit, cardColor)).join('')}
+                  <div class="member-task-grid">
+                    ${dailyTasks.map(t => renderMemberTaskItem(t, today, unit, cardColor)).join('')}
+                  </div>
                 </div>
               `;
             }
@@ -2237,7 +2282,9 @@
                     <span class="task-group-heading">As Needed</span>
                     <button type="button" class="task-group-link" onclick="openTaskListsAdmin()">Configure Tasks →</button>
                   </div>
-                  ${asNeededTasks.map(t => renderMemberTaskItem(t, today, unit, cardColor)).join('')}
+                  <div class="member-task-grid">
+                    ${asNeededTasks.map(t => renderMemberTaskItem(t, today, unit, cardColor)).join('')}
+                  </div>
                 </div>
               `;
             }
@@ -2289,18 +2336,33 @@
         lastTasksTableSignature = tasksTableSignature;
         let groupedTasksHtml = '';
 
+        const renderMemberTypeSubgroups = (memberTasks) => {
+          const daily = sortTasksByOrder(memberTasks.filter(t => normalizeTaskCategory(t) === 'daily'));
+          const asNeeded = sortTasksByOrder(memberTasks.filter(t => normalizeTaskCategory(t) === 'as-needed'));
+          let html = '';
+          if (daily.length) {
+            html += `<tr class="type-subheader"><td colspan="6">Daily Tasks (${daily.length})</td></tr>`;
+            html += daily.map((t, idx) => renderTaskRow(t, idx + 1)).join('');
+          }
+          if (asNeeded.length) {
+            html += `<tr class="type-subheader"><td colspan="6">As Needed Tasks (${asNeeded.length})</td></tr>`;
+            html += asNeeded.map((t, idx) => renderTaskRow(t, idx + 1)).join('');
+          }
+          return html;
+        };
+
         state.members.forEach(m => {
           const memberTasks = state.tasks.filter(t => t.assigneeId === m.id);
           const mColor = m.color || '#0d9488';
           groupedTasksHtml += `
             <tr class="group-header" style="background: ${mColor}12; border-top: 2px solid ${mColor}35; border-bottom: 1px solid ${mColor}35;">
-              <td colspan="5" style="color:var(--text);">${m.name.trim()}<span class="group-badge">${memberTasks.length} ${memberTasks.length === 1 ? 'task' : 'tasks'}</span></td>
+              <td colspan="6" style="color:var(--text);">${m.name.trim()}<span class="group-badge">${memberTasks.length} ${memberTasks.length === 1 ? 'task' : 'tasks'}</span></td>
             </tr>
           `;
           if (memberTasks.length) {
-            groupedTasksHtml += memberTasks.map((t, idx) => renderTaskRow(t, idx, memberTasks.length)).join('');
+            groupedTasksHtml += renderMemberTypeSubgroups(memberTasks);
           } else {
-            groupedTasksHtml += `<tr><td colspan="5" style="color:var(--text-muted); font-size:0.9rem; padding-left:24px;">No tasks assigned.</td></tr>`;
+            groupedTasksHtml += `<tr><td colspan="6" style="color:var(--text-muted); font-size:0.9rem; padding-left:24px;">No tasks assigned.</td></tr>`;
           }
         });
 
@@ -2309,12 +2371,12 @@
         if (unassignedTasks.length) {
           groupedTasksHtml += `
             <tr class="group-header" style="background: rgba(100,100,100,0.1);">
-              <td colspan="5">Unassigned<span class="group-badge">${unassignedTasks.length}</span></td>
+              <td colspan="6">Unassigned<span class="group-badge">${unassignedTasks.length}</span></td>
             </tr>
-          ` + unassignedTasks.map((t, idx) => renderTaskRow(t, idx, unassignedTasks.length)).join('');
+          ` + renderMemberTypeSubgroups(unassignedTasks);
         }
 
-        document.getElementById('task-list-body').innerHTML = groupedTasksHtml || `<tr><td colspan="5" style="text-align:center; color:var(--text-muted);">No tasks configured yet.</td></tr>`;
+        document.getElementById('task-list-body').innerHTML = groupedTasksHtml || `<tr><td colspan="6" style="text-align:center; color:var(--text-muted);">No tasks configured yet.</td></tr>`;
       }
 
       const waitingCount = state.approvals.length;
