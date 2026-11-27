@@ -406,16 +406,6 @@
       letter-spacing: 0.06em;
       color: var(--text-muted);
     }
-    .task-group-link {
-      background: none;
-      border: none;
-      color: var(--primary);
-      font-size: 0.84rem;
-      font-weight: 700;
-      text-decoration: underline;
-      padding: 2px 4px;
-    }
-    .task-group-link:hover { color: var(--primary-hover); }
 
     .member-task-grid {
       display: grid;
@@ -1326,20 +1316,6 @@
       }
     }
 
-    function openTaskListsAdmin() {
-      if (isUnlocked) {
-        document.getElementById('sidebar').classList.add('visible');
-        syncSidebarLayout(true);
-        showSection('admin-tasks', document.getElementById('nav-tasks'));
-      } else {
-        redirectAfterLogin = 'admin-tasks';
-        document.getElementById('admin-login-user').value = '';
-        document.getElementById('admin-login-pass').value = '';
-        document.getElementById('admin-login-modal').style.display = 'flex';
-        setTimeout(() => document.getElementById('admin-login-user').focus(), 50);
-      }
-    }
-
     function submitAdminLogin() {
       const u = document.getElementById('admin-login-user').value.trim();
       const p = document.getElementById('admin-login-pass').value;
@@ -1356,8 +1332,6 @@
         syncSidebarLayout(true);
         if (targetSection === 'admin-approvals') {
           showSection('admin-approvals', document.getElementById('nav-approvals'));
-        } else if (targetSection === 'admin-tasks') {
-          showSection('admin-tasks', document.getElementById('nav-tasks'));
         }
       } else {
         alert("Invalid username or password.");
@@ -2300,7 +2274,6 @@
                 <div class="task-group-section">
                   <div class="task-group-header-row">
                     <span class="task-group-heading">As Needed</span>
-                    <button type="button" class="task-group-link" onclick="openTaskListsAdmin()">Configure Tasks →</button>
                   </div>
                   <div class="member-task-grid">
                     ${asNeededTasks.map(t => renderMemberTaskItem(t, today, unit, cardColor)).join('')}
