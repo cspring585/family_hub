@@ -387,6 +387,17 @@
       white-space: nowrap;
     }
     .user-points { background: var(--primary); color: white; padding: 6px 12px; border-radius: var(--radius-sm); font-size: 0.85rem; font-weight: 700; white-space: nowrap; }
+    .btn-bonus-link {
+      background: transparent;
+      color: var(--primary);
+      border: 1.5px solid var(--primary);
+      padding: 5px 11px;
+      border-radius: var(--radius-sm);
+      font-size: 0.82rem;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+    .btn-bonus-link:hover { background: var(--primary); color: white; }
 
     .task-group-section { margin-top: 20px; }
     .task-group-section:first-of-type { margin-top: 8px; }
@@ -1044,6 +1055,7 @@
     let unsubscribeHousehold = null;
     let isUnlocked = false;
     let redirectAfterLogin = null;
+    let pendingBonusMemberId = null;
     let editId = null;
     let selectedMemberId = null;
     let pendingLocalWrites = 0;
@@ -1262,6 +1274,7 @@
     function closeModals() {
       document.querySelectorAll('.modal-overlay').forEach(m => m.style.display = 'none');
       redirectAfterLogin = null;
+      pendingBonusMemberId = null;
     }
 
     function syncSidebarLayout(isOpen) {
@@ -1302,6 +1315,34 @@
       }
     }
 
+    function applyBonusMemberSelection(memberId) {
+      if (!memberId) return;
+      const selectEl = document.getElementById('bonus-member-select');
+      if (selectEl && state.members.some(m => m.id === memberId)) {
+        selectEl.value = String(memberId);
+      }
+      setTimeout(() => {
+        const ptsInput = document.getElementById('bonus-points-input');
+        if (ptsInput) ptsInput.focus();
+      }, 50);
+    }
+
+    function openBonusPointsAdmin(memberId) {
+      if (isUnlocked) {
+        document.getElementById('sidebar').classList.add('visible');
+        syncSidebarLayout(true);
+        showSection('admin-members', document.getElementById('nav-members'));
+        applyBonusMemberSelection(memberId);
+      } else {
+        redirectAfterLogin = 'admin-members';
+        pendingBonusMemberId = memberId;
+        document.getElementById('admin-login-user').value = '';
+        document.getElementById('admin-login-pass').value = '';
+        document.getElementById('admin-login-modal').style.display = 'flex';
+        setTimeout(() => document.getElementById('admin-login-user').focus(), 50);
+      }
+    }
+
     function handleAdminButtonClick() {
       if (isUnlocked) {
         const sidebar = document.getElementById('sidebar');
@@ -1309,6 +1350,7 @@
         syncSidebarLayout(sidebar.classList.contains('visible'));
       } else {
         redirectAfterLogin = null;
+        pendingBonusMemberId = null;
         document.getElementById('admin-login-user').value = '';
         document.getElementById('admin-login-pass').value = '';
         document.getElementById('admin-login-modal').style.display = 'flex';
@@ -1323,6 +1365,7 @@
       const expectedPass = state.adminPasscode || "1234";
       if (u.toLowerCase() === expectedUser.toLowerCase() && p === expectedPass) {
         const targetSection = redirectAfterLogin;
+        const targetBonusMemberId = pendingBonusMemberId;
         isUnlocked = true;
         closeModals();
         const btn = document.getElementById('admin-header-btn');
@@ -1332,6 +1375,9 @@
         syncSidebarLayout(true);
         if (targetSection === 'admin-approvals') {
           showSection('admin-approvals', document.getElementById('nav-approvals'));
+        } else if (targetSection === 'admin-members') {
+          showSection('admin-members', document.getElementById('nav-members'));
+          applyBonusMemberSelection(targetBonusMemberId);
         }
       } else {
         alert("Invalid username or password.");
@@ -2293,6 +2339,7 @@
                     <span class="user-stat-pill">✓ ${completedTodayCount} Done Today</span>
                     <span class="user-stat-pill">⏳ ${remainingTodayCount} Remaining</span>
                     ${activeMember.role !== 'adult' ? `<span class="user-points" style="background:${cardColor};">${activeMember.points} ${unit}</span>` : ''}
+                    <button type="button" class="btn-bonus-link" onclick="openBonusPointsAdmin(${activeMember.id})">+ Bonus Points</button>
                     <button type="button" onclick="selectedMemberId = null; renderAll();" style="background:none; border:none; font-size:1.1rem; cursor:pointer; color:var(--text-muted); padding:4px 8px;" title="Close">✕</button>
                   </div>
                 </div>
