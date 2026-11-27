@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <meta name="mobile-web-app-capable" content="yes">
   <title>Family Hub</title>
-
   <!-- PWA Manifest & Mobile Web App Meta -->
   <link rel="manifest" href="/manifest.json">
   <meta name="theme-color" content="#0d9488">
@@ -15,7 +14,6 @@
   <link rel="apple-touch-icon" href="/icon-192.png">
   <link rel="icon" href="/icon.svg" type="image/svg+xml">
   <link rel="icon" href="/icon-192.png" type="image/png" sizes="192x192">
-
   <style>
     :root {
       --primary: #0d9488;
@@ -40,7 +38,6 @@
       --radius-md: 3px;
       --radius-sm: 2px;
     }
-
     html[data-theme="dark"] {
       --primary: #14b8a6;
       --primary-hover: #2dd4bf;
@@ -58,7 +55,6 @@
       --success: #10b981;
       --warning: #f59e0b;
     }
-
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
     body {
       background-color: var(--bg);
@@ -70,103 +66,46 @@
       transition: background-color 0.2s, color 0.2s;
       -webkit-tap-highlight-color: transparent;
     }
-
     /* SITE ACCESS GATE OVERLAY */
     #site-gate {
-      position: fixed;
-      inset: 0;
+      position: fixed; inset: 0;
       background: rgba(3, 7, 18, 0.85);
       backdrop-filter: blur(20px);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      z-index: 5000;
-      padding: 20px;
+      display: flex; justify-content: center; align-items: center;
+      z-index: 5000; padding: 20px;
     }
     .gate-card {
       background: var(--surface-card);
       padding: 40px 36px;
       border-radius: var(--radius-lg);
-      width: 100%;
-      max-width: 420px;
+      width: 100%; max-width: 420px;
       border: 1px solid var(--border);
       box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
       text-align: center;
     }
     .gate-accent-bar {
-      width: 48px;
-      height: 6px;
+      width: 48px; height: 6px;
       border-radius: var(--radius-sm);
       background: var(--primary);
       margin: 0 auto 20px;
     }
     .gate-card h2 { font-size: 1.65rem; font-weight: 800; color: var(--text); margin-bottom: 8px; letter-spacing: -0.03em; }
     .gate-card p { font-size: 0.92rem; color: var(--text-muted); margin-bottom: 24px; }
-    .gate-input {
-      width: 100%;
-      padding: 14px 16px;
-      border: 1.5px solid var(--input-border);
-      background: var(--input-bg);
-      color: var(--text);
-      border-radius: var(--radius-md);
-      font-size: 1rem;
-      margin-bottom: 16px;
-      outline: none;
-      transition: border-color 0.2s;
-    }
-    .gate-input:focus { border-color: var(--primary); }
-    .remember-row {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-size: 0.9rem;
-      color: var(--text-muted);
-      margin-bottom: 24px;
-      cursor: pointer;
-      justify-content: flex-start;
-    }
-    .btn-primary-full {
-      width: 100%;
-      padding: 14px;
-      background: var(--primary);
-      color: white;
-      border: none;
-      border-radius: var(--radius-md);
-      font-size: 1rem;
-      font-weight: 700;
-      cursor: pointer;
-    }
-    .btn-primary-full:hover { background: var(--primary-hover); }
     .btn-google-signin {
-      width: 100%;
-      padding: 13px 16px;
-      background: var(--surface);
-      color: var(--text);
+      width: 100%; padding: 13px 16px;
+      background: var(--surface); color: var(--text);
       border: 1.5px solid var(--input-border);
       border-radius: var(--radius-md);
-      font-size: 0.98rem;
-      font-weight: 700;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
+      font-size: 0.98rem; font-weight: 700; cursor: pointer;
+      display: inline-flex; align-items: center; justify-content: center; gap: 10px;
       margin-bottom: 12px;
     }
     .btn-google-signin:hover { border-color: var(--primary); }
-    .auth-error-text {
-      color: var(--danger);
-      font-size: 0.88rem;
-      min-height: 1.2em;
-      margin-bottom: 14px;
-    }
+    .auth-error-text { color: var(--danger); font-size: 0.88rem; min-height: 1.2em; margin-bottom: 14px; }
 
     /* TOP HEADER BAR */
     header.topbar {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
+      position: fixed; top: 0; left: 0; right: 0;
       min-height: var(--header-height);
       background: var(--topbar-bg);
       backdrop-filter: blur(16px);
@@ -175,65 +114,32 @@
       padding-top: env(safe-area-inset-top, 0px);
     }
     .topbar-inner {
-      max-width: var(--container-max);
-      width: 100%;
+      max-width: var(--container-max); width: 100%;
       min-height: var(--header-height);
-      margin: 0 auto;
-      padding: 0 36px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 12px;
+      margin: 0 auto; padding: 0 36px;
+      display: flex; justify-content: space-between; align-items: center; gap: 12px;
     }
-    .brand-wrap {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      cursor: pointer;
-      min-width: 0;
-    }
-    .brand-title {
-      font-size: 1.35rem;
-      font-weight: 800;
-      letter-spacing: -0.03em;
-      color: var(--text);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
+    .brand-wrap { display: flex; align-items: center; gap: 12px; cursor: pointer; min-width: 0; }
+    .brand-title { font-size: 1.35rem; font-weight: 800; letter-spacing: -0.03em; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .topbar-right { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
     #clock { font-weight: 600; color: var(--text-muted); font-size: 0.95rem; margin-right: 4px; }
-
     .btn-theme-toggle {
-      background: var(--surface);
-      color: var(--text);
+      background: var(--surface); color: var(--text);
       border: 1px solid var(--border);
-      width: 40px;
-      height: 40px;
+      width: 40px; height: 40px;
       border-radius: var(--radius-md);
-      font-size: 1.1rem;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
+      font-size: 1.1rem; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0;
     }
     .btn-theme-toggle:hover { border-color: var(--primary); }
 
     /* WAITING APPROVALS HEADER FLAG */
     .approval-flag {
-      background: rgba(245, 158, 11, 0.12);
-      color: #d97706;
+      background: rgba(245, 158, 11, 0.12); color: #d97706;
       border: 1.5px solid rgba(245, 158, 11, 0.35);
-      padding: 8px 14px;
-      border-radius: var(--radius-md);
-      font-size: 0.88rem;
-      font-weight: 700;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      cursor: pointer;
-      animation: pulseFlag 2s infinite;
-      white-space: nowrap;
+      padding: 8px 14px; border-radius: var(--radius-md);
+      font-size: 0.88rem; font-weight: 700;
+      display: inline-flex; align-items: center; gap: 6px;
+      cursor: pointer; animation: pulseFlag 2s infinite; white-space: nowrap;
     }
     html[data-theme="dark"] .approval-flag { color: #fbbf24; background: rgba(245, 158, 11, 0.18); }
     .approval-flag:hover { background: rgba(245, 158, 11, 0.22); }
@@ -241,19 +147,10 @@
       0%, 100% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.3); }
       50% { box-shadow: 0 0 0 6px rgba(245, 158, 11, 0); }
     }
-
     .btn-admin-header {
-      background: var(--primary);
-      color: white;
-      border: none;
-      padding: 10px 16px;
-      border-radius: var(--radius-md);
-      font-size: 0.92rem;
-      font-weight: 700;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      white-space: nowrap;
+      background: var(--primary); color: white; border: none;
+      padding: 10px 16px; border-radius: var(--radius-md);
+      font-size: 0.92rem; font-weight: 700; display: flex; align-items: center; gap: 6px; white-space: nowrap;
     }
     .btn-admin-header:hover { background: var(--primary-hover); }
     .btn-admin-header.unlocked { background: var(--success); }
@@ -262,57 +159,31 @@
     /* ADMIN LEFT SIDEBAR */
     nav#sidebar {
       width: var(--sidebar-width);
-      background: var(--surface-card);
-      color: var(--text);
+      background: var(--surface-card); color: var(--text);
       padding: 28px 20px calc(28px + env(safe-area-inset-bottom, 0px)) 20px;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      position: fixed;
-      top: calc(var(--header-height) + env(safe-area-inset-top, 0px));
-      bottom: 0;
-      left: 0;
+      display: flex; flex-direction: column; justify-content: space-between;
+      position: fixed; top: calc(var(--header-height) + env(safe-area-inset-top, 0px)); bottom: 0; left: 0;
       transform: translateX(-100%);
       transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-      z-index: 1100;
-      border-right: 1px solid var(--border);
+      z-index: 1100; border-right: 1px solid var(--border);
       box-shadow: 10px 0 30px rgba(0, 0, 0, 0.15);
     }
     nav#sidebar.visible { transform: translateX(0); }
-    .sidebar-label {
-      font-size: 0.75rem;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      color: var(--text-muted);
-      font-weight: 700;
-      padding: 0 12px 14px;
-    }
+    .sidebar-label { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); font-weight: 700; padding: 0 12px 14px; }
     .nav-links { display: flex; flex-direction: column; gap: 8px; }
     .nav-btn {
-      background: none;
-      border: none;
-      color: var(--text-muted);
-      padding: 12px 16px;
-      text-align: left;
-      font-size: 0.96rem;
-      border-radius: var(--radius-md);
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      font-weight: 600;
+      background: none; border: none; color: var(--text-muted);
+      padding: 12px 16px; text-align: left; font-size: 0.96rem;
+      border-radius: var(--radius-md); cursor: pointer;
+      display: flex; align-items: center; gap: 12px; font-weight: 600;
     }
     .nav-btn:hover { background: var(--surface); color: var(--text); }
     .nav-btn.active { background: var(--primary); color: white; }
     .btn-lock-sidebar {
-      width: 100%;
-      padding: 13px;
-      background: var(--surface);
-      color: var(--danger);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-md);
-      font-size: 0.92rem;
-      font-weight: 700;
+      width: 100%; padding: 13px;
+      background: var(--surface); color: var(--danger);
+      border: 1px solid var(--border); border-radius: var(--radius-md);
+      font-size: 0.92rem; font-weight: 700;
     }
     .btn-lock-sidebar:hover { background: rgba(239, 68, 68, 0.08); }
 
@@ -321,9 +192,7 @@
       margin: calc(var(--header-height) + env(safe-area-inset-top, 0px)) auto 0 auto;
       padding: 40px 36px 16px 36px;
       transition: padding-left 0.3s cubic-bezier(0.16, 1, 0.3, 1), max-width 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-      max-width: var(--container-max);
-      width: 100%;
-      flex: 1;
+      max-width: var(--container-max); width: 100%; flex: 1;
     }
     main.with-sidebar {
       margin-left: auto;
@@ -333,146 +202,72 @@
 
     /* FOOTER AREA */
     footer.hub-footer {
-      max-width: var(--container-max);
-      width: 100%;
+      max-width: var(--container-max); width: 100%;
       margin: 0 auto;
       padding: 20px 36px calc(36px + env(safe-area-inset-bottom, 0px)) 36px;
-      text-align: center;
-      color: var(--text-muted);
-      font-size: 0.88rem;
+      text-align: center; color: var(--text-muted); font-size: 0.88rem;
       transition: padding-left 0.3s cubic-bezier(0.16, 1, 0.3, 1), max-width 0.3s cubic-bezier(0.16, 1, 0.3, 1);
     }
     footer.hub-footer.with-sidebar {
       padding-left: calc(var(--sidebar-width) + 36px);
       max-width: calc(var(--container-max) + var(--sidebar-width));
     }
-    .footer-inner {
-      border-top: 1px solid var(--border);
-      padding-top: 20px;
-    }
+    .footer-inner { border-top: 1px solid var(--border); padding-top: 20px; }
 
     .hidden { display: none !important; }
-
     .card {
       background: var(--surface-card);
-      border-radius: var(--radius-lg);
-      padding: 32px;
-      border: 1px solid var(--border);
-      margin-bottom: 32px;
+      border-radius: var(--radius-lg); padding: 32px;
+      border: 1px solid var(--border); margin-bottom: 32px;
       box-shadow: 0 4px 24px -4px rgba(0, 0, 0, 0.02);
       position: relative;
     }
     h1 { font-size: 1.75rem; font-weight: 800; color: var(--text); letter-spacing: -0.03em; margin-bottom: 24px; }
+    h2.subhead { font-size: 1.2rem; font-weight: 700; color: var(--text); margin-bottom: 14px; }
 
     /* SECTION ACCORDION HEADER */
-    .section-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      cursor: pointer;
-      user-select: none;
-      margin-bottom: 16px;
-    }
+    .section-header { display: flex; justify-content: space-between; align-items: center; cursor: pointer; user-select: none; margin-bottom: 16px; }
     .section-header h3 { font-size: 1.25rem; font-weight: 700; color: var(--text); letter-spacing: -0.01em; }
     .section-header span { font-size: 1.4rem; font-weight: 700; color: var(--text-muted); }
 
     /* TASK LISTS HEADER & INLINE MEMBER TABS */
     .tasks-header-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 16px;
-      padding-bottom: 16px;
-      border-bottom: 1px solid var(--border);
-      margin-bottom: 0;
+      display: flex; justify-content: space-between; align-items: center;
+      flex-wrap: wrap; gap: 16px; padding-bottom: 16px;
+      border-bottom: 1px solid var(--border); margin-bottom: 0;
     }
     .tasks-header-title { font-size: 1.25rem; font-weight: 700; color: var(--text); letter-spacing: -0.01em; display: flex; align-items: center; gap: 10px; }
-    .member-tabs {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      align-items: center;
-      position: relative;
-      z-index: 150;
-    }
+    .member-tabs { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; position: relative; z-index: 150; }
     .member-tab-btn {
       --member-color: var(--primary);
-      background: var(--surface);
-      color: var(--text);
+      background: var(--surface); color: var(--text);
       border: 1.5px solid var(--border);
-      padding: 8px 14px;
-      border-radius: var(--radius-md);
-      font-size: 0.88rem;
-      font-weight: 700;
-      cursor: pointer;
-      user-select: none;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      min-height: 38px;
+      padding: 8px 14px; border-radius: var(--radius-md);
+      font-size: 0.88rem; font-weight: 700;
+      cursor: pointer; user-select: none;
+      display: inline-flex; align-items: center; gap: 6px; min-height: 38px;
     }
-    .member-tab-btn:hover {
-      border-color: var(--member-color);
-    }
-    .member-tab-btn.active {
-      background: var(--member-color);
-      color: white;
-      border-color: var(--member-color);
-    }
-    .member-tab-btn.active:hover {
-      border-color: var(--member-color);
-      filter: brightness(1.06);
-    }
-    .member-tab-badge {
-      background: rgba(255,255,255,0.22);
-      padding: 2px 7px;
-      border-radius: var(--radius-sm);
-      font-size: 0.75rem;
-      pointer-events: none;
-    }
+    .member-tab-btn:hover { border-color: var(--member-color); }
+    .member-tab-btn.active { background: var(--member-color); color: white; border-color: var(--member-color); }
+    .member-tab-btn.active:hover { border-color: var(--member-color); filter: brightness(1.06); }
+    .member-tab-badge { background: rgba(255,255,255,0.22); padding: 2px 7px; border-radius: var(--radius-sm); font-size: 0.75rem; pointer-events: none; }
 
     /* OVERLAY TASK LIST CARD ON DESKTOP; INLINE ON MOBILE */
-    #selected-member-card-slot {
-      position: absolute;
-      top: 84px;
-      left: 32px;
-      right: 32px;
-      z-index: 100;
-      display: none;
-    }
+    #selected-member-card-slot { position: absolute; top: 84px; left: 32px; right: 32px; z-index: 100; display: none; }
     #selected-member-card-slot.show { display: block; }
-
     .user-card {
       background: var(--surface-card);
-      border-radius: var(--radius-lg);
-      padding: 24px;
-      border: 1px solid var(--border);
-      border-top: 6px solid var(--primary);
+      border-radius: var(--radius-lg); padding: 24px;
+      border: 1px solid var(--border); border-top: 6px solid var(--primary);
       box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.25);
     }
     .user-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; gap: 12px; }
     .user-name { font-size: 1.25rem; font-weight: 800; color: var(--text); letter-spacing: -0.02em; }
-    .user-points {
-      background: var(--primary);
-      color: white;
-      padding: 6px 12px;
-      border-radius: var(--radius-sm);
-      font-size: 0.85rem;
-      font-weight: 700;
-      white-space: nowrap;
-    }
-
+    .user-points { background: var(--primary); color: white; padding: 6px 12px; border-radius: var(--radius-sm); font-size: 0.85rem; font-weight: 700; white-space: nowrap; }
     .task-item {
-      background: var(--surface);
-      padding: 18px;
-      border-radius: var(--radius-md);
-      margin-bottom: 14px;
-      border: 1px solid var(--border);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 14px;
+      background: var(--surface); padding: 18px; border-radius: var(--radius-md);
+      margin-bottom: 14px; border: 1px solid var(--border);
+      display: flex; justify-content: space-between; align-items: center; gap: 14px;
       border-left: 4px solid var(--warning);
       transition: border-color 0.15s ease, box-shadow 0.15s ease;
     }
@@ -481,101 +276,70 @@
     .task-item.completed { border-left-color: var(--success); opacity: 0.55; }
     .task-info h4 { font-size: 1.02rem; font-weight: 700; margin-bottom: 4px; color: var(--text); }
     .task-info p { font-size: 0.88rem; color: var(--text-muted); }
-
     .goal-bar { height: 6px; background: var(--surface-card); border-radius: var(--radius-sm); margin-top: 10px; overflow: hidden; }
     .goal-fill { height: 100%; background: var(--primary); transition: width 0.3s; }
 
     /* BUTTONS & FORMS */
-    button {
-      cursor: pointer;
-      font-weight: 600;
-      border-radius: var(--radius-md);
-      transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
-    }
+    button { cursor: pointer; font-weight: 600; border-radius: var(--radius-md); transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease; }
     .btn-check { background: var(--success); color: white; border: none; padding: 10px 18px; font-size: 0.92rem; font-weight: 700; flex-shrink: 0; }
     .btn-check:hover { background: #059669; }
     .btn-check:disabled { background: var(--surface); color: var(--text-muted); cursor: default; }
-
     .admin-form-box {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 20px;
-      margin-bottom: 24px;
-      background: var(--surface);
-      padding: 24px;
-      border-radius: var(--radius-lg);
-      border: 1px solid var(--border);
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 20px; margin-bottom: 24px;
+      background: var(--surface); padding: 24px;
+      border-radius: var(--radius-lg); border: 1px solid var(--border);
     }
     .form-group { display: flex; flex-direction: column; gap: 8px; }
     .form-group label { font-size: 0.78rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; }
     .form-group input, .form-group select {
-      padding: 12px 16px;
-      border: 1.5px solid var(--input-border);
-      border-radius: var(--radius-md);
-      font-size: 0.98rem;
-      background: var(--input-bg);
-      color: var(--text);
-      width: 100%;
+      padding: 12px 16px; border: 1.5px solid var(--input-border);
+      border-radius: var(--radius-md); font-size: 0.98rem;
+      background: var(--input-bg); color: var(--text); width: 100%;
     }
     .form-group input:focus, .form-group select:focus { outline: none; border-color: var(--primary); }
-
     .btn-outline-primary { background: transparent; border: 1.5px solid var(--primary); color: var(--primary); padding: 11px 20px; font-weight: 700; }
     .btn-outline-primary:hover { background: var(--primary); color: white; }
     .btn-outline-danger { background: transparent; border: 1.5px solid var(--danger); color: var(--danger); padding: 9px 16px; font-size: 0.9rem; font-weight: 700; }
     .btn-outline-danger:hover { background: var(--danger); color: white; }
 
-    /* RESPONSIVE TABLES */
-    .table-scroll {
-      width: 100%;
-      overflow-x: auto;
-      -webkit-overflow-scrolling: touch;
-      margin-top: 16px;
+    /* LOG PILLS */
+    .log-pill {
+      display: inline-block; padding: 3px 9px; border-radius: var(--radius-sm);
+      font-size: 0.76rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.03em;
     }
+    .log-pill.completed { background: rgba(245, 158, 11, 0.16); color: #d97706; }
+    .log-pill.approved { background: rgba(16, 185, 129, 0.16); color: #059669; }
+    .log-pill.rejected { background: rgba(239, 68, 68, 0.16); color: #dc2626; }
+    .log-pill.bonus { background: rgba(13, 148, 136, 0.16); color: var(--primary); }
+    html[data-theme="dark"] .log-pill.completed { color: #fbbf24; }
+    html[data-theme="dark"] .log-pill.approved { color: #34d399; }
+    html[data-theme="dark"] .log-pill.rejected { color: #f87171; }
+
+    /* RESPONSIVE TABLES */
+    .table-scroll { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; margin-top: 16px; }
     .table-scroll table { margin-top: 0; }
     table { width: 100%; border-collapse: collapse; margin-top: 16px; }
     th, td { text-align: left; padding: 16px 20px; border-bottom: 1px solid var(--border); }
     th { background: var(--surface); font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); }
-    tr.group-header td {
-      font-weight: 800;
-      font-size: 0.98rem;
-      padding: 14px 20px;
-    }
-    .group-badge {
-      display: inline-block;
-      background: var(--surface-card);
-      color: var(--text);
-      border: 1px solid var(--border);
-      font-size: 0.78rem;
-      font-weight: 700;
-      padding: 3px 10px;
-      border-radius: var(--radius-sm);
-      margin-left: 12px;
-    }
+    tr.group-header td { font-weight: 800; font-size: 0.98rem; padding: 14px 20px; }
+    .group-badge { display: inline-block; background: var(--surface-card); color: var(--text); border: 1px solid var(--border); font-size: 0.78rem; font-weight: 700; padding: 3px 10px; border-radius: var(--radius-sm); margin-left: 12px; }
 
     /* CALENDAR */
     .calendar-container iframe { width: 100%; height: 660px; border: none; border-radius: var(--radius-md); display: block; }
 
     /* MODALS */
     .modal-overlay {
-      position: fixed;
-      inset: 0;
+      position: fixed; inset: 0;
       background: rgba(3, 7, 18, 0.75);
       backdrop-filter: blur(10px);
-      display: none;
-      justify-content: center;
-      align-items: center;
-      z-index: 3000;
-      padding: 16px;
-      overflow-y: auto;
+      display: none; justify-content: center; align-items: center;
+      z-index: 3000; padding: 16px; overflow-y: auto;
     }
     .modal-box {
-      background: var(--surface-card);
-      padding: 32px;
-      border-radius: var(--radius-lg);
-      width: 100%;
-      max-width: 460px;
-      max-height: 90vh;
-      overflow-y: auto;
+      background: var(--surface-card); padding: 32px;
+      border-radius: var(--radius-lg); width: 100%; max-width: 460px;
+      max-height: 90vh; overflow-y: auto;
       box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4);
       border: 1px solid var(--border);
     }
@@ -584,16 +348,10 @@
 
     /* CELEBRATION TOAST */
     #toast {
-      position: fixed;
-      bottom: calc(24px + env(safe-area-inset-bottom, 0px));
-      right: 24px;
-      background: #0f172a;
-      color: #2dd4bf;
-      border: 1px solid #1e293b;
-      padding: 14px 24px;
-      border-radius: var(--radius-md);
-      font-size: 1.1rem;
-      font-weight: 800;
+      position: fixed; bottom: calc(24px + env(safe-area-inset-bottom, 0px)); right: 24px;
+      background: #0f172a; color: #2dd4bf; border: 1px solid #1e293b;
+      padding: 14px 24px; border-radius: var(--radius-md);
+      font-size: 1.1rem; font-weight: 800;
       box-shadow: 0 20px 40px rgba(0,0,0,0.4);
       transform: translateY(150px);
       transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
@@ -604,7 +362,6 @@
     /* MOBILE & TABLET RESPONSIVE ADJUSTMENTS */
     @media (max-width: 768px) {
       :root { --header-height: 60px; }
-
       .topbar-inner { padding: 0 14px; gap: 8px; }
       .brand-title { font-size: 1.1rem; }
       .topbar-right { gap: 6px; }
@@ -612,95 +369,44 @@
       .approval-flag { padding: 6px 10px; font-size: 0.78rem; gap: 4px; }
       .btn-theme-toggle { width: 36px; height: 36px; font-size: 1rem; }
       .btn-admin-header { padding: 8px 12px; font-size: 0.84rem; }
-
       nav#sidebar { width: 100%; max-width: 300px; }
-
       main { padding: 16px 12px 12px 12px; }
       main.with-sidebar, footer.hub-footer.with-sidebar { padding-left: 12px; }
       footer.hub-footer { padding: 12px 12px calc(24px + env(safe-area-inset-bottom, 0px)) 12px; }
-
       .card { padding: 18px 14px; margin-bottom: 16px; }
       h1 { font-size: 1.4rem; margin-bottom: 16px; }
-
-      .tasks-header-row {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 12px;
-        padding-bottom: 14px;
-      }
-      .member-tabs {
-        width: 100%;
-        display: grid;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 8px;
-      }
-      .member-tab-btn {
-        justify-content: space-between;
-        padding: 10px 12px;
-        font-size: 0.88rem;
-      }
-
-      #selected-member-card-slot {
-        position: static;
-        margin-top: 16px;
-      }
-      .user-card {
-        padding: 16px;
-        box-shadow: none;
-        border-color: var(--border);
-      }
+      .tasks-header-row { flex-direction: column; align-items: flex-start; gap: 12px; padding-bottom: 14px; }
+      .member-tabs { width: 100%; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+      .member-tab-btn { justify-content: space-between; padding: 10px 12px; font-size: 0.88rem; }
+      #selected-member-card-slot { position: static; margin-top: 16px; }
+      .user-card { padding: 16px; box-shadow: none; border-color: var(--border); }
       .user-header { margin-bottom: 14px; }
       .user-name { font-size: 1.1rem; }
-
-      .task-item {
-        flex-direction: column;
-        align-items: stretch;
-        padding: 14px;
-        gap: 12px;
-      }
+      .task-item { flex-direction: column; align-items: stretch; padding: 14px; gap: 12px; }
       .task-info { padding-right: 0 !important; }
-      .task-item .btn-check {
-        width: 100%;
-        padding: 12px;
-        font-size: 0.95rem;
-        text-align: center;
-      }
-
-      .gate-input, .form-group input, .form-group select {
-        font-size: 16px;
-      }
-      .admin-form-box {
-        grid-template-columns: 1fr;
-        padding: 16px;
-        gap: 14px;
-      }
-
+      .task-item .btn-check { width: 100%; padding: 12px; font-size: 0.95rem; text-align: center; }
+      .form-group input, .form-group select { font-size: 16px; }
+      .admin-form-box { grid-template-columns: 1fr; padding: 16px; gap: 14px; }
       th, td { padding: 12px 10px; font-size: 0.88rem; white-space: nowrap; }
       td:first-child { white-space: normal; min-width: 140px; }
-
       .calendar-container iframe { height: 520px; }
-
       .modal-box { padding: 22px 18px; }
       .modal-actions { flex-direction: column-reverse; gap: 10px; }
       .modal-actions button { width: 100%; padding: 12px; }
-
       #toast { left: 16px; right: 16px; text-align: center; }
     }
   </style>
 </head>
 <body>
-
   <!-- SITE ACCESS & GOOGLE SIGN-IN GATE -->
   <div id="site-gate">
     <div class="gate-card">
       <div class="gate-accent-bar"></div>
       <h2 id="gate-title">Family Hub</h2>
       <p>Sign in with your Google account</p>
-
       <button type="button" id="google-signin-btn" class="btn-google-signin" onclick="signInWithGoogle()">
         <span>Sign in with Google</span>
       </button>
-
       <div id="auth-error-msg" class="auth-error-text"></div>
     </div>
   </div>
@@ -729,6 +435,7 @@
       <div class="nav-links">
         <button type="button" id="nav-dashboard" class="nav-btn active" onclick="showSection('dashboard', this)">🏠 Dashboard</button>
         <button type="button" id="nav-approvals" class="nav-btn" onclick="showSection('admin-approvals', this)">✅ Approvals <span id="badge-count" style="background:var(--danger); color:white; padding:2px 8px; border-radius:2px; font-size:0.75rem; margin-left:auto;">0</span></button>
+        <button type="button" id="nav-logs" class="nav-btn" onclick="showSection('admin-logs', this)">📜 Activity Log</button>
         <button type="button" id="nav-members" class="nav-btn" onclick="showSection('admin-members', this)">👥 Members</button>
         <button type="button" id="nav-settings" class="nav-btn" onclick="showSection('admin-settings', this)">🛠️ Settings</button>
         <button type="button" id="nav-tasks" class="nav-btn" onclick="showSection('admin-tasks', this)">⚙️ Task Lists</button>
@@ -754,14 +461,11 @@
     <section id="dashboard" class="content-section">
       <div class="card" style="position:relative;">
         <div class="tasks-header-row">
-          <div class="tasks-header-title">
-            📋 Task Lists
-          </div>
+          <div class="tasks-header-title">📋 Task Lists</div>
           <div id="member-tabs-container" class="member-tabs"></div>
         </div>
         <div id="selected-member-card-slot"></div>
       </div>
-
       <div id="calendar-card-wrapper" class="card">
         <div class="section-header" onclick="toggleAccordion('calVisible')">
           <h3>📅 Family Calendar</h3><span id="cal-icon">−</span>
@@ -775,7 +479,41 @@
       <div class="card">
         <h1>Approval Queue</h1>
         <div class="table-scroll">
-          <table><thead><tr><th>Name</th><th>Task</th><th>Val</th><th style="text-align:right">Action</th></tr></thead><tbody id="approval-list-body"></tbody></table>
+          <table>
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Task</th>
+                <th>Val</th>
+                <th style="text-align:right">Action</th>
+              </tr>
+            </thead>
+            <tbody id="approval-list-body"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ACTIVITY LOG SECTION -->
+    <section id="admin-logs" class="content-section hidden">
+      <div class="card">
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-bottom:20px;">
+          <h1 style="margin-bottom:0;">Activity Log</h1>
+          <button type="button" class="btn-outline-danger" onclick="clearActivityLog()">🧹 Clear Log</button>
+        </div>
+        <div class="table-scroll">
+          <table>
+            <thead>
+              <tr>
+                <th>When</th>
+                <th>Member</th>
+                <th>Event</th>
+                <th>Details</th>
+                <th>Points</th>
+              </tr>
+            </thead>
+            <tbody id="activity-log-body"></tbody>
+          </table>
         </div>
       </div>
     </section>
@@ -800,7 +538,18 @@
         </div>
         <button type="button" class="btn-outline-primary" style="width:100%; padding:14px;" onclick="addTask()">Save Task</button>
         <div class="table-scroll" style="margin-top:24px;">
-          <table><thead><tr><th style="width:30%">Task</th><th style="width:15%">Streak Goal</th><th style="width:15%">Prize</th><th style="width:20%">Logic</th><th style="text-align:right; width:20%">Action</th></tr></thead><tbody id="task-list-body"></tbody></table>
+          <table>
+            <thead>
+              <tr>
+                <th style="width:30%">Task</th>
+                <th style="width:15%">Streak Goal</th>
+                <th style="width:15%">Prize</th>
+                <th style="width:20%">Logic</th>
+                <th style="text-align:right; width:20%">Action</th>
+              </tr>
+            </thead>
+            <tbody id="task-list-body"></tbody>
+          </table>
         </div>
       </div>
     </section>
@@ -810,14 +559,46 @@
       <div class="card">
         <h1>Family Members</h1>
         <button type="button" class="btn-outline-danger" onclick="clearAllPoints()" style="margin-bottom:20px;">💰 RESET ALL BALANCES</button>
+
+        <h2 class="subhead">Add Bonus Points</h2>
+        <div class="admin-form-box">
+          <div class="form-group">
+            <label>Member</label>
+            <select id="bonus-member-select"></select>
+          </div>
+          <div class="form-group">
+            <label>Points (+/-)</label>
+            <input type="number" id="bonus-points-input" placeholder="e.g. 5 or -2">
+          </div>
+          <div class="form-group">
+            <label>Reason (Optional)</label>
+            <input type="text" id="bonus-reason-input" placeholder="e.g. Helped clean up extra dishes">
+          </div>
+          <div class="form-group" style="justify-content:flex-end;">
+            <button type="button" class="btn-outline-primary" style="height:46px;" onclick="giveBonusPoints()">Apply Points</button>
+          </div>
+        </div>
+
+        <h2 class="subhead">Add New Member</h2>
         <div class="admin-form-box">
           <div class="form-group"><label>Name</label><input type="text" id="m-name"></div>
           <div class="form-group"><label>Role</label><select id="m-role"><option value="kid">Kid</option><option value="teen">Teen</option><option value="adult">Adult</option></select></div>
           <div class="form-group"><label>Card Color</label><input type="color" id="m-color" value="#0d9488" style="height:46px; width:100%; padding:2px; cursor:pointer; border-radius:3px; border:1.5px solid var(--input-border); background:var(--input-bg);"></div>
           <button type="button" class="btn-outline-primary" onclick="addMember()">Add Member</button>
         </div>
+
         <div class="table-scroll">
-          <table><thead><tr><th>Name</th><th>Role</th><th>Points</th><th style="text-align:right">Action</th></tr></thead><tbody id="member-list-body"></tbody></table>
+          <table>
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Role</th>
+                <th>Points</th>
+                <th style="text-align:right">Action</th>
+              </tr>
+            </thead>
+            <tbody id="member-list-body"></tbody>
+          </table>
         </div>
       </div>
     </section>
@@ -927,39 +708,31 @@
   <script src="https://www.gstatic.com/firebasejs/11.0.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/11.0.1/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore-compat.js"></script>
-
   <script>
     /* -------------------------------------------------------------------------
        SERVICE WORKER REGISTRATION & IMMEDIATE AUTO-UPDATE
-    ------------------------------------------------------------------------- */
+       ------------------------------------------------------------------------- */
     if ('serviceWorker' in navigator) {
       let refreshing = false;
       navigator.serviceWorker.addEventListener('controllerchange', () => {
-        if (!refreshing) {
-          refreshing = true;
-          window.location.reload();
-        }
+        if (!refreshing) { refreshing = true; window.location.reload(); }
       });
-
       window.addEventListener('load', () => {
         navigator.serviceWorker.register('/sw.js')
-          .then((reg) => {
-            setInterval(() => reg.update(), 15 * 60 * 1000);
-          })
+          .then((reg) => { setInterval(() => reg.update(), 15 * 60 * 1000); })
           .catch((err) => console.error('Service Worker registration failed:', err));
       });
     }
 
     /* -------------------------------------------------------------------------
        THEME (LIGHT / DARK MODE) INITIALIZATION
-    ------------------------------------------------------------------------- */
+       ------------------------------------------------------------------------- */
     function initTheme() {
       const savedTheme = localStorage.getItem('familyHubTheme');
       const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
       const theme = savedTheme || (prefersDark ? 'dark' : 'light');
       applyTheme(theme);
     }
-
     function applyTheme(theme) {
       document.documentElement.setAttribute('data-theme', theme);
       const btn = document.getElementById('theme-toggle-btn');
@@ -968,7 +741,6 @@
         btn.title = theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode';
       }
     }
-
     function toggleTheme() {
       const current = document.documentElement.getAttribute('data-theme') || 'light';
       const next = current === 'dark' ? 'light' : 'dark';
@@ -979,7 +751,7 @@
 
     /* -------------------------------------------------------------------------
        FIREBASE & DATA STATE INITIALIZATION (AUTH + ATOMIC UPDATES)
-    ------------------------------------------------------------------------- */
+       ------------------------------------------------------------------------- */
     const firebaseConfig = {
       apiKey: "AIzaSyB2v8EYgBpbQHTSqr_k4fDEjdcJpemqwbE",
       authDomain: "family-calendar-34850.firebaseapp.com",
@@ -989,10 +761,7 @@
       appId: "1:636042418970:web:657c82059c624b1ae32aa3",
       measurementId: "G-SYYJEJHRG8"
     };
-
-    if (!firebase.apps.length) {
-      firebase.initializeApp(firebaseConfig);
-    }
+    if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
     const auth = firebase.auth();
     const googleProvider = new firebase.auth.GoogleAuthProvider();
     const db = firebase.firestore();
@@ -1007,6 +776,7 @@
       members: [],
       tasks: [],
       approvals: [],
+      logs: [],
       calendarUrl: "",
       showCalendar: true,
       adminUsername: "admin",
@@ -1029,6 +799,8 @@
     let lastMembersTableSignature = '';
     let lastTasksTableSignature = '';
     let lastApprovalsSignature = '';
+    let lastLogsSignature = '';
+
     const currencyMap = { kid: "tokens", teen: "minutes", adult: "" };
 
     document.getElementById('member-tabs-container').addEventListener('click', (e) => {
@@ -1038,6 +810,17 @@
       selectedMemberId = (selectedMemberId === memberId) ? null : memberId;
       renderAll();
     });
+
+    function formatTimestamp(isoOrDate) {
+      const d = isoOrDate ? new Date(isoOrDate) : new Date();
+      if (Number.isNaN(d.getTime())) return String(isoOrDate || '');
+      return d.toLocaleString([], {
+        month: 'short',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+    }
 
     function setAuthError(msg) {
       const el = document.getElementById('auth-error-msg');
@@ -1049,10 +832,7 @@
       try {
         await auth.signInWithPopup(googleProvider);
       } catch (err) {
-        if (
-          err.code === 'auth/popup-blocked' ||
-          err.code === 'auth/operation-not-supported-in-this-environment'
-        ) {
+        if (err.code === 'auth/popup-blocked' || err.code === 'auth/operation-not-supported-in-this-environment') {
           try {
             await auth.signInWithRedirect(googleProvider);
           } catch (redirectErr) {
@@ -1092,32 +872,21 @@
     function startHouseholdListener() {
       stopHouseholdListener();
       if (!auth.currentUser) return;
-
       firestorePermissionDenied = false;
-
       unsubscribeHousehold = familyDocRef.onSnapshot((doc) => {
-        if (pendingLocalWrites > 0 || doc.metadata.hasPendingWrites) {
-          return;
-        }
-
+        if (pendingLocalWrites > 0 || doc.metadata.hasPendingWrites) { return; }
         firestorePermissionDenied = false;
-
         if (doc.exists) {
           const rawData = doc.data();
-          const hadLegacyKeys = Boolean(rawData.chores || typeof rawData.choresVisible === 'boolean');
+          const hadLegacyKeys = Boolean(rawData.chores || typeof rawData.choresVisible === 'boolean' || !Array.isArray(rawData.logs));
           state = migrateLegacyFields({ ...state, ...rawData });
           localStorage.setItem('familyHubData', JSON.stringify(state));
-          if (hadLegacyKeys) {
-            saveFullDocument();
-            return;
-          }
+          if (hadLegacyKeys) { saveFullDocument(); return; }
           checkSiteGate();
           renderAll();
         } else {
           const localBackup = JSON.parse(localStorage.getItem('familyHubData'));
-          if (localBackup) {
-            state = migrateLegacyFields({ ...state, ...localBackup });
-          }
+          if (localBackup) { state = migrateLegacyFields({ ...state, ...localBackup }); }
           saveFullDocument();
           checkSiteGate();
         }
@@ -1134,9 +903,7 @@
       if (!rawUrl) return "";
       const trimmed = rawUrl.trim();
       if (!trimmed) return "";
-      if (trimmed.includes('mode=')) {
-        return trimmed.replace(/mode=[^&]+/i, 'mode=AGENDA');
-      }
+      if (trimmed.includes('mode=')) { return trimmed.replace(/mode=[^&]+/i, 'mode=AGENDA'); }
       return trimmed + (trimmed.includes('?') ? '&' : '?') + 'mode=AGENDA';
     }
 
@@ -1157,6 +924,9 @@
           taskName: a.taskName ?? a.choreName
         }));
       }
+      if (!Array.isArray(migrated.logs)) {
+        migrated.logs = [];
+      }
       return migrated;
     }
 
@@ -1167,14 +937,10 @@
       pendingLocalWrites++;
       familyDocRef.update(patchObj)
         .catch((err) => {
-          if (err.code === 'not-found') {
-            return familyDocRef.set(state);
-          }
+          if (err.code === 'not-found') { return familyDocRef.set(state); }
           console.error("Firebase atomic update error:", err);
         })
-        .finally(() => {
-          pendingLocalWrites = Math.max(0, pendingLocalWrites - 1);
-        });
+        .finally(() => { pendingLocalWrites = Math.max(0, pendingLocalWrites - 1); });
     }
 
     function saveFullDocument() {
@@ -1184,9 +950,7 @@
       pendingLocalWrites++;
       familyDocRef.set(state)
         .catch(err => console.error("Firebase save error:", err))
-        .finally(() => {
-          pendingLocalWrites = Math.max(0, pendingLocalWrites - 1);
-        });
+        .finally(() => { pendingLocalWrites = Math.max(0, pendingLocalWrites - 1); });
     }
 
     function closeModals() {
@@ -1204,7 +968,7 @@
 
     /* -------------------------------------------------------------------------
        SITE ENTRY & GOOGLE AUTH GATE
-    ------------------------------------------------------------------------- */
+       ------------------------------------------------------------------------- */
     function checkSiteGate() {
       const gateEl = document.getElementById('site-gate');
       if (!gateEl) return;
@@ -1217,7 +981,7 @@
 
     /* -------------------------------------------------------------------------
        ADMIN AUTHENTICATION & NAVIGATION
-    ------------------------------------------------------------------------- */
+       ------------------------------------------------------------------------- */
     function handleApprovalFlagClick() {
       if (isUnlocked) {
         document.getElementById('sidebar').classList.add('visible');
@@ -1251,7 +1015,6 @@
       const p = document.getElementById('admin-login-pass').value;
       const expectedUser = state.adminUsername || "admin";
       const expectedPass = state.adminPasscode || "1234";
-
       if (u.toLowerCase() === expectedUser.toLowerCase() && p === expectedPass) {
         const targetSection = redirectAfterLogin;
         isUnlocked = true;
@@ -1261,7 +1024,6 @@
         btn.classList.add('unlocked');
         document.getElementById('sidebar').classList.add('visible');
         syncSidebarLayout(true);
-
         if (targetSection === 'admin-approvals') {
           showSection('admin-approvals', document.getElementById('nav-approvals'));
         }
@@ -1304,17 +1066,21 @@
       document.getElementById(dynamicId).classList.toggle('hidden', val !== 'dynamic');
     }
 
-    function showToast(role) {
+    function showToast(role, customText) {
       const toast = document.getElementById('toast');
-      const list = role === 'teen' ? teenMessages : kidMessages;
-      toast.innerText = list[Math.floor(Math.random() * list.length)];
+      if (customText) {
+        toast.innerText = customText;
+      } else {
+        const list = role === 'teen' ? teenMessages : kidMessages;
+        toast.innerText = list[Math.floor(Math.random() * list.length)];
+      }
       toast.classList.add('show');
       setTimeout(() => toast.classList.remove('show'), 2500);
     }
 
     /* -------------------------------------------------------------------------
        STREAK & DYNAMIC REWARD HELPERS
-    ------------------------------------------------------------------------- */
+       ------------------------------------------------------------------------- */
     function getYesterdayString() {
       const d = new Date();
       d.setDate(d.getDate() - 1);
@@ -1326,26 +1092,19 @@
       const yesterday = getYesterdayString();
       const min = Number(task.dynamic?.min) || 2;
       const max = Number(task.dynamic?.max) || 10;
-
       let activeStreak = 0;
-      if (task.lastCompleted === today) {
-        activeStreak = task.streak || 1;
-      } else if (task.lastCompleted === yesterday) {
-        activeStreak = task.streak || 1;
-      } else {
-        activeStreak = 0;
-      }
-
+      if (task.lastCompleted === today) { activeStreak = task.streak || 1; }
+      else if (task.lastCompleted === yesterday) { activeStreak = task.streak || 1; }
+      else { activeStreak = 0; }
       const effectiveStreak = task.lastCompleted === today ? activeStreak : activeStreak + 1;
       const step = Math.max(1, Math.round((max - min) / 4));
       const earned = task.type === 'dynamic' ? Math.max(min, max - ((effectiveStreak - 1) * step)) : (Number(task.points) || 0);
-
       return { earned, effectiveStreak, activeStreak };
     }
 
     /* -------------------------------------------------------------------------
-       MEMBER MANAGEMENT (ATOMIC UPDATES)
-    ------------------------------------------------------------------------- */
+       MEMBER MANAGEMENT & AD-HOC BONUS POINTS
+       ------------------------------------------------------------------------- */
     function addMember() {
       requireAuthUser();
       const name = document.getElementById('m-name').value.trim();
@@ -1356,6 +1115,55 @@
       state.members.push(newMember);
       document.getElementById('m-name').value = '';
       updateFields({ members: FieldValue.arrayUnion(newMember) });
+    }
+
+    function giveBonusPoints() {
+      requireAuthUser();
+      const memberId = Number(document.getElementById('bonus-member-select').value);
+      const pts = Number(document.getElementById('bonus-points-input').value);
+      const reason = document.getElementById('bonus-reason-input').value.trim();
+      if (!memberId) return alert("Select a member.");
+      if (!Number.isFinite(pts) || pts === 0) return alert("Enter a non-zero point amount.");
+
+      const member = state.members.find(m => m.id === memberId);
+      if (!member) return alert("Member not found.");
+
+      const nowIso = new Date().toISOString();
+      const logEntry = {
+        id: Date.now() + Math.floor(Math.random() * 10000),
+        timestamp: nowIso,
+        memberId: member.id,
+        memberName: member.name,
+        type: 'bonus',
+        label: 'Bonus Points',
+        details: reason || 'Extra task / bonus credit',
+        points: pts
+      };
+
+      member.points = (Number(member.points) || 0) + pts;
+      state.logs.unshift(logEntry);
+      if (state.logs.length > 200) state.logs = state.logs.slice(0, 200);
+
+      document.getElementById('bonus-points-input').value = '';
+      document.getElementById('bonus-reason-input').value = '';
+      showToast(member.role, `${pts > 0 ? '+' : ''}${pts} for ${member.name}!`);
+
+      localStorage.setItem('familyHubData', JSON.stringify(state));
+      renderAll();
+      pendingLocalWrites++;
+
+      db.runTransaction(async (tx) => {
+        const snap = await tx.get(familyDocRef);
+        if (!snap.exists) return;
+        const data = snap.data();
+        const updatedMembers = (data.members || []).map(m =>
+          m.id === memberId ? { ...m, points: (Number(m.points) || 0) + pts } : m
+        );
+        const existingLogs = Array.isArray(data.logs) ? data.logs : [];
+        const updatedLogs = [logEntry, ...existingLogs].slice(0, 200);
+        tx.update(familyDocRef, { members: updatedMembers, logs: updatedLogs });
+      }).catch(err => console.error("Bonus points transaction failed:", err))
+        .finally(() => { pendingLocalWrites = Math.max(0, pendingLocalWrites - 1); });
     }
 
     function deleteMember(id) {
@@ -1385,9 +1193,7 @@
       const newPoints = Number(document.getElementById('edit-m-points').value) || 0;
       const newColor = document.getElementById('edit-m-color').value;
       const targetId = editId;
-
       closeModals();
-
       const localMember = state.members.find(x => x.id === targetId);
       if (localMember) {
         localMember.name = newName;
@@ -1397,7 +1203,6 @@
       }
       localStorage.setItem('familyHubData', JSON.stringify(state));
       renderAll();
-
       pendingLocalWrites++;
       db.runTransaction(async (tx) => {
         const snap = await tx.get(familyDocRef);
@@ -1417,7 +1222,6 @@
       state.members.forEach(m => m.points = 0);
       localStorage.setItem('familyHubData', JSON.stringify(state));
       renderAll();
-
       pendingLocalWrites++;
       db.runTransaction(async (tx) => {
         const snap = await tx.get(familyDocRef);
@@ -1430,12 +1234,11 @@
 
     /* -------------------------------------------------------------------------
        TASK LIST MANAGEMENT (ATOMIC UPDATES & TRANSACTIONS)
-    ------------------------------------------------------------------------- */
+       ------------------------------------------------------------------------- */
     function addTask() {
       requireAuthUser();
       const name = document.getElementById('t-name').value.trim();
-      const selectedUserIds = Array.from(document.querySelectorAll('.t-assignee-cb:checked'))
-        .map(cb => Number(cb.value));
+      const selectedUserIds = Array.from(document.querySelectorAll('.t-assignee-cb:checked')).map(cb => Number(cb.value));
       const goal = Number(document.getElementById('t-goal').value) || 0;
       const prize = document.getElementById('t-prize').value.trim();
       const type = document.getElementById('t-type').value;
@@ -1443,10 +1246,8 @@
       const max = Number(document.getElementById('t-max').value) || 10;
       const min = Number(document.getElementById('t-min').value) || 2;
       const desc = document.getElementById('t-desc').value.trim();
-
       if (!name) return alert("Please enter a task name.");
       if (selectedUserIds.length === 0) return alert("Please select at least one user.");
-
       const createdTasks = selectedUserIds.map((userId, index) => ({
         id: Date.now() + index,
         name,
@@ -1462,15 +1263,12 @@
         lastCompleted: null,
         prevLastCompleted: null
       }));
-
       state.tasks.push(...createdTasks);
-
       document.getElementById('t-name').value = '';
       document.getElementById('t-goal').value = '0';
       document.getElementById('t-prize').value = '';
       document.getElementById('t-desc').value = '';
       document.querySelectorAll('.t-assignee-cb').forEach(cb => cb.checked = false);
-
       updateFields({ tasks: FieldValue.arrayUnion(...createdTasks) });
     }
 
@@ -1479,11 +1277,8 @@
       if (!confirm("Delete this task?")) return;
       const targetTask = state.tasks.find(t => t.id === id);
       state.tasks = state.tasks.filter(t => t.id !== id);
-      if (targetTask) {
-        updateFields({ tasks: FieldValue.arrayRemove(targetTask) });
-      } else {
-        updateFields({ tasks: state.tasks });
-      }
+      if (targetTask) { updateFields({ tasks: FieldValue.arrayRemove(targetTask) }); }
+      else { updateFields({ tasks: state.tasks }); }
     }
 
     function openEditTask(id) {
@@ -1519,21 +1314,16 @@
         },
         desc: document.getElementById('edit-t-desc').value.trim()
       };
-
       closeModals();
-
       const localTask = state.tasks.find(x => x.id === targetId);
       if (localTask) Object.assign(localTask, updatedFields);
       localStorage.setItem('familyHubData', JSON.stringify(state));
       renderAll();
-
       pendingLocalWrites++;
       db.runTransaction(async (tx) => {
         const snap = await tx.get(familyDocRef);
         if (!snap.exists) return;
-        const tasks = (snap.data().tasks || []).map(t =>
-          t.id === targetId ? { ...t, ...updatedFields } : t
-        );
+        const tasks = (snap.data().tasks || []).map(t => t.id === targetId ? { ...t, ...updatedFields } : t);
         tx.update(familyDocRef, { tasks });
       }).catch(err => console.error("Task edit transaction failed:", err))
         .finally(() => { pendingLocalWrites = Math.max(0, pendingLocalWrites - 1); });
@@ -1545,7 +1335,6 @@
       state.tasks.forEach(t => t.lastCompleted = null);
       localStorage.setItem('familyHubData', JSON.stringify(state));
       renderAll();
-
       pendingLocalWrites++;
       db.runTransaction(async (tx) => {
         const snap = await tx.get(familyDocRef);
@@ -1559,13 +1348,9 @@
     function resetAllTaskGoals() {
       requireAuthUser();
       if (!confirm("Reset all streak progress counters to 0?")) return;
-      state.tasks.forEach(t => {
-        t.streak = 0;
-        t.goalStreak = 0;
-      });
+      state.tasks.forEach(t => { t.streak = 0; t.goalStreak = 0; });
       localStorage.setItem('familyHubData', JSON.stringify(state));
       renderAll();
-
       pendingLocalWrites++;
       db.runTransaction(async (tx) => {
         const snap = await tx.get(familyDocRef);
@@ -1576,21 +1361,27 @@
         .finally(() => { pendingLocalWrites = Math.max(0, pendingLocalWrites - 1); });
     }
 
+    function clearActivityLog() {
+      requireAuthUser();
+      if (!confirm("Clear all activity log entries?")) return;
+      state.logs = [];
+      updateFields({ logs: [] });
+    }
+
     /* -------------------------------------------------------------------------
-       CONFLICT-FREE TASK COMPLETION & APPROVAL WORKFLOW
-    ------------------------------------------------------------------------- */
+       CONFLICT-FREE TASK COMPLETION & APPROVAL WORKFLOW WITH LOGGING
+       ------------------------------------------------------------------------- */
     function completeTask(taskId) {
       requireAuthUser();
       const task = state.tasks.find(t => t.id === taskId);
       if (!task) return;
       const member = state.members.find(m => m.id === task.assigneeId);
       if (!member) return;
-
       const today = new Date().toDateString();
       if (task.lastCompleted === today) return;
 
+      const nowIso = new Date().toISOString();
       const info = getStreakAndRewardInfo(task);
-
       task.prevStreak = task.streak || 0;
       task.streak = info.effectiveStreak;
       task.prevLastCompleted = task.lastCompleted || null;
@@ -1603,15 +1394,30 @@
         taskId: task.id,
         taskName: task.name,
         points: info.earned,
-        wasConsecutive: info.activeStreak > 0
+        wasConsecutive: info.activeStreak > 0,
+        completedAt: nowIso
+      };
+
+      const completedLog = {
+        id: Date.now() + Math.floor(Math.random() * 10000) + 1,
+        timestamp: nowIso,
+        memberId: member.id,
+        memberName: member.name,
+        type: 'completed',
+        label: 'Marked Complete',
+        details: task.name,
+        points: info.earned
       };
 
       state.approvals.push(newApproval);
+      state.logs.unshift(completedLog);
+      if (state.logs.length > 200) state.logs = state.logs.slice(0, 200);
+
       showToast(member.role);
       localStorage.setItem('familyHubData', JSON.stringify(state));
       renderAll();
-
       pendingLocalWrites++;
+
       db.runTransaction(async (tx) => {
         const snap = await tx.get(familyDocRef);
         if (!snap.exists) return;
@@ -1619,7 +1425,6 @@
         const serverTasks = data.tasks || [];
         const serverTask = serverTasks.find(t => t.id === taskId);
         if (!serverTask || serverTask.lastCompleted === today) return;
-
         const serverInfo = getStreakAndRewardInfo(serverTask);
         const updatedTasks = serverTasks.map(t => {
           if (t.id !== taskId) return t;
@@ -1631,14 +1436,12 @@
             lastCompleted: today
           };
         });
-
+        const existingLogs = Array.isArray(data.logs) ? data.logs : [];
+        const updatedLogs = [{ ...completedLog, points: serverInfo.earned }, ...existingLogs].slice(0, 200);
         tx.update(familyDocRef, {
           tasks: updatedTasks,
-          approvals: FieldValue.arrayUnion({
-            ...newApproval,
-            points: serverInfo.earned,
-            wasConsecutive: serverInfo.activeStreak > 0
-          })
+          approvals: FieldValue.arrayUnion({ ...newApproval, points: serverInfo.earned, wasConsecutive: serverInfo.activeStreak > 0 }),
+          logs: updatedLogs
         });
       }).catch(err => console.error("Complete task transaction failed:", err))
         .finally(() => { pendingLocalWrites = Math.max(0, pendingLocalWrites - 1); });
@@ -1652,30 +1455,43 @@
       const targetTaskId = app.taskId ?? app.choreId;
       const task = state.tasks.find(t => t.id === targetTaskId);
       const member = state.members.find(m => m.id === app.memberId);
+      const actionIso = new Date().toISOString();
 
       if (approved) {
         if (member) member.points += app.points;
         if (task) {
           task.goalStreak = app.wasConsecutive ? ((task.goalStreak || 0) + 1) : 1;
           if (task.goal > 0 && task.goalStreak >= task.goal) {
-            alert(`🎉 ${member.name} completed "${task.name}" ${task.goal} days in a row and unlocked: ${task.prize || 'Prize'}!`);
+            alert(`🎉 ${member ? member.name : app.memberName} completed "${task.name}" ${task.goal} days in a row and unlocked: ${task.prize || 'Prize'}!`);
             task.goalStreak = 0;
           }
         }
       } else {
         if (task) {
           task.lastCompleted = task.prevLastCompleted || null;
-          if (task.prevStreak !== undefined) {
-            task.streak = task.prevStreak;
-          }
+          if (task.prevStreak !== undefined) { task.streak = task.prevStreak; }
         }
       }
 
+      const decisionLog = {
+        id: Date.now() + Math.floor(Math.random() * 10000) + 2,
+        timestamp: actionIso,
+        memberId: app.memberId,
+        memberName: app.memberName,
+        type: approved ? 'approved' : 'rejected',
+        label: approved ? 'Admin Approved' : 'Admin Rejected',
+        details: app.taskName || app.choreName || 'Task',
+        points: approved ? app.points : 0
+      };
+
       state.approvals.splice(appIndex, 1);
+      state.logs.unshift(decisionLog);
+      if (state.logs.length > 200) state.logs = state.logs.slice(0, 200);
+
       localStorage.setItem('familyHubData', JSON.stringify(state));
       renderAll();
-
       pendingLocalWrites++;
+
       db.runTransaction(async (tx) => {
         const snap = await tx.get(familyDocRef);
         if (!snap.exists) return;
@@ -1683,11 +1499,9 @@
         const serverApprovals = data.approvals || [];
         const serverApp = serverApprovals.find(a => a.id === appId);
         if (!serverApp) return;
-
         const srvTaskId = serverApp.taskId ?? serverApp.choreId;
         let updatedMembers = data.members || [];
         let updatedTasks = data.tasks || [];
-
         if (approved) {
           updatedMembers = updatedMembers.map(m =>
             m.id === serverApp.memberId ? { ...m, points: (Number(m.points) || 0) + (Number(serverApp.points) || 0) } : m
@@ -1695,9 +1509,7 @@
           updatedTasks = updatedTasks.map(t => {
             if (t.id !== srvTaskId) return t;
             let nextGoalStreak = serverApp.wasConsecutive ? ((t.goalStreak || 0) + 1) : 1;
-            if (t.goal > 0 && nextGoalStreak >= t.goal) {
-              nextGoalStreak = 0;
-            }
+            if (t.goal > 0 && nextGoalStreak >= t.goal) { nextGoalStreak = 0; }
             return { ...t, goalStreak: nextGoalStreak };
           });
         } else {
@@ -1710,11 +1522,13 @@
             };
           });
         }
-
+        const existingLogs = Array.isArray(data.logs) ? data.logs : [];
+        const updatedLogs = [decisionLog, ...existingLogs].slice(0, 200);
         tx.update(familyDocRef, {
           members: updatedMembers,
           tasks: updatedTasks,
-          approvals: FieldValue.arrayRemove(serverApp)
+          approvals: FieldValue.arrayRemove(serverApp),
+          logs: updatedLogs
         });
       }).catch(err => console.error("Approval transaction failed:", err))
         .finally(() => { pendingLocalWrites = Math.max(0, pendingLocalWrites - 1); });
@@ -1722,13 +1536,12 @@
 
     /* -------------------------------------------------------------------------
        SETTINGS, BACKUP & RESTORE (ATOMIC FIELD UPDATES)
-    ------------------------------------------------------------------------- */
+       ------------------------------------------------------------------------- */
     function saveFamilyName() {
       state.familyName = document.getElementById('family-name-input').value.trim();
       updateFields({ familyName: state.familyName });
       alert("Hub name saved!");
     }
-
     function saveCalendarUrl() {
       const rawUrl = document.getElementById('cal-url-input').value.trim();
       state.calendarUrl = normalizeCalendarUrl(rawUrl);
@@ -1736,30 +1549,21 @@
       updateFields({ calendarUrl: state.calendarUrl });
       alert("Calendar URL saved!");
     }
-
     function toggleCalendarVisibility() {
       state.showCalendar = document.getElementById('show-calendar-toggle').checked;
       updateFields({ showCalendar: state.showCalendar });
     }
-
     function updateAdminCredentials() {
       const newUser = document.getElementById('change-admin-user-input').value.trim();
       const newPass = document.getElementById('change-pass-input').value.trim();
       if (!newUser && !newPass) return alert("Enter a new username or password.");
       const patch = {};
-      if (newUser) {
-        state.adminUsername = newUser;
-        patch.adminUsername = newUser;
-      }
-      if (newPass) {
-        state.adminPasscode = newPass;
-        patch.adminPasscode = newPass;
-      }
+      if (newUser) { state.adminUsername = newUser; patch.adminUsername = newUser; }
+      if (newPass) { state.adminPasscode = newPass; patch.adminPasscode = newPass; }
       document.getElementById('change-pass-input').value = '';
       updateFields(patch);
       alert("Admin login credentials updated!");
     }
-
     function updateSitePassword() {
       const newSitePass = document.getElementById('change-site-pass-input').value.trim();
       if (!newSitePass) return alert("Enter a new website password.");
@@ -1770,7 +1574,6 @@
       updateFields({ sitePassword: newSitePass });
       alert("Website entry password updated!");
     }
-
     function exportData() {
       const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' });
       const url = URL.createObjectURL(blob);
@@ -1779,7 +1582,6 @@
       a.download = `family-hub-backup-${new Date().toISOString().slice(0,10)}.json`;
       a.click();
     }
-
     function importData(event) {
       requireAuthUser();
       const file = event.target.files[0];
@@ -1791,13 +1593,10 @@
           state = migrateLegacyFields({ ...state, ...imported });
           saveFullDocument();
           alert("Hub data restored successfully!");
-        } catch (err) {
-          alert("Invalid backup file.");
-        }
+        } catch (err) { alert("Invalid backup file."); }
       };
       reader.readAsText(file);
     }
-
     function nuclearReset() {
       requireAuthUser();
       if (confirm("This will wipe all members, task lists, and points. Continue?")) {
@@ -1810,7 +1609,7 @@
 
     /* -------------------------------------------------------------------------
        UI RENDERING ENGINE
-    ------------------------------------------------------------------------- */
+       ------------------------------------------------------------------------- */
     function renderTaskRow(t) {
       const logicLabel = t.type === 'dynamic' ? `D:${t.dynamic.min}-${t.dynamic.max}` : `S:${t.points}`;
       return `
@@ -1848,11 +1647,13 @@
       }
 
       const activeNav = document.querySelector('.nav-btn.active');
-      const activeSectionId = activeNav && activeNav.id === 'nav-approvals' ? 'admin-approvals'
-        : activeNav && activeNav.id === 'nav-members' ? 'admin-members'
-        : activeNav && activeNav.id === 'nav-settings' ? 'admin-settings'
-        : activeNav && activeNav.id === 'nav-tasks' ? 'admin-tasks'
-        : 'dashboard';
+      const activeSectionId =
+        activeNav && activeNav.id === 'nav-approvals' ? 'admin-approvals' :
+        activeNav && activeNav.id === 'nav-logs' ? 'admin-logs' :
+        activeNav && activeNav.id === 'nav-members' ? 'admin-members' :
+        activeNav && activeNav.id === 'nav-settings' ? 'admin-settings' :
+        activeNav && activeNav.id === 'nav-tasks' ? 'admin-tasks' : 'dashboard';
+
       document.querySelectorAll('.content-section').forEach(s => {
         s.classList.toggle('hidden', s.id !== activeSectionId);
       });
@@ -1866,9 +1667,7 @@
       if (footerTitleEl) footerTitleEl.innerText = activeHubName;
 
       const familyNameInput = document.getElementById('family-name-input');
-      if (familyNameInput && document.activeElement !== familyNameInput) {
-        familyNameInput.value = state.familyName || '';
-      }
+      if (familyNameInput && document.activeElement !== familyNameInput) { familyNameInput.value = state.familyName || ''; }
 
       const showCal = state.showCalendar !== false;
       document.getElementById('show-calendar-toggle').checked = showCal;
@@ -1891,13 +1690,20 @@
       }
 
       const calUrlInput = document.getElementById('cal-url-input');
-      if (calUrlInput && document.activeElement !== calUrlInput) {
-        calUrlInput.value = embedUrl || '';
-      }
+      if (calUrlInput && document.activeElement !== calUrlInput) { calUrlInput.value = embedUrl || ''; }
 
       const adminUserInput = document.getElementById('change-admin-user-input');
-      if (adminUserInput && document.activeElement !== adminUserInput) {
-        adminUserInput.value = state.adminUsername || 'admin';
+      if (adminUserInput && document.activeElement !== adminUserInput) { adminUserInput.value = state.adminUsername || 'admin'; }
+
+      const bonusMemberSelect = document.getElementById('bonus-member-select');
+      if (bonusMemberSelect && document.activeElement !== bonusMemberSelect) {
+        const prevVal = bonusMemberSelect.value;
+        bonusMemberSelect.innerHTML = state.members.length
+          ? state.members.map(m => `<option value="${m.id}">${m.name} (${m.points} pts)</option>`).join('')
+          : `<option value="">No members available</option>`;
+        if (prevVal && state.members.some(m => String(m.id) === prevVal)) {
+          bonusMemberSelect.value = prevVal;
+        }
       }
 
       const assigneeList = document.getElementById('t-assignee-list');
@@ -1919,17 +1725,13 @@
       const cardSlot = document.getElementById('selected-member-card-slot');
 
       if (state.members.length === 0) {
-        tabsContainer.innerHTML = '';
-        lastTabsSignature = '';
-        cardSlot.innerHTML = '';
-        lastCardSignature = '';
-        cardSlot.classList.remove('show');
+        tabsContainer.innerHTML = ''; lastTabsSignature = '';
+        cardSlot.innerHTML = ''; lastCardSignature = ''; cardSlot.classList.remove('show');
       } else {
         const tabsSignature = JSON.stringify({
           selectedMemberId,
           members: state.members.map(m => ({ id: m.id, name: m.name, role: m.role, points: m.points, color: m.color }))
         });
-
         if (tabsSignature !== lastTabsSignature) {
           lastTabsSignature = tabsSignature;
           tabsContainer.innerHTML = state.members.map(m => {
@@ -1949,12 +1751,10 @@
         if (activeMember) {
           const memberTasks = state.tasks.filter(t => t.assigneeId === activeMember.id);
           const cardSignature = JSON.stringify({ today, activeMember, memberTasks });
-
           if (cardSignature !== lastCardSignature) {
             lastCardSignature = cardSignature;
             const unit = currencyMap[activeMember.role] || '';
             const cardColor = activeMember.color || '#0d9488';
-
             const tasksHtml = memberTasks.length ? memberTasks.map(t => {
               const isDone = t.lastCompleted === today;
               const info = getStreakAndRewardInfo(t);
@@ -1962,7 +1762,6 @@
               const pct = t.goal > 0 ? Math.min(100, Math.round((currentGoalStreak / t.goal) * 100)) : 0;
               const streakLabel = info.activeStreak > 0 ? ` • 🔥 ${info.activeStreak}d streak` : '';
               const rewardText = `${info.earned} ${unit}${streakLabel}`;
-
               return `
                 <div class="task-item ${isDone ? 'completed' : ''}">
                   <div class="task-info" style="flex:1; padding-right:14px;">
@@ -1993,9 +1792,7 @@
           }
           cardSlot.classList.add('show');
         } else {
-          cardSlot.innerHTML = '';
-          lastCardSignature = '';
-          cardSlot.classList.remove('show');
+          cardSlot.innerHTML = ''; lastCardSignature = ''; cardSlot.classList.remove('show');
         }
       }
 
@@ -2027,13 +1824,9 @@
               <td colspan="5" style="color:var(--text);">${m.name.trim()}<span class="group-badge">${memberTasks.length} ${memberTasks.length === 1 ? 'task' : 'tasks'}</span></td>
             </tr>
           `;
-          if (memberTasks.length) {
-            groupedTasksHtml += memberTasks.map(renderTaskRow).join('');
-          } else {
-            groupedTasksHtml += `<tr><td colspan="5" style="color:var(--text-muted); font-size:0.9rem; padding-left:24px;">No tasks assigned.</td></tr>`;
-          }
+          if (memberTasks.length) { groupedTasksHtml += memberTasks.map(renderTaskRow).join(''); }
+          else { groupedTasksHtml += `<tr><td colspan="5" style="color:var(--text-muted); font-size:0.9rem; padding-left:24px;">No tasks assigned.</td></tr>`; }
         });
-
         const memberIds = new Set(state.members.map(m => m.id));
         const unassignedTasks = state.tasks.filter(t => !memberIds.has(t.assigneeId));
         if (unassignedTasks.length) {
@@ -2043,7 +1836,6 @@
             </tr>
           ` + unassignedTasks.map(renderTaskRow).join('');
         }
-
         document.getElementById('task-list-body').innerHTML = groupedTasksHtml || `<tr><td colspan="5" style="text-align:center; color:var(--text-muted);">No tasks configured yet.</td></tr>`;
       }
 
@@ -2058,7 +1850,10 @@
         document.getElementById('approval-list-body').innerHTML = waitingCount ? state.approvals.map(a => `
           <tr>
             <td><strong>${a.memberName}</strong></td>
-            <td>${a.taskName || a.choreName}</td>
+            <td>
+              ${a.taskName || a.choreName}
+              ${a.completedAt ? `<div style="font-size:0.8rem; color:var(--text-muted); margin-top:2px;">Completed ${formatTimestamp(a.completedAt)}</div>` : ''}
+            </td>
             <td>+${a.points}</td>
             <td style="text-align:right;">
               <button type="button" class="btn-check" style="padding:8px 14px; font-size:0.88rem;" onclick="handleApproval(${a.id}, true)">Approve</button>
@@ -2066,6 +1861,30 @@
             </td>
           </tr>
         `).join('') : `<tr><td colspan="4" style="text-align:center; color:var(--text-muted);">No pending approvals.</td></tr>`;
+      }
+
+      const logsSignature = JSON.stringify(state.logs);
+      if (logsSignature !== lastLogsSignature) {
+        lastLogsSignature = logsSignature;
+        const logBody = document.getElementById('activity-log-body');
+        if (logBody) {
+          logBody.innerHTML = state.logs.length ? state.logs.map(entry => {
+            const ptsNum = Number(entry.points) || 0;
+            const ptsFormatted = ptsNum > 0 ? `+${ptsNum}` : `${ptsNum}`;
+            const pillClass = entry.type === 'approved' ? 'approved' :
+                              entry.type === 'rejected' ? 'rejected' :
+                              entry.type === 'bonus' ? 'bonus' : 'completed';
+            return `
+              <tr>
+                <td style="color:var(--text-muted); font-size:0.88rem;">${formatTimestamp(entry.timestamp)}</td>
+                <td><strong>${entry.memberName}</strong></td>
+                <td><span class="log-pill ${pillClass}">${entry.label}</span></td>
+                <td>${entry.details || ''}</td>
+                <td><strong>${ptsFormatted}</strong></td>
+              </tr>
+            `;
+          }).join('') : `<tr><td colspan="5" style="text-align:center; color:var(--text-muted);">No activity logged yet.</td></tr>`;
+        }
       }
     }
 
@@ -2082,9 +1901,7 @@
         startHouseholdListener();
       } else {
         stopHouseholdListener();
-        if (isUnlocked) {
-          lockAdmin();
-        }
+        if (isUnlocked) { lockAdmin(); }
       }
       checkSiteGate();
       renderAll();
