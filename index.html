@@ -38,6 +38,7 @@
       --radius-md: 3px;
       --radius-sm: 2px;
     }
+
     html[data-theme="dark"] {
       --primary: #14b8a6;
       --primary-hover: #2dd4bf;
@@ -55,7 +56,9 @@
       --success: #10b981;
       --warning: #f59e0b;
     }
+
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+
     body {
       background-color: var(--bg);
       color: var(--text);
@@ -66,46 +69,68 @@
       transition: background-color 0.2s, color 0.2s;
       -webkit-tap-highlight-color: transparent;
     }
+
     /* SITE ACCESS GATE OVERLAY */
     #site-gate {
-      position: fixed; inset: 0;
+      position: fixed;
+      inset: 0;
       background: rgba(3, 7, 18, 0.85);
       backdrop-filter: blur(20px);
-      display: flex; justify-content: center; align-items: center;
-      z-index: 5000; padding: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 5000;
+      padding: 20px;
     }
+
     .gate-card {
       background: var(--surface-card);
       padding: 40px 36px;
       border-radius: var(--radius-lg);
-      width: 100%; max-width: 420px;
+      width: 100%;
+      max-width: 420px;
       border: 1px solid var(--border);
       box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
       text-align: center;
     }
+
     .gate-accent-bar {
-      width: 48px; height: 6px;
+      width: 48px;
+      height: 6px;
       border-radius: var(--radius-sm);
       background: var(--primary);
       margin: 0 auto 20px;
     }
+
     .gate-card h2 { font-size: 1.65rem; font-weight: 800; color: var(--text); margin-bottom: 8px; letter-spacing: -0.03em; }
     .gate-card p { font-size: 0.92rem; color: var(--text-muted); margin-bottom: 24px; }
+
     .btn-google-signin {
-      width: 100%; padding: 13px 16px;
-      background: var(--surface); color: var(--text);
+      width: 100%;
+      padding: 13px 16px;
+      background: var(--surface);
+      color: var(--text);
       border: 1.5px solid var(--input-border);
       border-radius: var(--radius-md);
-      font-size: 0.98rem; font-weight: 700; cursor: pointer;
-      display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+      font-size: 0.98rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
       margin-bottom: 12px;
     }
+
     .btn-google-signin:hover { border-color: var(--primary); }
     .auth-error-text { color: var(--danger); font-size: 0.88rem; min-height: 1.2em; margin-bottom: 14px; }
 
     /* TOP HEADER BAR */
     header.topbar {
-      position: fixed; top: 0; left: 0; right: 0;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
       min-height: var(--header-height);
       background: var(--topbar-bg);
       backdrop-filter: blur(16px);
@@ -113,45 +138,79 @@
       z-index: 1200;
       padding-top: env(safe-area-inset-top, 0px);
     }
+
     .topbar-inner {
-      max-width: var(--container-max); width: 100%;
+      max-width: var(--container-max);
+      width: 100%;
       min-height: var(--header-height);
-      margin: 0 auto; padding: 0 36px;
-      display: flex; justify-content: space-between; align-items: center; gap: 12px;
+      margin: 0 auto;
+      padding: 0 36px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
     }
+
     .brand-wrap { display: flex; align-items: center; gap: 12px; cursor: pointer; min-width: 0; }
     .brand-title { font-size: 1.35rem; font-weight: 800; letter-spacing: -0.03em; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .topbar-right { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
     #clock { font-weight: 600; color: var(--text-muted); font-size: 0.95rem; margin-right: 4px; }
+
     .btn-theme-toggle {
-      background: var(--surface); color: var(--text);
+      background: var(--surface);
+      color: var(--text);
       border: 1px solid var(--border);
-      width: 40px; height: 40px;
+      width: 40px;
+      height: 40px;
       border-radius: var(--radius-md);
-      font-size: 1.1rem; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0;
+      font-size: 1.1rem;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
     }
+
     .btn-theme-toggle:hover { border-color: var(--primary); }
 
     /* WAITING APPROVALS HEADER FLAG */
     .approval-flag {
-      background: rgba(245, 158, 11, 0.12); color: #d97706;
+      background: rgba(245, 158, 11, 0.12);
+      color: #d97706;
       border: 1.5px solid rgba(245, 158, 11, 0.35);
-      padding: 8px 14px; border-radius: var(--radius-md);
-      font-size: 0.88rem; font-weight: 700;
-      display: inline-flex; align-items: center; gap: 6px;
-      cursor: pointer; animation: pulseFlag 2s infinite; white-space: nowrap;
+      padding: 8px 14px;
+      border-radius: var(--radius-md);
+      font-size: 0.88rem;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      animation: pulseFlag 2s infinite;
+      white-space: nowrap;
     }
+
     html[data-theme="dark"] .approval-flag { color: #fbbf24; background: rgba(245, 158, 11, 0.18); }
     .approval-flag:hover { background: rgba(245, 158, 11, 0.22); }
+
     @keyframes pulseFlag {
       0%, 100% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.3); }
       50% { box-shadow: 0 0 0 6px rgba(245, 158, 11, 0); }
     }
+
     .btn-admin-header {
-      background: var(--primary); color: white; border: none;
-      padding: 10px 16px; border-radius: var(--radius-md);
-      font-size: 0.92rem; font-weight: 700; display: flex; align-items: center; gap: 6px; white-space: nowrap;
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 10px 16px;
+      border-radius: var(--radius-md);
+      font-size: 0.92rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      white-space: nowrap;
     }
+
     .btn-admin-header:hover { background: var(--primary-hover); }
     .btn-admin-header.unlocked { background: var(--success); }
     .btn-admin-header.unlocked:hover { background: #059669; }
@@ -159,32 +218,56 @@
     /* ADMIN LEFT SIDEBAR */
     nav#sidebar {
       width: var(--sidebar-width);
-      background: var(--surface-card); color: var(--text);
+      background: var(--surface-card);
+      color: var(--text);
       padding: 28px 20px calc(28px + env(safe-area-inset-bottom, 0px)) 20px;
-      display: flex; flex-direction: column; justify-content: space-between;
-      position: fixed; top: calc(var(--header-height) + env(safe-area-inset-top, 0px)); bottom: 0; left: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: fixed;
+      top: calc(var(--header-height) + env(safe-area-inset-top, 0px));
+      bottom: 0;
+      left: 0;
       transform: translateX(-100%);
       transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-      z-index: 1100; border-right: 1px solid var(--border);
+      z-index: 1100;
+      border-right: 1px solid var(--border);
       box-shadow: 10px 0 30px rgba(0, 0, 0, 0.15);
     }
+
     nav#sidebar.visible { transform: translateX(0); }
     .sidebar-label { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); font-weight: 700; padding: 0 12px 14px; }
     .nav-links { display: flex; flex-direction: column; gap: 8px; }
+
     .nav-btn {
-      background: none; border: none; color: var(--text-muted);
-      padding: 12px 16px; text-align: left; font-size: 0.96rem;
-      border-radius: var(--radius-md); cursor: pointer;
-      display: flex; align-items: center; gap: 12px; font-weight: 600;
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      padding: 12px 16px;
+      text-align: left;
+      font-size: 0.96rem;
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 600;
     }
+
     .nav-btn:hover { background: var(--surface); color: var(--text); }
     .nav-btn.active { background: var(--primary); color: white; }
+
     .btn-lock-sidebar {
-      width: 100%; padding: 13px;
-      background: var(--surface); color: var(--danger);
-      border: 1px solid var(--border); border-radius: var(--radius-md);
-      font-size: 0.92rem; font-weight: 700;
+      width: 100%;
+      padding: 13px;
+      background: var(--surface);
+      color: var(--danger);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      font-size: 0.92rem;
+      font-weight: 700;
     }
+
     .btn-lock-sidebar:hover { background: rgba(239, 68, 68, 0.08); }
 
     /* MAIN CONTENT AREA */
@@ -192,8 +275,11 @@
       margin: calc(var(--header-height) + env(safe-area-inset-top, 0px)) auto 0 auto;
       padding: 40px 36px 16px 36px;
       transition: padding-left 0.3s cubic-bezier(0.16, 1, 0.3, 1), max-width 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-      max-width: var(--container-max); width: 100%; flex: 1;
+      max-width: var(--container-max);
+      width: 100%;
+      flex: 1;
     }
+
     main.with-sidebar {
       margin-left: auto;
       padding-left: calc(var(--sidebar-width) + 36px);
@@ -202,26 +288,34 @@
 
     /* FOOTER AREA */
     footer.hub-footer {
-      max-width: var(--container-max); width: 100%;
+      max-width: var(--container-max);
+      width: 100%;
       margin: 0 auto;
       padding: 20px 36px calc(36px + env(safe-area-inset-bottom, 0px)) 36px;
-      text-align: center; color: var(--text-muted); font-size: 0.88rem;
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.88rem;
       transition: padding-left 0.3s cubic-bezier(0.16, 1, 0.3, 1), max-width 0.3s cubic-bezier(0.16, 1, 0.3, 1);
     }
+
     footer.hub-footer.with-sidebar {
       padding-left: calc(var(--sidebar-width) + 36px);
       max-width: calc(var(--container-max) + var(--sidebar-width));
     }
-    .footer-inner { border-top: 1px solid var(--border); padding-top: 20px; }
 
+    .footer-inner { border-top: 1px solid var(--border); padding-top: 20px; }
     .hidden { display: none !important; }
+
     .card {
       background: var(--surface-card);
-      border-radius: var(--radius-lg); padding: 32px;
-      border: 1px solid var(--border); margin-bottom: 32px;
+      border-radius: var(--radius-lg);
+      padding: 32px;
+      border: 1px solid var(--border);
+      margin-bottom: 32px;
       box-shadow: 0 4px 24px -4px rgba(0, 0, 0, 0.02);
       position: relative;
     }
+
     h1 { font-size: 1.75rem; font-weight: 800; color: var(--text); letter-spacing: -0.03em; margin-bottom: 24px; }
     h2.subhead { font-size: 1.2rem; font-weight: 700; color: var(--text); margin-bottom: 14px; }
 
@@ -232,45 +326,111 @@
 
     /* TASK LISTS HEADER & INLINE MEMBER TABS */
     .tasks-header-row {
-      display: flex; justify-content: space-between; align-items: center;
-      flex-wrap: wrap; gap: 16px; padding-bottom: 16px;
-      border-bottom: 1px solid var(--border); margin-bottom: 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 0;
     }
+
     .tasks-header-title { font-size: 1.25rem; font-weight: 700; color: var(--text); letter-spacing: -0.01em; display: flex; align-items: center; gap: 10px; }
     .member-tabs { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; position: relative; z-index: 150; }
+
     .member-tab-btn {
       --member-color: var(--primary);
-      background: var(--surface); color: var(--text);
+      background: var(--surface);
+      color: var(--text);
       border: 1.5px solid var(--border);
-      padding: 8px 14px; border-radius: var(--radius-md);
-      font-size: 0.88rem; font-weight: 700;
-      cursor: pointer; user-select: none;
-      display: inline-flex; align-items: center; gap: 6px; min-height: 38px;
+      padding: 8px 14px;
+      border-radius: var(--radius-md);
+      font-size: 0.88rem;
+      font-weight: 700;
+      cursor: pointer;
+      user-select: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      min-height: 38px;
     }
+
     .member-tab-btn:hover { border-color: var(--member-color); }
     .member-tab-btn.active { background: var(--member-color); color: white; border-color: var(--member-color); }
     .member-tab-btn.active:hover { border-color: var(--member-color); filter: brightness(1.06); }
     .member-tab-badge { background: rgba(255,255,255,0.22); padding: 2px 7px; border-radius: var(--radius-sm); font-size: 0.75rem; pointer-events: none; }
 
-    /* OVERLAY TASK LIST CARD ON DESKTOP; INLINE ON MOBILE */
-    #selected-member-card-slot { position: absolute; top: 84px; left: 32px; right: 32px; z-index: 100; display: none; }
+    /* IN-FLOW MEMBER TASK LIST CARD */
+    #selected-member-card-slot { margin-top: 20px; display: none; }
     #selected-member-card-slot.show { display: block; }
+
     .user-card {
       background: var(--surface-card);
-      border-radius: var(--radius-lg); padding: 24px;
-      border: 1px solid var(--border); border-top: 6px solid var(--primary);
-      box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.25);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      border: 1px solid var(--border);
+      border-top: 6px solid var(--primary);
     }
-    .user-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; gap: 12px; }
+
+    .user-header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; margin-bottom: 14px; gap: 12px; }
     .user-name { font-size: 1.25rem; font-weight: 800; color: var(--text); letter-spacing: -0.02em; }
+    .user-stats-group { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; }
+    .user-stat-pill {
+      background: var(--surface);
+      color: var(--text);
+      border: 1px solid var(--border);
+      padding: 5px 10px;
+      border-radius: var(--radius-sm);
+      font-size: 0.82rem;
+      font-weight: 700;
+      white-space: nowrap;
+    }
     .user-points { background: var(--primary); color: white; padding: 6px 12px; border-radius: var(--radius-sm); font-size: 0.85rem; font-weight: 700; white-space: nowrap; }
+
+    .task-group-section { margin-top: 20px; }
+    .task-group-section:first-of-type { margin-top: 8px; }
+    .task-group-header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 12px;
+      padding-bottom: 8px;
+      border-bottom: 1.5px solid var(--border);
+    }
+    .task-group-heading {
+      font-size: 0.84rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text-muted);
+    }
+    .task-group-link {
+      background: none;
+      border: none;
+      color: var(--primary);
+      font-size: 0.84rem;
+      font-weight: 700;
+      text-decoration: underline;
+      padding: 2px 4px;
+    }
+    .task-group-link:hover { color: var(--primary-hover); }
+
     .task-item {
-      background: var(--surface); padding: 18px; border-radius: var(--radius-md);
-      margin-bottom: 14px; border: 1px solid var(--border);
-      display: flex; justify-content: space-between; align-items: center; gap: 14px;
+      background: var(--surface);
+      padding: 18px;
+      border-radius: var(--radius-md);
+      margin-bottom: 14px;
+      border: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 14px;
       border-left: 4px solid var(--warning);
       transition: border-color 0.15s ease, box-shadow 0.15s ease;
     }
+
     .task-item:last-child { margin-bottom: 0; }
     .task-item:hover { box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08); }
     .task-item.completed { border-left-color: var(--success); opacity: 0.55; }
@@ -284,30 +444,58 @@
     .btn-check { background: var(--success); color: white; border: none; padding: 10px 18px; font-size: 0.92rem; font-weight: 700; flex-shrink: 0; }
     .btn-check:hover { background: #059669; }
     .btn-check:disabled { background: var(--surface); color: var(--text-muted); cursor: default; }
+
     .admin-form-box {
-      display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 20px; margin-bottom: 24px;
-      background: var(--surface); padding: 24px;
-      border-radius: var(--radius-lg); border: 1px solid var(--border);
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 20px;
+      margin-bottom: 24px;
+      background: var(--surface);
+      padding: 24px;
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border);
     }
+
     .form-group { display: flex; flex-direction: column; gap: 8px; }
     .form-group label { font-size: 0.78rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; }
+
     .form-group input, .form-group select {
-      padding: 12px 16px; border: 1.5px solid var(--input-border);
-      border-radius: var(--radius-md); font-size: 0.98rem;
-      background: var(--input-bg); color: var(--text); width: 100%;
+      padding: 12px 16px;
+      border: 1.5px solid var(--input-border);
+      border-radius: var(--radius-md);
+      font-size: 0.98rem;
+      background: var(--input-bg);
+      color: var(--text);
+      width: 100%;
     }
+
     .form-group input:focus, .form-group select:focus { outline: none; border-color: var(--primary); }
     .btn-outline-primary { background: transparent; border: 1.5px solid var(--primary); color: var(--primary); padding: 11px 20px; font-weight: 700; }
     .btn-outline-primary:hover { background: var(--primary); color: white; }
     .btn-outline-danger { background: transparent; border: 1.5px solid var(--danger); color: var(--danger); padding: 9px 16px; font-size: 0.9rem; font-weight: 700; }
     .btn-outline-danger:hover { background: var(--danger); color: white; }
+    .btn-order {
+      background: var(--surface);
+      border: 1px solid var(--input-border);
+      color: var(--text);
+      padding: 6px 10px;
+      font-size: 0.82rem;
+      font-weight: 700;
+    }
+    .btn-order:hover:not(:disabled) { border-color: var(--primary); color: var(--primary); }
+    .btn-order:disabled { opacity: 0.35; cursor: default; }
 
     /* LOG PILLS */
     .log-pill {
-      display: inline-block; padding: 3px 9px; border-radius: var(--radius-sm);
-      font-size: 0.76rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.03em;
+      display: inline-block;
+      padding: 3px 9px;
+      border-radius: var(--radius-sm);
+      font-size: 0.76rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
     }
+
     .log-pill.completed { background: rgba(245, 158, 11, 0.16); color: #d97706; }
     .log-pill.approved { background: rgba(16, 185, 129, 0.16); color: #059669; }
     .log-pill.rejected { background: rgba(239, 68, 68, 0.16); color: #dc2626; }
@@ -330,33 +518,51 @@
 
     /* MODALS */
     .modal-overlay {
-      position: fixed; inset: 0;
+      position: fixed;
+      inset: 0;
       background: rgba(3, 7, 18, 0.75);
       backdrop-filter: blur(10px);
-      display: none; justify-content: center; align-items: center;
-      z-index: 3000; padding: 16px; overflow-y: auto;
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 3000;
+      padding: 16px;
+      overflow-y: auto;
     }
+
     .modal-box {
-      background: var(--surface-card); padding: 32px;
-      border-radius: var(--radius-lg); width: 100%; max-width: 460px;
-      max-height: 90vh; overflow-y: auto;
+      background: var(--surface-card);
+      padding: 32px;
+      border-radius: var(--radius-lg);
+      width: 100%;
+      max-width: 460px;
+      max-height: 90vh;
+      overflow-y: auto;
       box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4);
       border: 1px solid var(--border);
     }
+
     .modal-box h3 { margin-bottom: 20px; font-size: 1.35rem; font-weight: 800; color: var(--text); letter-spacing: -0.02em; }
     .modal-actions { display: flex; justify-content: flex-end; gap: 14px; margin-top: 28px; }
 
     /* CELEBRATION TOAST */
     #toast {
-      position: fixed; bottom: calc(24px + env(safe-area-inset-bottom, 0px)); right: 24px;
-      background: #0f172a; color: #2dd4bf; border: 1px solid #1e293b;
-      padding: 14px 24px; border-radius: var(--radius-md);
-      font-size: 1.1rem; font-weight: 800;
+      position: fixed;
+      bottom: calc(24px + env(safe-area-inset-bottom, 0px));
+      right: 24px;
+      background: #0f172a;
+      color: #2dd4bf;
+      border: 1px solid #1e293b;
+      padding: 14px 24px;
+      border-radius: var(--radius-md);
+      font-size: 1.1rem;
+      font-weight: 800;
       box-shadow: 0 20px 40px rgba(0,0,0,0.4);
       transform: translateY(150px);
       transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
       z-index: 4000;
     }
+
     #toast.show { transform: translateY(0); }
 
     /* MOBILE & TABLET RESPONSIVE ADJUSTMENTS */
@@ -398,6 +604,7 @@
   </style>
 </head>
 <body>
+
   <!-- SITE ACCESS & GOOGLE SIGN-IN GATE -->
   <div id="site-gate">
     <div class="gate-card">
@@ -459,13 +666,14 @@
 
     <!-- DASHBOARD SECTION -->
     <section id="dashboard" class="content-section">
-      <div class="card" style="position:relative;">
+      <div class="card">
         <div class="tasks-header-row">
           <div class="tasks-header-title">📋 Task Lists</div>
           <div id="member-tabs-container" class="member-tabs"></div>
         </div>
         <div id="selected-member-card-slot"></div>
       </div>
+
       <div id="calendar-card-wrapper" class="card">
         <div class="section-header" onclick="toggleAccordion('calVisible')">
           <h3>📅 Family Calendar</h3><span id="cal-icon">−</span>
@@ -526,8 +734,16 @@
           <button type="button" class="btn-outline-danger" onclick="resetAllTaskChecks()">🧪 RESET DAILY SWEEP</button>
           <button type="button" class="btn-outline-danger" onclick="resetAllTaskGoals()">🎁 RESET STREAK PROGRESS</button>
         </div>
+
         <div class="admin-form-box">
           <div class="form-group"><label>Task Name</label><input type="text" id="t-name"></div>
+          <div class="form-group">
+            <label>Task Type</label>
+            <select id="t-type-category">
+              <option value="daily">Daily Task</option>
+              <option value="as-needed">As Needed Task</option>
+            </select>
+          </div>
           <div class="form-group"><label>Users</label><div id="t-assignee-list" style="display:flex; gap:12px; flex-wrap:wrap; background:var(--input-bg); padding:10px 14px; border-radius:3px; border:1.5px solid var(--input-border); min-height:46px; align-items:center;"></div></div>
           <div class="form-group"><label>Target Streak (Days in a Row)</label><input type="number" id="t-goal" value="0"></div>
           <div class="form-group"><label>Prize Name</label><input type="text" id="t-prize"></div>
@@ -537,6 +753,7 @@
           <div class="form-group" style="grid-column: 1 / -1;"><label>Description</label><input type="text" id="t-desc"></div>
         </div>
         <button type="button" class="btn-outline-primary" style="width:100%; padding:14px;" onclick="addTask()">Save Task</button>
+
         <div class="table-scroll" style="margin-top:24px;">
           <table>
             <thead>
@@ -544,8 +761,8 @@
                 <th style="width:30%">Task</th>
                 <th style="width:15%">Streak Goal</th>
                 <th style="width:15%">Prize</th>
-                <th style="width:20%">Logic</th>
-                <th style="text-align:right; width:20%">Action</th>
+                <th style="width:18%">Logic</th>
+                <th style="text-align:right; width:22%">Action</th>
               </tr>
             </thead>
             <tbody id="task-list-body"></tbody>
@@ -618,7 +835,8 @@
         <div class="admin-form-box">
           <div class="form-group" style="grid-column: 1 / -1;">
             <label style="display:flex; align-items:center; gap:8px; cursor:pointer;">
-              <input type="checkbox" id="show-calendar-toggle" onchange="toggleCalendarVisibility()" style="width:18px; height:18px; cursor:pointer;"> Show Family Calendar on Dashboard
+              <input type="checkbox" id="show-calendar-toggle" onchange="toggleCalendarVisibility()" style="width:18px; height:18px; cursor:pointer;">
+              Show Family Calendar on Dashboard
             </label>
           </div>
         </div>
@@ -688,6 +906,13 @@
     <div class="modal-box">
       <h3>Edit Task Configuration</h3>
       <div class="form-group" style="margin-bottom:14px;"><label>Task Name</label><input type="text" id="edit-t-name"></div>
+      <div class="form-group" style="margin-bottom:14px;">
+        <label>Task Type</label>
+        <select id="edit-t-type-category">
+          <option value="daily">Daily Task</option>
+          <option value="as-needed">As Needed Task</option>
+        </select>
+      </div>
       <div class="form-group" style="margin-bottom:14px;"><label>User</label><select id="edit-t-assignee"></select></div>
       <div class="form-group" style="margin-bottom:14px;"><label>Target Streak (Days in a Row)</label><input type="number" id="edit-t-goal"></div>
       <div class="form-group" style="margin-bottom:14px;"><label>Prize Name</label><input type="text" id="edit-t-prize"></div>
@@ -708,31 +933,38 @@
   <script src="https://www.gstatic.com/firebasejs/11.0.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/11.0.1/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore-compat.js"></script>
+
   <script>
     /* -------------------------------------------------------------------------
        SERVICE WORKER REGISTRATION & IMMEDIATE AUTO-UPDATE
-       ------------------------------------------------------------------------- */
+    ------------------------------------------------------------------------- */
     if ('serviceWorker' in navigator) {
       let refreshing = false;
       navigator.serviceWorker.addEventListener('controllerchange', () => {
-        if (!refreshing) { refreshing = true; window.location.reload(); }
+        if (!refreshing) {
+          refreshing = true;
+          window.location.reload();
+        }
       });
       window.addEventListener('load', () => {
         navigator.serviceWorker.register('/sw.js')
-          .then((reg) => { setInterval(() => reg.update(), 15 * 60 * 1000); })
+          .then((reg) => {
+            setInterval(() => reg.update(), 15 * 60 * 1000);
+          })
           .catch((err) => console.error('Service Worker registration failed:', err));
       });
     }
 
     /* -------------------------------------------------------------------------
        THEME (LIGHT / DARK MODE) INITIALIZATION
-       ------------------------------------------------------------------------- */
+    ------------------------------------------------------------------------- */
     function initTheme() {
       const savedTheme = localStorage.getItem('familyHubTheme');
       const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
       const theme = savedTheme || (prefersDark ? 'dark' : 'light');
       applyTheme(theme);
     }
+
     function applyTheme(theme) {
       document.documentElement.setAttribute('data-theme', theme);
       const btn = document.getElementById('theme-toggle-btn');
@@ -741,17 +973,19 @@
         btn.title = theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode';
       }
     }
+
     function toggleTheme() {
       const current = document.documentElement.getAttribute('data-theme') || 'light';
       const next = current === 'dark' ? 'light' : 'dark';
       localStorage.setItem('familyHubTheme', next);
       applyTheme(next);
     }
+
     initTheme();
 
     /* -------------------------------------------------------------------------
        FIREBASE & DATA STATE INITIALIZATION (AUTH + ATOMIC UPDATES)
-       ------------------------------------------------------------------------- */
+    ------------------------------------------------------------------------- */
     const firebaseConfig = {
       apiKey: "AIzaSyB2v8EYgBpbQHTSqr_k4fDEjdcJpemqwbE",
       authDomain: "family-calendar-34850.firebaseapp.com",
@@ -761,7 +995,11 @@
       appId: "1:636042418970:web:657c82059c624b1ae32aa3",
       measurementId: "G-SYYJEJHRG8"
     };
-    if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
+
+    if (!firebase.apps.length) {
+      firebase.initializeApp(firebaseConfig);
+    }
+
     const auth = firebase.auth();
     const googleProvider = new firebase.auth.GoogleAuthProvider();
     const db = firebase.firestore();
@@ -794,6 +1032,7 @@
     let editId = null;
     let selectedMemberId = null;
     let pendingLocalWrites = 0;
+
     let lastTabsSignature = '';
     let lastCardSignature = '';
     let lastMembersTableSignature = '';
@@ -873,20 +1112,28 @@
       stopHouseholdListener();
       if (!auth.currentUser) return;
       firestorePermissionDenied = false;
+
       unsubscribeHousehold = familyDocRef.onSnapshot((doc) => {
-        if (pendingLocalWrites > 0 || doc.metadata.hasPendingWrites) { return; }
+        if (pendingLocalWrites > 0 || doc.metadata.hasPendingWrites) {
+          return;
+        }
         firestorePermissionDenied = false;
         if (doc.exists) {
           const rawData = doc.data();
           const hadLegacyKeys = Boolean(rawData.chores || typeof rawData.choresVisible === 'boolean' || !Array.isArray(rawData.logs));
           state = migrateLegacyFields({ ...state, ...rawData });
           localStorage.setItem('familyHubData', JSON.stringify(state));
-          if (hadLegacyKeys) { saveFullDocument(); return; }
+          if (hadLegacyKeys) {
+            saveFullDocument();
+            return;
+          }
           checkSiteGate();
           renderAll();
         } else {
           const localBackup = JSON.parse(localStorage.getItem('familyHubData'));
-          if (localBackup) { state = migrateLegacyFields({ ...state, ...localBackup }); }
+          if (localBackup) {
+            state = migrateLegacyFields({ ...state, ...localBackup });
+          }
           saveFullDocument();
           checkSiteGate();
         }
@@ -903,8 +1150,14 @@
       if (!rawUrl) return "";
       const trimmed = rawUrl.trim();
       if (!trimmed) return "";
-      if (trimmed.includes('mode=')) { return trimmed.replace(/mode=[^&]+/i, 'mode=AGENDA'); }
+      if (trimmed.includes('mode=')) {
+        return trimmed.replace(/mode=[^&]+/i, 'mode=AGENDA');
+      }
       return trimmed + (trimmed.includes('?') ? '&' : '?') + 'mode=AGENDA';
+    }
+
+    function normalizeTaskCategory(task) {
+      return task && task.taskType === 'as-needed' ? 'as-needed' : 'daily';
     }
 
     function migrateLegacyFields(data) {
@@ -917,6 +1170,14 @@
         migrated.tasksVisible = migrated.choresVisible;
       }
       delete migrated.choresVisible;
+      if (Array.isArray(migrated.tasks)) {
+        migrated.tasks = migrated.tasks.map(t => ({
+          ...t,
+          taskType: normalizeTaskCategory(t)
+        }));
+      } else {
+        migrated.tasks = [];
+      }
       if (Array.isArray(migrated.approvals)) {
         migrated.approvals = migrated.approvals.map(a => ({
           ...a,
@@ -937,10 +1198,14 @@
       pendingLocalWrites++;
       familyDocRef.update(patchObj)
         .catch((err) => {
-          if (err.code === 'not-found') { return familyDocRef.set(state); }
+          if (err.code === 'not-found') {
+            return familyDocRef.set(state);
+          }
           console.error("Firebase atomic update error:", err);
         })
-        .finally(() => { pendingLocalWrites = Math.max(0, pendingLocalWrites - 1); });
+        .finally(() => {
+          pendingLocalWrites = Math.max(0, pendingLocalWrites - 1);
+        });
     }
 
     function saveFullDocument() {
@@ -950,7 +1215,9 @@
       pendingLocalWrites++;
       familyDocRef.set(state)
         .catch(err => console.error("Firebase save error:", err))
-        .finally(() => { pendingLocalWrites = Math.max(0, pendingLocalWrites - 1); });
+        .finally(() => {
+          pendingLocalWrites = Math.max(0, pendingLocalWrites - 1);
+        });
     }
 
     function closeModals() {
@@ -968,7 +1235,7 @@
 
     /* -------------------------------------------------------------------------
        SITE ENTRY & GOOGLE AUTH GATE
-       ------------------------------------------------------------------------- */
+    ------------------------------------------------------------------------- */
     function checkSiteGate() {
       const gateEl = document.getElementById('site-gate');
       if (!gateEl) return;
@@ -981,7 +1248,7 @@
 
     /* -------------------------------------------------------------------------
        ADMIN AUTHENTICATION & NAVIGATION
-       ------------------------------------------------------------------------- */
+    ------------------------------------------------------------------------- */
     function handleApprovalFlagClick() {
       if (isUnlocked) {
         document.getElementById('sidebar').classList.add('visible');
@@ -1010,6 +1277,20 @@
       }
     }
 
+    function openTaskListsAdmin() {
+      if (isUnlocked) {
+        document.getElementById('sidebar').classList.add('visible');
+        syncSidebarLayout(true);
+        showSection('admin-tasks', document.getElementById('nav-tasks'));
+      } else {
+        redirectAfterLogin = 'admin-tasks';
+        document.getElementById('admin-login-user').value = '';
+        document.getElementById('admin-login-pass').value = '';
+        document.getElementById('admin-login-modal').style.display = 'flex';
+        setTimeout(() => document.getElementById('admin-login-user').focus(), 50);
+      }
+    }
+
     function submitAdminLogin() {
       const u = document.getElementById('admin-login-user').value.trim();
       const p = document.getElementById('admin-login-pass').value;
@@ -1026,6 +1307,8 @@
         syncSidebarLayout(true);
         if (targetSection === 'admin-approvals') {
           showSection('admin-approvals', document.getElementById('nav-approvals'));
+        } else if (targetSection === 'admin-tasks') {
+          showSection('admin-tasks', document.getElementById('nav-tasks'));
         }
       } else {
         alert("Invalid username or password.");
@@ -1080,7 +1363,7 @@
 
     /* -------------------------------------------------------------------------
        STREAK & DYNAMIC REWARD HELPERS
-       ------------------------------------------------------------------------- */
+    ------------------------------------------------------------------------- */
     function getYesterdayString() {
       const d = new Date();
       d.setDate(d.getDate() - 1);
@@ -1092,19 +1375,28 @@
       const yesterday = getYesterdayString();
       const min = Number(task.dynamic?.min) || 2;
       const max = Number(task.dynamic?.max) || 10;
+
       let activeStreak = 0;
-      if (task.lastCompleted === today) { activeStreak = task.streak || 1; }
-      else if (task.lastCompleted === yesterday) { activeStreak = task.streak || 1; }
-      else { activeStreak = 0; }
+      if (task.lastCompleted === today) {
+        activeStreak = task.streak || 1;
+      } else if (task.lastCompleted === yesterday) {
+        activeStreak = task.streak || 1;
+      } else {
+        activeStreak = 0;
+      }
+
       const effectiveStreak = task.lastCompleted === today ? activeStreak : activeStreak + 1;
       const step = Math.max(1, Math.round((max - min) / 4));
-      const earned = task.type === 'dynamic' ? Math.max(min, max - ((effectiveStreak - 1) * step)) : (Number(task.points) || 0);
+      const earned = task.type === 'dynamic'
+        ? Math.max(min, max - ((effectiveStreak - 1) * step))
+        : (Number(task.points) || 0);
+
       return { earned, effectiveStreak, activeStreak };
     }
 
     /* -------------------------------------------------------------------------
        MEMBER MANAGEMENT & AD-HOC BONUS POINTS
-       ------------------------------------------------------------------------- */
+    ------------------------------------------------------------------------- */
     function addMember() {
       requireAuthUser();
       const name = document.getElementById('m-name').value.trim();
@@ -1124,7 +1416,6 @@
       const reason = document.getElementById('bonus-reason-input').value.trim();
       if (!memberId) return alert("Select a member.");
       if (!Number.isFinite(pts) || pts === 0) return alert("Enter a non-zero point amount.");
-
       const member = state.members.find(m => m.id === memberId);
       if (!member) return alert("Member not found.");
 
@@ -1150,8 +1441,8 @@
 
       localStorage.setItem('familyHubData', JSON.stringify(state));
       renderAll();
-      pendingLocalWrites++;
 
+      pendingLocalWrites++;
       db.runTransaction(async (tx) => {
         const snap = await tx.get(familyDocRef);
         if (!snap.exists) return;
@@ -1163,7 +1454,9 @@
         const updatedLogs = [logEntry, ...existingLogs].slice(0, 200);
         tx.update(familyDocRef, { members: updatedMembers, logs: updatedLogs });
       }).catch(err => console.error("Bonus points transaction failed:", err))
-        .finally(() => { pendingLocalWrites = Math.max(0, pendingLocalWrites - 1); });
+        .finally(() => {
+          pendingLocalWrites = Math.max(0, pendingLocalWrites - 1);
+        });
     }
 
     function deleteMember(id) {
@@ -1194,6 +1487,7 @@
       const newColor = document.getElementById('edit-m-color').value;
       const targetId = editId;
       closeModals();
+
       const localMember = state.members.find(x => x.id === targetId);
       if (localMember) {
         localMember.name = newName;
@@ -1201,8 +1495,10 @@
         localMember.points = newPoints;
         localMember.color = newColor;
       }
+
       localStorage.setItem('familyHubData', JSON.stringify(state));
       renderAll();
+
       pendingLocalWrites++;
       db.runTransaction(async (tx) => {
         const snap = await tx.get(familyDocRef);
@@ -1213,7 +1509,9 @@
         );
         tx.update(familyDocRef, { members });
       }).catch(err => console.error("Member edit transaction failed:", err))
-        .finally(() => { pendingLocalWrites = Math.max(0, pendingLocalWrites - 1); });
+        .finally(() => {
+          pendingLocalWrites = Math.max(0, pendingLocalWrites - 1);
+        });
     }
 
     function clearAllPoints() {
@@ -1222,6 +1520,7 @@
       state.members.forEach(m => m.points = 0);
       localStorage.setItem('familyHubData', JSON.stringify(state));
       renderAll();
+
       pendingLocalWrites++;
       db.runTransaction(async (tx) => {
         const snap = await tx.get(familyDocRef);
@@ -1229,15 +1528,18 @@
         const members = (snap.data().members || []).map(m => ({ ...m, points: 0 }));
         tx.update(familyDocRef, { members });
       }).catch(err => console.error("Clear points transaction failed:", err))
-        .finally(() => { pendingLocalWrites = Math.max(0, pendingLocalWrites - 1); });
+        .finally(() => {
+          pendingLocalWrites = Math.max(0, pendingLocalWrites - 1);
+        });
     }
 
     /* -------------------------------------------------------------------------
-       TASK LIST MANAGEMENT (ATOMIC UPDATES & TRANSACTIONS)
-       ------------------------------------------------------------------------- */
+       TASK LIST MANAGEMENT (ATOMIC UPDATES, ORDERING & TRANSACTIONS)
+    ------------------------------------------------------------------------- */
     function addTask() {
       requireAuthUser();
       const name = document.getElementById('t-name').value.trim();
+      const taskType = document.getElementById('t-type-category').value === 'as-needed' ? 'as-needed' : 'daily';
       const selectedUserIds = Array.from(document.querySelectorAll('.t-assignee-cb:checked')).map(cb => Number(cb.value));
       const goal = Number(document.getElementById('t-goal').value) || 0;
       const prize = document.getElementById('t-prize').value.trim();
@@ -1248,9 +1550,11 @@
       const desc = document.getElementById('t-desc').value.trim();
       if (!name) return alert("Please enter a task name.");
       if (selectedUserIds.length === 0) return alert("Please select at least one user.");
+
       const createdTasks = selectedUserIds.map((userId, index) => ({
         id: Date.now() + index,
         name,
+        taskType,
         assigneeId: userId,
         goal,
         prize,
@@ -1263,8 +1567,10 @@
         lastCompleted: null,
         prevLastCompleted: null
       }));
+
       state.tasks.push(...createdTasks);
       document.getElementById('t-name').value = '';
+      document.getElementById('t-type-category').value = 'daily';
       document.getElementById('t-goal').value = '0';
       document.getElementById('t-prize').value = '';
       document.getElementById('t-desc').value = '';
@@ -1272,13 +1578,67 @@
       updateFields({ tasks: FieldValue.arrayUnion(...createdTasks) });
     }
 
+    function moveTask(taskId, direction) {
+      requireAuthUser();
+      const idx = state.tasks.findIndex(t => t.id === taskId);
+      if (idx === -1) return;
+      const currentTask = state.tasks[idx];
+      const delta = direction === 'up' ? -1 : 1;
+
+      let swapIdx = -1;
+      for (let i = idx + delta; i >= 0 && i < state.tasks.length; i += delta) {
+        if (state.tasks[i].assigneeId === currentTask.assigneeId) {
+          swapIdx = i;
+          break;
+        }
+      }
+      if (swapIdx === -1) return;
+
+      const reordered = [...state.tasks];
+      const temp = reordered[idx];
+      reordered[idx] = reordered[swapIdx];
+      reordered[swapIdx] = temp;
+      state.tasks = reordered;
+
+      localStorage.setItem('familyHubData', JSON.stringify(state));
+      renderAll();
+
+      pendingLocalWrites++;
+      db.runTransaction(async (tx) => {
+        const snap = await tx.get(familyDocRef);
+        if (!snap.exists) return;
+        const serverTasks = [...(snap.data().tasks || [])];
+        const sIdx = serverTasks.findIndex(t => t.id === taskId);
+        if (sIdx === -1) return;
+        const sTask = serverTasks[sIdx];
+        let sSwapIdx = -1;
+        for (let i = sIdx + delta; i >= 0 && i < serverTasks.length; i += delta) {
+          if (serverTasks[i].assigneeId === sTask.assigneeId) {
+            sSwapIdx = i;
+            break;
+          }
+        }
+        if (sSwapIdx === -1) return;
+        const sTemp = serverTasks[sIdx];
+        serverTasks[sIdx] = serverTasks[sSwapIdx];
+        serverTasks[sSwapIdx] = sTemp;
+        tx.update(familyDocRef, { tasks: serverTasks });
+      }).catch(err => console.error("Move task transaction failed:", err))
+        .finally(() => {
+          pendingLocalWrites = Math.max(0, pendingLocalWrites - 1);
+        });
+    }
+
     function deleteTask(id) {
       requireAuthUser();
       if (!confirm("Delete this task?")) return;
       const targetTask = state.tasks.find(t => t.id === id);
       state.tasks = state.tasks.filter(t => t.id !== id);
-      if (targetTask) { updateFields({ tasks: FieldValue.arrayRemove(targetTask) }); }
-      else { updateFields({ tasks: state.tasks }); }
+      if (targetTask) {
+        updateFields({ tasks: FieldValue.arrayRemove(targetTask) });
+      } else {
+        updateFields({ tasks: state.tasks });
+      }
     }
 
     function openEditTask(id) {
@@ -1286,6 +1646,7 @@
       if (!t) return;
       editId = id;
       document.getElementById('edit-t-name').value = t.name;
+      document.getElementById('edit-t-type-category').value = normalizeTaskCategory(t);
       document.getElementById('edit-t-assignee').value = t.assigneeId;
       document.getElementById('edit-t-goal').value = t.goal || 0;
       document.getElementById('edit-t-prize').value = t.prize || '';
@@ -1303,6 +1664,7 @@
       const targetId = editId;
       const updatedFields = {
         name: document.getElementById('edit-t-name').value.trim(),
+        taskType: document.getElementById('edit-t-type-category').value === 'as-needed' ? 'as-needed' : 'daily',
         assigneeId: Number(document.getElementById('edit-t-assignee').value),
         goal: Number(document.getElementById('edit-t-goal').value) || 0,
         prize: document.getElementById('edit-t-prize').value.trim(),
@@ -1315,18 +1677,25 @@
         desc: document.getElementById('edit-t-desc').value.trim()
       };
       closeModals();
+
       const localTask = state.tasks.find(x => x.id === targetId);
       if (localTask) Object.assign(localTask, updatedFields);
+
       localStorage.setItem('familyHubData', JSON.stringify(state));
       renderAll();
+
       pendingLocalWrites++;
       db.runTransaction(async (tx) => {
         const snap = await tx.get(familyDocRef);
         if (!snap.exists) return;
-        const tasks = (snap.data().tasks || []).map(t => t.id === targetId ? { ...t, ...updatedFields } : t);
+        const tasks = (snap.data().tasks || []).map(t =>
+          t.id === targetId ? { ...t, ...updatedFields } : t
+        );
         tx.update(familyDocRef, { tasks });
       }).catch(err => console.error("Task edit transaction failed:", err))
-        .finally(() => { pendingLocalWrites = Math.max(0, pendingLocalWrites - 1); });
+        .finally(() => {
+          pendingLocalWrites = Math.max(0, pendingLocalWrites - 1);
+        });
     }
 
     function resetAllTaskChecks() {
@@ -1335,6 +1704,7 @@
       state.tasks.forEach(t => t.lastCompleted = null);
       localStorage.setItem('familyHubData', JSON.stringify(state));
       renderAll();
+
       pendingLocalWrites++;
       db.runTransaction(async (tx) => {
         const snap = await tx.get(familyDocRef);
@@ -1342,7 +1712,9 @@
         const tasks = (snap.data().tasks || []).map(t => ({ ...t, lastCompleted: null }));
         tx.update(familyDocRef, { tasks });
       }).catch(err => console.error("Reset checks transaction failed:", err))
-        .finally(() => { pendingLocalWrites = Math.max(0, pendingLocalWrites - 1); });
+        .finally(() => {
+          pendingLocalWrites = Math.max(0, pendingLocalWrites - 1);
+        });
     }
 
     function resetAllTaskGoals() {
@@ -1351,6 +1723,7 @@
       state.tasks.forEach(t => { t.streak = 0; t.goalStreak = 0; });
       localStorage.setItem('familyHubData', JSON.stringify(state));
       renderAll();
+
       pendingLocalWrites++;
       db.runTransaction(async (tx) => {
         const snap = await tx.get(familyDocRef);
@@ -1358,7 +1731,9 @@
         const tasks = (snap.data().tasks || []).map(t => ({ ...t, streak: 0, goalStreak: 0 }));
         tx.update(familyDocRef, { tasks });
       }).catch(err => console.error("Reset goals transaction failed:", err))
-        .finally(() => { pendingLocalWrites = Math.max(0, pendingLocalWrites - 1); });
+        .finally(() => {
+          pendingLocalWrites = Math.max(0, pendingLocalWrites - 1);
+        });
     }
 
     function clearActivityLog() {
@@ -1370,18 +1745,21 @@
 
     /* -------------------------------------------------------------------------
        CONFLICT-FREE TASK COMPLETION & APPROVAL WORKFLOW WITH LOGGING
-       ------------------------------------------------------------------------- */
+    ------------------------------------------------------------------------- */
     function completeTask(taskId) {
       requireAuthUser();
       const task = state.tasks.find(t => t.id === taskId);
       if (!task) return;
       const member = state.members.find(m => m.id === task.assigneeId);
       if (!member) return;
+
+      const isAsNeeded = normalizeTaskCategory(task) === 'as-needed';
       const today = new Date().toDateString();
-      if (task.lastCompleted === today) return;
+      if (!isAsNeeded && task.lastCompleted === today) return;
 
       const nowIso = new Date().toISOString();
       const info = getStreakAndRewardInfo(task);
+
       task.prevStreak = task.streak || 0;
       task.streak = info.effectiveStreak;
       task.prevLastCompleted = task.lastCompleted || null;
@@ -1416,15 +1794,18 @@
       showToast(member.role);
       localStorage.setItem('familyHubData', JSON.stringify(state));
       renderAll();
-      pendingLocalWrites++;
 
+      pendingLocalWrites++;
       db.runTransaction(async (tx) => {
         const snap = await tx.get(familyDocRef);
         if (!snap.exists) return;
         const data = snap.data();
         const serverTasks = data.tasks || [];
         const serverTask = serverTasks.find(t => t.id === taskId);
-        if (!serverTask || serverTask.lastCompleted === today) return;
+        if (!serverTask) return;
+        const serverIsAsNeeded = normalizeTaskCategory(serverTask) === 'as-needed';
+        if (!serverIsAsNeeded && serverTask.lastCompleted === today) return;
+
         const serverInfo = getStreakAndRewardInfo(serverTask);
         const updatedTasks = serverTasks.map(t => {
           if (t.id !== taskId) return t;
@@ -1436,15 +1817,23 @@
             lastCompleted: today
           };
         });
+
         const existingLogs = Array.isArray(data.logs) ? data.logs : [];
         const updatedLogs = [{ ...completedLog, points: serverInfo.earned }, ...existingLogs].slice(0, 200);
+
         tx.update(familyDocRef, {
           tasks: updatedTasks,
-          approvals: FieldValue.arrayUnion({ ...newApproval, points: serverInfo.earned, wasConsecutive: serverInfo.activeStreak > 0 }),
+          approvals: FieldValue.arrayUnion({
+            ...newApproval,
+            points: serverInfo.earned,
+            wasConsecutive: serverInfo.activeStreak > 0
+          }),
           logs: updatedLogs
         });
       }).catch(err => console.error("Complete task transaction failed:", err))
-        .finally(() => { pendingLocalWrites = Math.max(0, pendingLocalWrites - 1); });
+        .finally(() => {
+          pendingLocalWrites = Math.max(0, pendingLocalWrites - 1);
+        });
     }
 
     function handleApproval(appId, approved) {
@@ -1469,7 +1858,9 @@
       } else {
         if (task) {
           task.lastCompleted = task.prevLastCompleted || null;
-          if (task.prevStreak !== undefined) { task.streak = task.prevStreak; }
+          if (task.prevStreak !== undefined) {
+            task.streak = task.prevStreak;
+          }
         }
       }
 
@@ -1490,8 +1881,8 @@
 
       localStorage.setItem('familyHubData', JSON.stringify(state));
       renderAll();
-      pendingLocalWrites++;
 
+      pendingLocalWrites++;
       db.runTransaction(async (tx) => {
         const snap = await tx.get(familyDocRef);
         if (!snap.exists) return;
@@ -1499,9 +1890,11 @@
         const serverApprovals = data.approvals || [];
         const serverApp = serverApprovals.find(a => a.id === appId);
         if (!serverApp) return;
+
         const srvTaskId = serverApp.taskId ?? serverApp.choreId;
         let updatedMembers = data.members || [];
         let updatedTasks = data.tasks || [];
+
         if (approved) {
           updatedMembers = updatedMembers.map(m =>
             m.id === serverApp.memberId ? { ...m, points: (Number(m.points) || 0) + (Number(serverApp.points) || 0) } : m
@@ -1509,7 +1902,9 @@
           updatedTasks = updatedTasks.map(t => {
             if (t.id !== srvTaskId) return t;
             let nextGoalStreak = serverApp.wasConsecutive ? ((t.goalStreak || 0) + 1) : 1;
-            if (t.goal > 0 && nextGoalStreak >= t.goal) { nextGoalStreak = 0; }
+            if (t.goal > 0 && nextGoalStreak >= t.goal) {
+              nextGoalStreak = 0;
+            }
             return { ...t, goalStreak: nextGoalStreak };
           });
         } else {
@@ -1522,8 +1917,10 @@
             };
           });
         }
+
         const existingLogs = Array.isArray(data.logs) ? data.logs : [];
         const updatedLogs = [decisionLog, ...existingLogs].slice(0, 200);
+
         tx.update(familyDocRef, {
           members: updatedMembers,
           tasks: updatedTasks,
@@ -1531,17 +1928,20 @@
           logs: updatedLogs
         });
       }).catch(err => console.error("Approval transaction failed:", err))
-        .finally(() => { pendingLocalWrites = Math.max(0, pendingLocalWrites - 1); });
+        .finally(() => {
+          pendingLocalWrites = Math.max(0, pendingLocalWrites - 1);
+        });
     }
 
     /* -------------------------------------------------------------------------
        SETTINGS, BACKUP & RESTORE (ATOMIC FIELD UPDATES)
-       ------------------------------------------------------------------------- */
+    ------------------------------------------------------------------------- */
     function saveFamilyName() {
       state.familyName = document.getElementById('family-name-input').value.trim();
       updateFields({ familyName: state.familyName });
       alert("Hub name saved!");
     }
+
     function saveCalendarUrl() {
       const rawUrl = document.getElementById('cal-url-input').value.trim();
       state.calendarUrl = normalizeCalendarUrl(rawUrl);
@@ -1549,10 +1949,12 @@
       updateFields({ calendarUrl: state.calendarUrl });
       alert("Calendar URL saved!");
     }
+
     function toggleCalendarVisibility() {
       state.showCalendar = document.getElementById('show-calendar-toggle').checked;
       updateFields({ showCalendar: state.showCalendar });
     }
+
     function updateAdminCredentials() {
       const newUser = document.getElementById('change-admin-user-input').value.trim();
       const newPass = document.getElementById('change-pass-input').value.trim();
@@ -1564,6 +1966,7 @@
       updateFields(patch);
       alert("Admin login credentials updated!");
     }
+
     function updateSitePassword() {
       const newSitePass = document.getElementById('change-site-pass-input').value.trim();
       if (!newSitePass) return alert("Enter a new website password.");
@@ -1574,6 +1977,7 @@
       updateFields({ sitePassword: newSitePass });
       alert("Website entry password updated!");
     }
+
     function exportData() {
       const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' });
       const url = URL.createObjectURL(blob);
@@ -1582,6 +1986,7 @@
       a.download = `family-hub-backup-${new Date().toISOString().slice(0,10)}.json`;
       a.click();
     }
+
     function importData(event) {
       requireAuthUser();
       const file = event.target.files[0];
@@ -1593,10 +1998,13 @@
           state = migrateLegacyFields({ ...state, ...imported });
           saveFullDocument();
           alert("Hub data restored successfully!");
-        } catch (err) { alert("Invalid backup file."); }
+        } catch (err) {
+          alert("Invalid backup file.");
+        }
       };
       reader.readAsText(file);
     }
+
     function nuclearReset() {
       requireAuthUser();
       if (confirm("This will wipe all members, task lists, and points. Continue?")) {
@@ -1609,16 +2017,53 @@
 
     /* -------------------------------------------------------------------------
        UI RENDERING ENGINE
-       ------------------------------------------------------------------------- */
-    function renderTaskRow(t) {
+    ------------------------------------------------------------------------- */
+    function renderMemberTaskItem(t, today, unit, cardColor) {
+      const isAsNeeded = normalizeTaskCategory(t) === 'as-needed';
+      const isDoneToday = t.lastCompleted === today;
+      const isLockedDone = !isAsNeeded && isDoneToday;
+      const info = getStreakAndRewardInfo(t);
+      const currentGoalStreak = info.activeStreak > 0 ? (t.goalStreak || 0) : 0;
+      const pct = t.goal > 0 ? Math.min(100, Math.round((currentGoalStreak / t.goal) * 100)) : 0;
+      const streakLabel = info.activeStreak > 0 ? ` • 🔥 ${info.activeStreak}d streak` : '';
+      const rewardText = `${info.earned} ${unit}${streakLabel}`;
+      const buttonLabel = isLockedDone ? '✓ Done' : (isAsNeeded && isDoneToday ? 'Complete Again' : 'Complete');
+
+      return `
+        <div class="task-item ${isLockedDone ? 'completed' : ''}">
+          <div class="task-info" style="flex:1; padding-right:14px;">
+            <h4>${t.name}</h4>
+            <p>${t.desc ? t.desc + ' • ' : ''}<strong>${rewardText}</strong></p>
+            ${t.goal > 0 ? `
+              <p style="font-size:0.8rem; color:${cardColor}; font-weight:700; margin-top:6px;">
+                🎁 ${t.prize || 'Streak Prize'}: ${currentGoalStreak}/${t.goal} days
+              </p>
+              <div class="goal-bar"><div class="goal-fill" style="width:${pct}%; background:${cardColor};"></div></div>
+            ` : ''}
+          </div>
+          <button type="button" class="btn-check" ${isLockedDone ? 'disabled' : ''} onclick="completeTask(${t.id})">${buttonLabel}</button>
+        </div>
+      `;
+    }
+
+    function renderTaskRow(t, indexInMemberGroup, memberGroupCount) {
       const logicLabel = t.type === 'dynamic' ? `D:${t.dynamic.min}-${t.dynamic.max}` : `S:${t.points}`;
+      const categoryLabel = normalizeTaskCategory(t) === 'as-needed' ? 'As Needed' : 'Daily';
+      const isFirst = indexInMemberGroup === 0;
+      const isLast = indexInMemberGroup === memberGroupCount - 1;
       return `
         <tr>
-          <td><strong>${t.name}</strong>${t.desc ? `<div style="font-size:0.85rem; color:var(--text-muted); margin-top:2px;">${t.desc}</div>` : ''}</td>
+          <td>
+            <strong>${t.name}</strong>
+            <span class="group-badge" style="margin-left:8px;">${categoryLabel}</span>
+            ${t.desc ? `<div style="font-size:0.85rem; color:var(--text-muted); margin-top:2px;">${t.desc}</div>` : ''}
+          </td>
           <td>${t.goal ? t.goal + 'd' : 0}</td>
           <td>${t.prize || '--'}</td>
           <td>${logicLabel}</td>
-          <td style="text-align:right;">
+          <td style="text-align:right; white-space:nowrap;">
+            <button type="button" class="btn-order" ${isFirst ? 'disabled' : ''} onclick="moveTask(${t.id}, 'up')" title="Move Up">↑</button>
+            <button type="button" class="btn-order" ${isLast ? 'disabled' : ''} onclick="moveTask(${t.id}, 'down')" title="Move Down">↓</button>
             <button type="button" class="btn-outline-primary" style="padding:6px 12px; font-size:0.85rem;" onclick="openEditTask(${t.id})">Edit</button>
             <button type="button" class="btn-outline-danger" style="padding:6px 12px; font-size:0.85rem;" onclick="deleteTask(${t.id})">X</button>
           </td>
@@ -1647,12 +2092,12 @@
       }
 
       const activeNav = document.querySelector('.nav-btn.active');
-      const activeSectionId =
-        activeNav && activeNav.id === 'nav-approvals' ? 'admin-approvals' :
-        activeNav && activeNav.id === 'nav-logs' ? 'admin-logs' :
-        activeNav && activeNav.id === 'nav-members' ? 'admin-members' :
-        activeNav && activeNav.id === 'nav-settings' ? 'admin-settings' :
-        activeNav && activeNav.id === 'nav-tasks' ? 'admin-tasks' : 'dashboard';
+      const activeSectionId = activeNav && activeNav.id === 'nav-approvals' ? 'admin-approvals'
+        : activeNav && activeNav.id === 'nav-logs' ? 'admin-logs'
+        : activeNav && activeNav.id === 'nav-members' ? 'admin-members'
+        : activeNav && activeNav.id === 'nav-settings' ? 'admin-settings'
+        : activeNav && activeNav.id === 'nav-tasks' ? 'admin-tasks'
+        : 'dashboard';
 
       document.querySelectorAll('.content-section').forEach(s => {
         s.classList.toggle('hidden', s.id !== activeSectionId);
@@ -1667,7 +2112,9 @@
       if (footerTitleEl) footerTitleEl.innerText = activeHubName;
 
       const familyNameInput = document.getElementById('family-name-input');
-      if (familyNameInput && document.activeElement !== familyNameInput) { familyNameInput.value = state.familyName || ''; }
+      if (familyNameInput && document.activeElement !== familyNameInput) {
+        familyNameInput.value = state.familyName || '';
+      }
 
       const showCal = state.showCalendar !== false;
       document.getElementById('show-calendar-toggle').checked = showCal;
@@ -1690,10 +2137,14 @@
       }
 
       const calUrlInput = document.getElementById('cal-url-input');
-      if (calUrlInput && document.activeElement !== calUrlInput) { calUrlInput.value = embedUrl || ''; }
+      if (calUrlInput && document.activeElement !== calUrlInput) {
+        calUrlInput.value = embedUrl || '';
+      }
 
       const adminUserInput = document.getElementById('change-admin-user-input');
-      if (adminUserInput && document.activeElement !== adminUserInput) { adminUserInput.value = state.adminUsername || 'admin'; }
+      if (adminUserInput && document.activeElement !== adminUserInput) {
+        adminUserInput.value = state.adminUsername || 'admin';
+      }
 
       const bonusMemberSelect = document.getElementById('bonus-member-select');
       if (bonusMemberSelect && document.activeElement !== bonusMemberSelect) {
@@ -1709,11 +2160,14 @@
       const assigneeList = document.getElementById('t-assignee-list');
       if (assigneeList) {
         const currentlyChecked = Array.from(document.querySelectorAll('.t-assignee-cb:checked')).map(cb => Number(cb.value));
-        assigneeList.innerHTML = state.members.length ? state.members.map(m => `
-          <label style="display:flex; align-items:center; gap:8px; cursor:pointer; font-size:0.95rem; font-weight:normal; text-transform:none; color:var(--text);">
-            <input type="checkbox" class="t-assignee-cb" value="${m.id}" ${currentlyChecked.includes(m.id) ? 'checked' : ''}> ${m.name}
-          </label>
-        `).join('') : `<span style="color:var(--text-muted); font-size:0.9rem;">Add family members first</span>`;
+        assigneeList.innerHTML = state.members.length
+          ? state.members.map(m => `
+              <label style="display:flex; align-items:center; gap:8px; cursor:pointer; font-size:0.95rem; font-weight:normal; text-transform:none; color:var(--text);">
+                <input type="checkbox" class="t-assignee-cb" value="${m.id}" ${currentlyChecked.includes(m.id) ? 'checked' : ''}>
+                ${m.name}
+              </label>
+            `).join('')
+          : `<span style="color:var(--text-muted); font-size:0.9rem;">Add family members first</span>`;
       }
 
       const editAssigneeSelect = document.getElementById('edit-t-assignee');
@@ -1725,8 +2179,11 @@
       const cardSlot = document.getElementById('selected-member-card-slot');
 
       if (state.members.length === 0) {
-        tabsContainer.innerHTML = ''; lastTabsSignature = '';
-        cardSlot.innerHTML = ''; lastCardSignature = ''; cardSlot.classList.remove('show');
+        tabsContainer.innerHTML = '';
+        lastTabsSignature = '';
+        cardSlot.innerHTML = '';
+        lastCardSignature = '';
+        cardSlot.classList.remove('show');
       } else {
         const tabsSignature = JSON.stringify({
           selectedMemberId,
@@ -1755,44 +2212,59 @@
             lastCardSignature = cardSignature;
             const unit = currencyMap[activeMember.role] || '';
             const cardColor = activeMember.color || '#0d9488';
-            const tasksHtml = memberTasks.length ? memberTasks.map(t => {
-              const isDone = t.lastCompleted === today;
-              const info = getStreakAndRewardInfo(t);
-              const currentGoalStreak = info.activeStreak > 0 ? (t.goalStreak || 0) : 0;
-              const pct = t.goal > 0 ? Math.min(100, Math.round((currentGoalStreak / t.goal) * 100)) : 0;
-              const streakLabel = info.activeStreak > 0 ? ` • 🔥 ${info.activeStreak}d streak` : '';
-              const rewardText = `${info.earned} ${unit}${streakLabel}`;
-              return `
-                <div class="task-item ${isDone ? 'completed' : ''}">
-                  <div class="task-info" style="flex:1; padding-right:14px;">
-                    <h4>${t.name}</h4>
-                    <p>${t.desc ? t.desc + ' • ' : ''}<strong>${rewardText}</strong></p>
-                    ${t.goal > 0 ? `
-                      <p style="font-size:0.8rem; color:${cardColor}; font-weight:700; margin-top:6px;">🎁 ${t.prize || 'Streak Prize'}: ${currentGoalStreak}/${t.goal} days</p>
-                      <div class="goal-bar"><div class="goal-fill" style="width:${pct}%; background:${cardColor};"></div></div>
-                    ` : ''}
+
+            const dailyTasks = memberTasks.filter(t => normalizeTaskCategory(t) === 'daily');
+            const asNeededTasks = memberTasks.filter(t => normalizeTaskCategory(t) === 'as-needed');
+
+            const completedTodayCount = dailyTasks.filter(t => t.lastCompleted === today).length;
+            const remainingTodayCount = Math.max(0, dailyTasks.length - completedTodayCount);
+
+            let sectionsHtml = '';
+            if (dailyTasks.length) {
+              sectionsHtml += `
+                <div class="task-group-section">
+                  <div class="task-group-header-row">
+                    <span class="task-group-heading">Daily Tasks</span>
                   </div>
-                  <button type="button" class="btn-check" ${isDone ? 'disabled' : ''} onclick="completeTask(${t.id})">${isDone ? '✓ Done' : 'Complete'}</button>
+                  ${dailyTasks.map(t => renderMemberTaskItem(t, today, unit, cardColor)).join('')}
                 </div>
               `;
-            }).join('') : `<p style="color:var(--text-muted); font-size:0.95rem; padding:12px 0;">No tasks assigned to ${activeMember.name}.</p>`;
+            }
+            if (asNeededTasks.length) {
+              sectionsHtml += `
+                <div class="task-group-section">
+                  <div class="task-group-header-row">
+                    <span class="task-group-heading">As Needed</span>
+                    <button type="button" class="task-group-link" onclick="openTaskListsAdmin()">Configure Tasks →</button>
+                  </div>
+                  ${asNeededTasks.map(t => renderMemberTaskItem(t, today, unit, cardColor)).join('')}
+                </div>
+              `;
+            }
+            if (!sectionsHtml) {
+              sectionsHtml = `<p style="color:var(--text-muted); font-size:0.95rem; padding:12px 0;">No tasks assigned to ${activeMember.name}.</p>`;
+            }
 
             cardSlot.innerHTML = `
               <div class="user-card" style="border-top-color: ${cardColor};">
                 <div class="user-header">
                   <span class="user-name">${activeMember.name}'s Task List</span>
-                  <div style="display:flex; align-items:center; gap:10px;">
+                  <div class="user-stats-group">
+                    <span class="user-stat-pill">✓ ${completedTodayCount} Done Today</span>
+                    <span class="user-stat-pill">⏳ ${remainingTodayCount} Remaining</span>
                     ${activeMember.role !== 'adult' ? `<span class="user-points" style="background:${cardColor};">${activeMember.points} ${unit}</span>` : ''}
                     <button type="button" onclick="selectedMemberId = null; renderAll();" style="background:none; border:none; font-size:1.1rem; cursor:pointer; color:var(--text-muted); padding:4px 8px;" title="Close">✕</button>
                   </div>
                 </div>
-                ${tasksHtml}
+                ${sectionsHtml}
               </div>
             `;
           }
           cardSlot.classList.add('show');
         } else {
-          cardSlot.innerHTML = ''; lastCardSignature = ''; cardSlot.classList.remove('show');
+          cardSlot.innerHTML = '';
+          lastCardSignature = '';
+          cardSlot.classList.remove('show');
         }
       }
 
@@ -1816,6 +2288,7 @@
       if (tasksTableSignature !== lastTasksTableSignature) {
         lastTasksTableSignature = tasksTableSignature;
         let groupedTasksHtml = '';
+
         state.members.forEach(m => {
           const memberTasks = state.tasks.filter(t => t.assigneeId === m.id);
           const mColor = m.color || '#0d9488';
@@ -1824,9 +2297,13 @@
               <td colspan="5" style="color:var(--text);">${m.name.trim()}<span class="group-badge">${memberTasks.length} ${memberTasks.length === 1 ? 'task' : 'tasks'}</span></td>
             </tr>
           `;
-          if (memberTasks.length) { groupedTasksHtml += memberTasks.map(renderTaskRow).join(''); }
-          else { groupedTasksHtml += `<tr><td colspan="5" style="color:var(--text-muted); font-size:0.9rem; padding-left:24px;">No tasks assigned.</td></tr>`; }
+          if (memberTasks.length) {
+            groupedTasksHtml += memberTasks.map((t, idx) => renderTaskRow(t, idx, memberTasks.length)).join('');
+          } else {
+            groupedTasksHtml += `<tr><td colspan="5" style="color:var(--text-muted); font-size:0.9rem; padding-left:24px;">No tasks assigned.</td></tr>`;
+          }
         });
+
         const memberIds = new Set(state.members.map(m => m.id));
         const unassignedTasks = state.tasks.filter(t => !memberIds.has(t.assigneeId));
         if (unassignedTasks.length) {
@@ -1834,8 +2311,9 @@
             <tr class="group-header" style="background: rgba(100,100,100,0.1);">
               <td colspan="5">Unassigned<span class="group-badge">${unassignedTasks.length}</span></td>
             </tr>
-          ` + unassignedTasks.map(renderTaskRow).join('');
+          ` + unassignedTasks.map((t, idx) => renderTaskRow(t, idx, unassignedTasks.length)).join('');
         }
+
         document.getElementById('task-list-body').innerHTML = groupedTasksHtml || `<tr><td colspan="5" style="text-align:center; color:var(--text-muted);">No tasks configured yet.</td></tr>`;
       }
 
@@ -1847,20 +2325,22 @@
       const approvalsSignature = JSON.stringify(state.approvals);
       if (approvalsSignature !== lastApprovalsSignature) {
         lastApprovalsSignature = approvalsSignature;
-        document.getElementById('approval-list-body').innerHTML = waitingCount ? state.approvals.map(a => `
-          <tr>
-            <td><strong>${a.memberName}</strong></td>
-            <td>
-              ${a.taskName || a.choreName}
-              ${a.completedAt ? `<div style="font-size:0.8rem; color:var(--text-muted); margin-top:2px;">Completed ${formatTimestamp(a.completedAt)}</div>` : ''}
-            </td>
-            <td>+${a.points}</td>
-            <td style="text-align:right;">
-              <button type="button" class="btn-check" style="padding:8px 14px; font-size:0.88rem;" onclick="handleApproval(${a.id}, true)">Approve</button>
-              <button type="button" class="btn-outline-danger" style="padding:6px 12px; font-size:0.88rem;" onclick="handleApproval(${a.id}, false)">Reject</button>
-            </td>
-          </tr>
-        `).join('') : `<tr><td colspan="4" style="text-align:center; color:var(--text-muted);">No pending approvals.</td></tr>`;
+        document.getElementById('approval-list-body').innerHTML = waitingCount
+          ? state.approvals.map(a => `
+              <tr>
+                <td><strong>${a.memberName}</strong></td>
+                <td>
+                  ${a.taskName || a.choreName}
+                  ${a.completedAt ? `<div style="font-size:0.8rem; color:var(--text-muted); margin-top:2px;">Completed ${formatTimestamp(a.completedAt)}</div>` : ''}
+                </td>
+                <td>+${a.points}</td>
+                <td style="text-align:right;">
+                  <button type="button" class="btn-check" style="padding:8px 14px; font-size:0.88rem;" onclick="handleApproval(${a.id}, true)">Approve</button>
+                  <button type="button" class="btn-outline-danger" style="padding:6px 12px; font-size:0.88rem;" onclick="handleApproval(${a.id}, false)">Reject</button>
+                </td>
+              </tr>
+            `).join('')
+          : `<tr><td colspan="4" style="text-align:center; color:var(--text-muted);">No pending approvals.</td></tr>`;
       }
 
       const logsSignature = JSON.stringify(state.logs);
@@ -1868,22 +2348,25 @@
         lastLogsSignature = logsSignature;
         const logBody = document.getElementById('activity-log-body');
         if (logBody) {
-          logBody.innerHTML = state.logs.length ? state.logs.map(entry => {
-            const ptsNum = Number(entry.points) || 0;
-            const ptsFormatted = ptsNum > 0 ? `+${ptsNum}` : `${ptsNum}`;
-            const pillClass = entry.type === 'approved' ? 'approved' :
-                              entry.type === 'rejected' ? 'rejected' :
-                              entry.type === 'bonus' ? 'bonus' : 'completed';
-            return `
-              <tr>
-                <td style="color:var(--text-muted); font-size:0.88rem;">${formatTimestamp(entry.timestamp)}</td>
-                <td><strong>${entry.memberName}</strong></td>
-                <td><span class="log-pill ${pillClass}">${entry.label}</span></td>
-                <td>${entry.details || ''}</td>
-                <td><strong>${ptsFormatted}</strong></td>
-              </tr>
-            `;
-          }).join('') : `<tr><td colspan="5" style="text-align:center; color:var(--text-muted);">No activity logged yet.</td></tr>`;
+          logBody.innerHTML = state.logs.length
+            ? state.logs.map(entry => {
+                const ptsNum = Number(entry.points) || 0;
+                const ptsFormatted = ptsNum > 0 ? `+${ptsNum}` : `${ptsNum}`;
+                const pillClass = entry.type === 'approved' ? 'approved'
+                  : entry.type === 'rejected' ? 'rejected'
+                  : entry.type === 'bonus' ? 'bonus'
+                  : 'completed';
+                return `
+                  <tr>
+                    <td style="color:var(--text-muted); font-size:0.88rem;">${formatTimestamp(entry.timestamp)}</td>
+                    <td><strong>${entry.memberName}</strong></td>
+                    <td><span class="log-pill ${pillClass}">${entry.label}</span></td>
+                    <td>${entry.details || ''}</td>
+                    <td><strong>${ptsFormatted}</strong></td>
+                  </tr>
+                `;
+              }).join('')
+            : `<tr><td colspan="5" style="text-align:center; color:var(--text-muted);">No activity logged yet.</td></tr>`;
         }
       }
     }
@@ -1901,7 +2384,9 @@
         startHouseholdListener();
       } else {
         stopHouseholdListener();
-        if (isUnlocked) { lockAdmin(); }
+        if (isUnlocked) {
+          lockAdmin();
+        }
       }
       checkSiteGate();
       renderAll();
