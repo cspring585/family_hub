@@ -436,6 +436,7 @@
       transition: border-color 0.15s ease, box-shadow 0.15s ease;
     }
 
+    .task-item:last-child { margin-bottom: 0; }
     .task-item:hover { box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08); }
     .task-item.completed { border-left-color: var(--success); opacity: 0.55; }
     .task-info h4 { font-size: 1.02rem; font-weight: 700; margin-bottom: 4px; color: var(--text); }
@@ -1215,7 +1216,8 @@
           const groupKey = `${t.assigneeId ?? 'unassigned'}:${taskType}`;
           const nextDefaultOrder = (perGroupCounters.get(groupKey) || 0) + 1;
           perGroupCounters.set(groupKey, nextDefaultOrder);
-          const sortOrder = Number.isFinite(Number(t.sortOrder)) ? Number(t.sortOrder) : nextDefaultOrder;
+          const hasExplicitOrder = t && t.sortOrder !== undefined && t.sortOrder !== null && t.sortOrder !== '' && Number.isFinite(Number(t.sortOrder));
+          const sortOrder = hasExplicitOrder ? Number(t.sortOrder) : nextDefaultOrder;
           return {
             ...t,
             taskType,
@@ -1640,7 +1642,7 @@
       const digitsOnly = String(rawValue ?? '').replace(/\D+/g, '');
       const parsedOrder = digitsOnly === '' ? 0 : Number(digitsOnly);
       const targetTask = state.tasks.find(t => t.id === taskId);
-      if (!targetTask || getTaskSortOrder(targetTask, 0) === parsedOrder) return;
+      if (!targetTask) return;
 
       targetTask.sortOrder = parsedOrder;
       localStorage.setItem('familyHubData', JSON.stringify(state));
@@ -1650,10 +1652,13 @@
       db.runTransaction(async (tx) => {
         const snap = await tx.get(familyDocRef);
         if (!snap.exists) return;
-        const tasks = (snap.data().tasks || []).map(t =>
+        const migrated = migrateLegacyFields(snap.data());
+        const updatedTasks = (migrated.tasks || []).map(t =>
           t.id === taskId ? { ...t, sortOrder: parsedOrder } : t
         );
-        tx.update(familyDocRef, { tasks });
+        state.tasks = updatedTasks;
+        localStorage.setItem('familyHubData', JSON.stringify(state));
+        tx.update(familyDocRef, { tasks: updatedTasks });
       }).catch(err => console.error("Task order transaction failed:", err))
         .finally(() => {
           pendingLocalWrites = Math.max(0, pendingLocalWrites - 1);
@@ -1663,13 +1668,23 @@
     function deleteTask(id) {
       requireAuthUser();
       if (!confirm("Delete this task?")) return;
-      const targetTask = state.tasks.find(t => t.id === id);
       state.tasks = state.tasks.filter(t => t.id !== id);
-      if (targetTask) {
-        updateFields({ tasks: FieldValue.arrayRemove(targetTask) });
-      } else {
-        updateFields({ tasks: state.tasks });
-      }
+      localStorage.setItem('familyHubData', JSON.stringify(state));
+      renderAll();
+
+      pendingLocalWrites++;
+      db.runTransaction(async (tx) => {
+        const snap = await tx.get(familyDocRef);
+        if (!snap.exists) return;
+        const migrated = migrateLegacyFields(snap.data());
+        const remainingTasks = (migrated.tasks || []).filter(t => t.id !== id);
+        state.tasks = remainingTasks;
+        localStorage.setItem('familyHubData', JSON.stringify(state));
+        tx.update(familyDocRef, { tasks: remainingTasks });
+      }).catch(err => console.error("Delete task transaction failed:", err))
+        .finally(() => {
+          pendingLocalWrites = Math.max(0, pendingLocalWrites - 1);
+        });
     }
 
     function openEditTask(id) {
@@ -1693,9 +1708,11 @@
     function submitTaskEdit() {
       requireAuthUser();
       const targetId = editId;
+      const existingTask = state.tasks.find(x => x.id === targetId);
       const updatedFields = {
         name: document.getElementById('edit-t-name').value.trim(),
         taskType: document.getElementById('edit-t-type-category').value === 'as-needed' ? 'as-needed' : 'daily',
+        sortOrder: getTaskSortOrder(existingTask, 1),
         assigneeId: Number(document.getElementById('edit-t-assignee').value),
         goal: Number(document.getElementById('edit-t-goal').value) || 0,
         prize: document.getElementById('edit-t-prize').value.trim(),
@@ -1719,9 +1736,12 @@
       db.runTransaction(async (tx) => {
         const snap = await tx.get(familyDocRef);
         if (!snap.exists) return;
-        const tasks = (snap.data().tasks || []).map(t =>
-          t.id === targetId ? { ...t, ...updatedFields } : t
+        const migrated = migrateLegacyFields(snap.data());
+        const tasks = (migrated.tasks || []).map(t =>
+          t.id === targetId ? { ...t, ...updatedFields, sortOrder: getTaskSortOrder(t, updatedFields.sortOrder) } : t
         );
+        state.tasks = tasks;
+        localStorage.setItem('familyHubData', JSON.stringify(state));
         tx.update(familyDocRef, { tasks });
       }).catch(err => console.error("Task edit transaction failed:", err))
         .finally(() => {
